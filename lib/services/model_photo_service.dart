@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -30,25 +31,33 @@ abstract final class ModelPhotoService {
   }
 
   static Future<ModelPhoto> upload(XFile photo) async {
-    final session = await SessionService.ensureSession();
-    final request = http.MultipartRequest(
-      'POST',
-      Uri.parse('${IngestService.apiUrl}/api/model-photos'),
-    );
-    request.headers['authorization'] = 'Bearer ${session.token}';
-    request.files.add(
-      http.MultipartFile.fromBytes(
-        'image',
-        await photo.readAsBytes(),
-        filename: photo.name,
-        contentType: _mediaType(photo.name, photo.mimeType),
-      ),
-    );
-    final streamed = await request.send().timeout(const Duration(seconds: 45));
-    final response = await http.Response.fromStream(streamed);
-    final data = _json(response);
-    _ensureSuccess(response, data);
-    return _photo(Map<String, dynamic>.from(data['photo'] as Map));
+    try {
+      final session = await SessionService.ensureSession();
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('${IngestService.apiUrl}/api/model-photos'),
+      );
+      request.headers['authorization'] = 'Bearer ${session.token}';
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          await photo.readAsBytes(),
+          filename: photo.name,
+          contentType: _mediaType(photo.name, photo.mimeType),
+        ),
+      );
+      final streamed = await request.send().timeout(
+        const Duration(seconds: 45),
+      );
+      final response = await http.Response.fromStream(streamed);
+      final data = _json(response);
+      _ensureSuccess(response, data);
+      return _photo(Map<String, dynamic>.from(data['photo'] as Map));
+    } on TimeoutException {
+      throw Exception(_connectionMessage);
+    } on http.ClientException {
+      throw Exception(_connectionMessage);
+    }
   }
 
   static Future<ModelPhoto> setPrimary(String id) async {
@@ -81,7 +90,18 @@ abstract final class ModelPhotoService {
 
   static Future<http.Response> _send(
     Future<http.Response> Function() request,
-  ) => request().timeout(const Duration(seconds: 20));
+  ) async {
+    try {
+      return await request().timeout(const Duration(seconds: 12));
+    } on TimeoutException {
+      throw Exception(_connectionMessage);
+    } on http.ClientException {
+      throw Exception(_connectionMessage);
+    }
+  }
+
+  static const _connectionMessage =
+      'Could not reach your photo library. Keep the backend running and reconnect wireless debugging, then try again.';
 
   static ModelPhoto _photo(Map<String, dynamic> json) {
     final imageUrl = json['imageUrl']?.toString() ?? '';

@@ -20,6 +20,7 @@ class FeedScreen extends StatefulWidget {
     required this.onProfile,
     required this.fetchPosts,
     this.fetchModelPhotos = ModelPhotoService.fetchPhotos,
+    this.uploadModelPhoto = ModelPhotoService.upload,
     this.generateOutfit = SocialService.createOutfitLook,
     this.profileName = 'YouCam Creator',
     this.profileAvatarUrl,
@@ -29,6 +30,7 @@ class FeedScreen extends StatefulWidget {
   final VoidCallback onProfile;
   final FetchPosts fetchPosts;
   final FetchModelPhotos fetchModelPhotos;
+  final UploadModelPhoto uploadModelPhoto;
   final GenerateOutfitLook generateOutfit;
   final String profileName;
   final String? profileAvatarUrl;
@@ -109,6 +111,7 @@ class _FeedScreenState extends State<FeedScreen> {
         builder: (_) => TryOnYourselfScreen(
           post: post,
           fetchModelPhotos: widget.fetchModelPhotos,
+          uploadModelPhoto: widget.uploadModelPhoto,
           generateOutfit: widget.generateOutfit,
         ),
       ),

@@ -33,6 +33,7 @@ class CompeteApp extends StatefulWidget {
     this.persistCloset = true,
     this.shareIntentReceiver,
     this.fetchModelPhotos,
+    this.uploadModelPhoto,
     this.checkYouCamConfigured,
     this.generateYouCamLook,
     this.generateOutfitLook,
@@ -49,6 +50,7 @@ class CompeteApp extends StatefulWidget {
   final bool persistCloset;
   final ShareIntentReceiver? shareIntentReceiver;
   final FetchModelPhotos? fetchModelPhotos;
+  final UploadModelPhoto? uploadModelPhoto;
   final CheckYouCamConfigured? checkYouCamConfigured;
   final GenerateYouCamLook? generateYouCamLook;
   final GenerateOutfitLook? generateOutfitLook;
@@ -267,6 +269,8 @@ class _CompeteAppState extends State<CompeteApp> {
                     fetchModelPhotos:
                         widget.fetchModelPhotos ??
                         ModelPhotoService.fetchPhotos,
+                    uploadModelPhoto:
+                        widget.uploadModelPhoto ?? ModelPhotoService.upload,
                     generateOutfit:
                         widget.generateOutfitLook ??
                         SocialService.createOutfitLook,
@@ -279,6 +283,8 @@ class _CompeteAppState extends State<CompeteApp> {
                     fetchPhotos:
                         widget.fetchModelPhotos ??
                         ModelPhotoService.fetchPhotos,
+                    uploadPhoto:
+                        widget.uploadModelPhoto ?? ModelPhotoService.upload,
                   ),
                   AppTab.collections => CollectionsScreen(
                     key: ValueKey(_collectionsVersion),

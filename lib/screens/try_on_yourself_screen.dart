@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../components/diagonal_processing_overlay.dart';
 import '../models/model_photo.dart';
@@ -7,16 +8,30 @@ import '../services/model_photo_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
 
+typedef PickFullBodyPhoto = Future<XFile?> Function(ImageSource source);
+
+Future<XFile?> _pickFullBodyPhoto(ImageSource source) =>
+    ImagePicker().pickImage(
+      source: source,
+      imageQuality: 90,
+      maxWidth: 2048,
+      maxHeight: 2048,
+    );
+
 class TryOnYourselfScreen extends StatefulWidget {
   const TryOnYourselfScreen({
     super.key,
     required this.post,
     this.fetchModelPhotos = ModelPhotoService.fetchPhotos,
+    this.uploadModelPhoto = ModelPhotoService.upload,
+    this.pickPhoto = _pickFullBodyPhoto,
     this.generateOutfit = SocialService.createOutfitLook,
   });
 
   final SocialPost post;
   final FetchModelPhotos fetchModelPhotos;
+  final UploadModelPhoto uploadModelPhoto;
+  final PickFullBodyPhoto pickPhoto;
   final GenerateOutfitLook generateOutfit;
 
   @override
@@ -29,6 +44,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
   String? _resultUrl;
   String? _error;
   bool _loading = true;
+  bool _uploading = false;
   bool _generating = false;
 
   @override
@@ -52,9 +68,71 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = _friendlyError(error);
       });
     }
+  }
+
+  Future<void> _chooseSource() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              key: const Key('try-on-gallery-option'),
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Choose from gallery'),
+              subtitle: const Text('Pick a clear full-body photo'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+            ListTile(
+              key: const Key('try-on-camera-option'),
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text('Take a new photo'),
+              subtitle: const Text(
+                'Stand straight with your full body visible',
+              ),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source != null) await _pickAndUpload(source);
+  }
+
+  Future<void> _pickAndUpload(ImageSource source) async {
+    try {
+      final picked = await widget.pickPhoto(source);
+      if (picked == null || !mounted) return;
+      setState(() {
+        _uploading = true;
+        _error = null;
+      });
+      final photo = await widget.uploadModelPhoto(picked);
+      if (!mounted) return;
+      setState(() {
+        _photos = [photo, ..._photos.where((item) => item.id != photo.id)];
+        _selected = photo;
+        _resultUrl = null;
+      });
+    } catch (error) {
+      if (mounted) setState(() => _error = _friendlyError(error));
+    } finally {
+      if (mounted) setState(() => _uploading = false);
+    }
+  }
+
+  String _friendlyError(Object error) {
+    final message = error.toString().replaceFirst('Exception: ', '');
+    if (message.contains('ClientConnection') ||
+        message.contains('SocketException') ||
+        message.contains('TimeoutException')) {
+      return 'Could not reach your photo library. Keep the backend running and reconnect wireless debugging, then try again.';
+    }
+    return message;
   }
 
   Future<void> _generate() async {
@@ -77,9 +155,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
       if (mounted) setState(() => _resultUrl = result);
     } catch (error) {
       if (mounted) {
-        setState(
-          () => _error = error.toString().replaceFirst('Exception: ', ''),
-        );
+        setState(() => _error = _friendlyError(error));
       }
     } finally {
       if (mounted) setState(() => _generating = false);
@@ -155,15 +231,58 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                     color: AppColors.sunken,
                     borderRadius: BorderRadius.circular(AppRadii.medium),
                   ),
-                  child: const Text(
-                    'Add a full-body photo in My Photos first, then come back to try this fit.',
-                    style: TextStyle(height: 1.4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Add a full-body photo now',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: AppSpacing.x1),
+                      const Text(
+                        'Use it immediately for this fit. It will also be saved in My Photos for future try-ons.',
+                        style: TextStyle(height: 1.4),
+                      ),
+                      const SizedBox(height: AppSpacing.x3),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          key: const Key('try-on-add-photo-button'),
+                          onPressed: _uploading ? null : _chooseSource,
+                          icon: _uploading
+                              ? const SizedBox.square(
+                                  dimension: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.add_a_photo_outlined),
+                          label: Text(
+                            _uploading ? 'Saving photo…' : 'Add your photo',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 )
               else ...[
-                const Text(
-                  'Choose your full-body photo',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Choose your full-body photo',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    TextButton.icon(
+                      key: const Key('try-on-add-another-photo-button'),
+                      onPressed: _uploading || _generating
+                          ? null
+                          : _chooseSource,
+                      icon: const Icon(Icons.add_a_photo_outlined, size: 17),
+                      label: const Text('Add new'),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppSpacing.x2),
                 SizedBox(

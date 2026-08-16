@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:youcam2/app.dart';
 import 'package:youcam2/components/outfit_post_image.dart';
 import 'package:youcam2/models/closet_item.dart';
@@ -10,6 +11,7 @@ import 'package:youcam2/models/model_photo.dart';
 import 'package:youcam2/models/social_post.dart';
 import 'package:youcam2/models/user_profile.dart';
 import 'package:youcam2/services/share_intent_service.dart';
+import 'package:youcam2/screens/try_on_yourself_screen.dart';
 
 Future<List<SocialPost>> emptyFeed() async => const [];
 Future<List<ModelPhoto>> emptyModelPhotos() async => const [];
@@ -491,5 +493,73 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('Your version is ready.'), findsOneWidget);
+  });
+
+  testWidgets('try-on can add a camera or gallery photo without leaving', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final post = SocialPost(
+      id: 'post-inline-photo',
+      caption: '',
+      imageUrl: 'https://example.com/outfit.jpg',
+      garments: const [],
+      author: const SocialUser(
+        id: 'creator-inline',
+        name: 'Creator',
+        handle: 'creator',
+      ),
+      likeCount: 0,
+      likedByMe: false,
+      comments: const [],
+      createdAt: DateTime(2026),
+    );
+    ImageSource? pickedSource;
+    var uploaded = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: TryOnYourselfScreen(
+          post: post,
+          fetchModelPhotos: emptyModelPhotos,
+          pickPhoto: (source) async {
+            pickedSource = source;
+            return XFile('/tmp/new-full-body.jpg');
+          },
+          uploadModelPhoto: (file) async {
+            uploaded = true;
+            return ModelPhoto(
+              id: 'new-photo',
+              imageUrl: 'https://example.com/new-photo.jpg',
+              label: 'New photo',
+              isPrimary: true,
+              createdAt: DateTime(2026),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('try-on-add-photo-button')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('try-on-add-photo-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('try-on-camera-option')), findsOneWidget);
+    expect(find.byKey(const Key('try-on-gallery-option')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('try-on-gallery-option')));
+    await tester.pumpAndSettle();
+    expect(pickedSource, ImageSource.gallery);
+    expect(uploaded, isTrue);
+    expect(find.byKey(const Key('try-on-photo-new-photo')), findsOneWidget);
+    expect(find.byKey(const Key('run-try-on-button')), findsOneWidget);
+    expect(
+      find.byKey(const Key('try-on-add-another-photo-button')),
+      findsOneWidget,
+    );
   });
 }
