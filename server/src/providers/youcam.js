@@ -160,4 +160,55 @@ export function createFashionTryOn(input) {
   return createTryOn(input);
 }
 
+export async function createOutfitTryOn({
+  personBuffer,
+  personContentType,
+  garments,
+}) {
+  const requested = Array.isArray(garments) ? garments.slice(0, 6) : [];
+  if (!requested.length) throw new YouCamError('Choose at least one collection item.', 422);
+
+  const hasFullBody = requested.some((garment) => garment.category === 'full_body');
+  const supported = requested
+    .filter((garment) => garment.category !== 'accessory')
+    .filter(
+      (garment) =>
+        !hasFullBody || !['upper_body', 'lower_body'].includes(garment.category),
+    )
+    .sort((a, b) => {
+      const order = { full_body: 0, upper_body: 1, lower_body: 2, shoes: 3 };
+      return (order[a.category] ?? 4) - (order[b.category] ?? 4);
+    });
+  if (!supported.length) {
+    throw new YouCamError(
+      'These pieces need a dedicated YouCam accessory engine before they can be generated.',
+      422,
+    );
+  }
+
+  let currentBuffer = personBuffer;
+  let currentContentType = personContentType;
+  const taskIds = [];
+  for (const garment of supported) {
+    const result = await createFashionTryOn({
+      personBuffer: currentBuffer,
+      personContentType: currentContentType,
+      garmentUrl: garment.garmentUrl,
+      category: garment.category,
+    });
+    currentBuffer = result.buffer;
+    currentContentType = result.contentType;
+    taskIds.push(result.taskId);
+  }
+  return {
+    buffer: currentBuffer,
+    contentType: currentContentType,
+    taskIds,
+    appliedCount: supported.length,
+    skippedCategories: requested
+      .filter((garment) => !supported.includes(garment))
+      .map((garment) => garment.category),
+  };
+}
+
 export const name = 'youcam-clothes-v3';

@@ -1,7 +1,12 @@
 import { Hono } from 'hono';
 
 import { readMedia, saveImageBuffer } from '../media.js';
-import { configured, createFashionTryOn, YouCamError } from '../providers/youcam.js';
+import {
+  configured,
+  createFashionTryOn,
+  createOutfitTryOn,
+  YouCamError,
+} from '../providers/youcam.js';
 import { findModelPhoto } from '../store.js';
 import { requireUser } from './auth.js';
 
@@ -64,6 +69,41 @@ tryOn.post('/model', requireUser, async (c) => {
       imageUrl,
       taskId: result.taskId,
       provider: body.category === 'shoes' ? 'youcam-shoes-v2' : 'youcam-clothes-v3',
+    });
+  } catch (error) {
+    if (error instanceof YouCamError) return c.json({ error: error.message }, error.status);
+    throw error;
+  }
+});
+
+tryOn.post('/outfit', requireUser, async (c) => {
+  if (!configured) return c.json({ error: 'YouCam is not configured on the server.' }, 503);
+  try {
+    const body = await c.req.json();
+    const photo = findModelPhoto(c.get('user').id, String(body?.modelPhotoId || ''));
+    if (!photo) return c.json({ error: 'Choose one of your saved full-body photos.' }, 404);
+    const match = /^\/media\/([^/]+)$/.exec(photo.imageUrl);
+    if (!match) return c.json({ error: 'Re-upload this photo before using it for try-on.' }, 422);
+    const media = await readMedia(match[1]);
+    if (!media) return c.json({ error: 'The selected full-body photo is missing.' }, 404);
+    const garments = Array.isArray(body?.garments)
+      ? body.garments.map((garment) => ({
+          garmentUrl: String(garment?.garmentUrl || ''),
+          category: String(garment?.category || 'upper_body'),
+        }))
+      : [];
+    const result = await createOutfitTryOn({
+      personBuffer: media.bytes,
+      personContentType: media.contentType,
+      garments,
+    });
+    const imageUrl = await saveImageBuffer(result.buffer, result.contentType, 'youcam-outfit');
+    return c.json({
+      imageUrl,
+      taskIds: result.taskIds,
+      appliedCount: result.appliedCount,
+      skippedCategories: result.skippedCategories,
+      provider: 'youcam-outfit-pipeline',
     });
   } catch (error) {
     if (error instanceof YouCamError) return c.json({ error: error.message }, error.status);
