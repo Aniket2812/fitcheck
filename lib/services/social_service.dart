@@ -16,6 +16,11 @@ typedef GenerateYouCamLook =
       ModelPhoto? modelPhoto,
       required PostGarment garment,
     });
+typedef GenerateOutfitLook =
+    Future<String> Function({
+      required ModelPhoto modelPhoto,
+      required List<PostGarment> garments,
+    });
 
 abstract final class SocialService {
   static String mediaUrl(String value) {
@@ -181,6 +186,48 @@ abstract final class SocialService {
     );
     final streamed = await request.send().timeout(const Duration(minutes: 4));
     final response = await http.Response.fromStream(streamed);
+    final data = _json(response);
+    _ensureSuccess(response, data);
+    return mediaUrl(data['imageUrl'].toString());
+  }
+
+  static Future<String> createOutfitLook({
+    required ModelPhoto modelPhoto,
+    required List<PostGarment> garments,
+  }) async {
+    if (garments.isEmpty) {
+      throw Exception('Choose at least one collection item.');
+    }
+    if (garments.any(
+      (garment) =>
+          garment.originalImageUrl == null ||
+          !garment.originalImageUrl!.startsWith('http'),
+    )) {
+      throw Exception(
+        'One of these items has no usable product image. Remove it and add the product link again.',
+      );
+    }
+    final session = await SessionService.ensureSession();
+    final response = await http
+        .post(
+          Uri.parse('${IngestService.apiUrl}/api/try-on/outfit'),
+          headers: {
+            'authorization': 'Bearer ${session.token}',
+            'content-type': 'application/json',
+          },
+          body: jsonEncode({
+            'modelPhotoId': modelPhoto.id,
+            'garments': garments
+                .map(
+                  (garment) => {
+                    'garmentUrl': garment.originalImageUrl,
+                    'category': _youCamCategory(garment),
+                  },
+                )
+                .toList(),
+          }),
+        )
+        .timeout(const Duration(minutes: 12));
     final data = _json(response);
     _ensureSuccess(response, data);
     return mediaUrl(data['imageUrl'].toString());

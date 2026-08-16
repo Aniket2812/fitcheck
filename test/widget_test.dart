@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:youcam2/app.dart';
 import 'package:youcam2/components/outfit_post_image.dart';
 import 'package:youcam2/models/closet_item.dart';
@@ -71,7 +72,7 @@ void main() {
     expect(find.text('Collections'), findsOneWidget);
   });
 
-  testWidgets('plus button opens the post composer and tags a product', (
+  testWidgets('plus button builds outfits only from saved collections', (
     WidgetTester tester,
   ) async {
     tester.view.physicalSize = const Size(800, 1600);
@@ -79,23 +80,11 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    Future<ClosetItem> fakeIngest(String url) async {
-      return const ClosetItem(
-        id: 'item-1',
-        title: 'Test jacket',
-        brand: 'Compete',
-        pageUrl: 'https://example.com/jacket',
-        originalImage: 'https://example.com/jacket.jpg',
-        image:
-            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
-      );
-    }
-
     await tester.pumpWidget(
       CompeteApp(
-        ingestLink: fakeIngest,
         fetchPosts: emptyFeed,
         fetchModelPhotos: emptyModelPhotos,
+        fetchCollections: emptyCollections,
         checkYouCamConfigured: youCamOff,
         persistCloset: false,
         shareIntentReceiver: FakeShareIntentReceiver(),
@@ -105,31 +94,20 @@ void main() {
 
     await tester.tap(find.byKey(const Key('add-post-button')));
     await tester.pumpAndSettle();
-    expect(find.text('New outfit'), findsOneWidget);
+    expect(find.text('Build an outfit'), findsOneWidget);
     expect(find.byKey(const Key('choose-outfit-photo')), findsNothing);
     expect(find.byKey(const Key('composer-new-photo')), findsNothing);
     expect(find.text('Choose from gallery'), findsNothing);
     expect(find.text('Take a photo'), findsNothing);
-    expect(find.byKey(const Key('composer-no-saved-photos')), findsOneWidget);
-
-    await tester.tap(find.byKey(const Key('tag-product-button')));
-    await tester.pump();
-    expect(find.text('Paste a product link first.'), findsOneWidget);
-
-    await tester.enterText(
-      find.byKey(const Key('post-product-link-field')),
-      'https://example.com/jacket',
+    expect(
+      find.byKey(const Key('composer-no-collection-items')),
+      findsOneWidget,
     );
-    await tester.tap(find.byKey(const Key('tag-product-button')));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Test jacket'), findsOneWidget);
+    expect(find.byKey(const Key('composer-no-saved-photos')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('publish-post-button')));
     await tester.pump();
-    expect(
-      find.text('Choose a saved full-body photo from My Photos.'),
-      findsOneWidget,
-    );
+    expect(find.text('Choose at least one collection item.'), findsOneWidget);
   });
 
   testWidgets('shared fashion link asks which collection should receive it', (
@@ -308,7 +286,7 @@ void main() {
     expect(find.text('Building tomorrow’s closet.'), findsOneWidget);
   });
 
-  testWidgets('linked product automatically generates a YouCam preview', (
+  testWidgets('collection pieces generate a multi-item YouCam preview', (
     WidgetTester tester,
   ) async {
     tester.view.physicalSize = const Size(800, 1800);
@@ -323,33 +301,41 @@ void main() {
       isPrimary: true,
       createdAt: DateTime(2026),
     );
-    String? generatedFor;
-
-    Future<ClosetItem> fakeIngest(String url) async => const ClosetItem(
-      id: 'top-1',
-      title: 'Black top',
-      image:
-          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
-      originalImage: 'https://example.com/top.jpg',
-      pageUrl: 'https://example.com/top',
-      category: 'upper_body',
+    List<String> generatedItems = const [];
+    final collection = FashionCollection(
+      id: 'shirts',
+      name: 'Shirts & Tops',
+      kind: 'shirt',
+      isDefault: true,
+      items: const [
+        CollectionItem(
+          id: 'top-1',
+          collectionId: 'shirts',
+          title: 'Black top',
+          imageUrl:
+              'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+          originalImageUrl: 'https://example.com/top.jpg',
+          buyUrl: 'https://example.com/top',
+          category: 'upper_body',
+        ),
+      ],
     );
     Future<String> fakeGenerate({
-      XFile? photo,
-      ModelPhoto? modelPhoto,
-      required PostGarment garment,
+      required ModelPhoto modelPhoto,
+      required List<PostGarment> garments,
     }) async {
-      generatedFor = modelPhoto?.id;
+      generatedItems = garments.map((garment) => garment.id).toList();
+      expect(modelPhoto.id, 'model-preview');
       return 'https://example.com/generated-look.jpg';
     }
 
     await tester.pumpWidget(
       CompeteApp(
-        ingestLink: fakeIngest,
         fetchPosts: emptyFeed,
         fetchModelPhotos: () async => [model],
+        fetchCollections: () async => [collection],
         checkYouCamConfigured: () async => true,
-        generateYouCamLook: fakeGenerate,
+        generateOutfitLook: fakeGenerate,
         persistCloset: false,
         shareIntentReceiver: FakeShareIntentReceiver(),
       ),
@@ -357,18 +343,13 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('add-post-button')));
     await tester.pumpAndSettle();
-    await tester.enterText(
-      find.byKey(const Key('post-product-link-field')),
-      'https://example.com/top',
-    );
-    await tester.tap(find.byKey(const Key('tag-product-button')));
-    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('collection-item-top-1')));
+    await tester.tap(find.byKey(const Key('generate-outfit-button')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
-    expect(generatedFor, 'model-preview');
-    expect(
-      find.text('YouCam look ready. This generated image will be posted.'),
-      findsOneWidget,
-    );
+    expect(generatedItems, ['top-1']);
+    expect(find.text('Regenerate outfit'), findsOneWidget);
   });
 
   testWidgets('garment hotspot opens the enlarged shoppable product', (
@@ -411,5 +392,82 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Test jacket'), findsOneWidget);
     expect(find.text('View product'), findsOneWidget);
+  });
+
+  testWidgets('feed try-on uses a saved photo and shows diagonal processing', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final post = SocialPost(
+      id: 'post-try-on',
+      caption: 'Borrow this look',
+      imageUrl: 'https://example.com/outfit.jpg',
+      garments: const [
+        PostGarment(
+          id: 'garment-try-on',
+          title: 'Blue shirt',
+          imageUrl: 'https://example.com/shirt-cutout.png',
+          originalImageUrl: 'https://example.com/shirt.jpg',
+          buyUrl: 'https://example.com/shirt',
+          category: 'upper_body',
+          x: 0.5,
+          y: 0.3,
+        ),
+      ],
+      author: const SocialUser(id: 'creator-2', name: 'Maya', handle: 'maya'),
+      likeCount: 4,
+      likedByMe: false,
+      comments: const [],
+      createdAt: DateTime(2026),
+    );
+    final model = ModelPhoto(
+      id: 'my-photo',
+      imageUrl: 'https://example.com/me.jpg',
+      label: 'My default',
+      isPrimary: true,
+      createdAt: DateTime(2026),
+    );
+    final result = Completer<String>();
+
+    await tester.pumpWidget(
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: () async => [post],
+        fetchModelPhotos: () async => [model],
+        fetchCollections: emptyCollections,
+        checkYouCamConfigured: () async => true,
+        generateOutfitLook:
+            ({
+              required ModelPhoto modelPhoto,
+              required List<PostGarment> garments,
+            }) {
+              expect(modelPhoto.id, 'my-photo');
+              expect(garments.single.id, 'garment-try-on');
+              return result.future;
+            },
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('try-on-post-post-try-on')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('try-on-yourself-screen')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('run-try-on-button')));
+    await tester.pump();
+    expect(
+      find.byKey(const Key('try-on-processing-animation')),
+      findsOneWidget,
+    );
+
+    result.complete('https://example.com/my-look.jpg');
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('Your version is ready.'), findsOneWidget);
   });
 }

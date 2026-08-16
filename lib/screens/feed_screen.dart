@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import '../components/outfit_post_image.dart';
 import '../components/screen.dart';
 import '../models/social_post.dart';
+import '../services/model_photo_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
 import 'post_detail_screen.dart';
+import 'try_on_yourself_screen.dart';
 
 typedef FetchPosts = Future<List<SocialPost>> Function();
 
@@ -15,6 +17,8 @@ class FeedScreen extends StatefulWidget {
     required this.onSearch,
     required this.onProfile,
     required this.fetchPosts,
+    this.fetchModelPhotos = ModelPhotoService.fetchPhotos,
+    this.generateOutfit = SocialService.createOutfitLook,
     this.profileName = 'YouCam Creator',
     this.profileAvatarUrl,
   });
@@ -22,6 +26,8 @@ class FeedScreen extends StatefulWidget {
   final VoidCallback onSearch;
   final VoidCallback onProfile;
   final FetchPosts fetchPosts;
+  final FetchModelPhotos fetchModelPhotos;
+  final GenerateOutfitLook generateOutfit;
   final String profileName;
   final String? profileAvatarUrl;
 
@@ -84,6 +90,19 @@ class _FeedScreenState extends State<FeedScreen> {
     ).then((_) => _load());
   }
 
+  void _tryOn(SocialPost post) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => TryOnYourselfScreen(
+          post: post,
+          fetchModelPhotos: widget.fetchModelPhotos,
+          generateOutfit: widget.generateOutfit,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => CompeteScreen(
     onSearch: widget.onSearch,
@@ -107,6 +126,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 post: _posts[index],
                 onOpen: () => _open(_posts[index]),
                 onLike: () => _like(index),
+                onTryOn: () => _tryOn(_posts[index]),
               ),
             ),
           ),
@@ -118,13 +138,15 @@ class _PostCard extends StatelessWidget {
     required this.post,
     required this.onOpen,
     required this.onLike,
+    required this.onTryOn,
   });
   final SocialPost post;
   final VoidCallback onOpen;
   final VoidCallback onLike;
+  final VoidCallback onTryOn;
 
   @override
-  Widget build(BuildContext context) => ColoredBox(
+  Widget build(BuildContext context) => Material(
     color: AppColors.raised,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,6 +167,12 @@ class _PostCard extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           subtitle: Text('@${post.author.handle}'),
+          trailing: TextButton.icon(
+            key: Key('try-on-post-${post.id}'),
+            onPressed: onTryOn,
+            icon: const Icon(Icons.auto_awesome, size: 16),
+            label: const Text('Try on yourself'),
+          ),
           onTap: onOpen,
         ),
         OutfitPostImage(post: post, onOpenPost: onOpen),

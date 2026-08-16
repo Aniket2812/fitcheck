@@ -35,6 +35,7 @@ class CompeteApp extends StatefulWidget {
     this.fetchModelPhotos,
     this.checkYouCamConfigured,
     this.generateYouCamLook,
+    this.generateOutfitLook,
     this.fetchProfile,
     this.updateProfile,
     this.fetchCollections,
@@ -50,6 +51,7 @@ class CompeteApp extends StatefulWidget {
   final FetchModelPhotos? fetchModelPhotos;
   final CheckYouCamConfigured? checkYouCamConfigured;
   final GenerateYouCamLook? generateYouCamLook;
+  final GenerateOutfitLook? generateOutfitLook;
   final FetchProfile? fetchProfile;
   final UpdateProfile? updateProfile;
   final FetchCollections? fetchCollections;
@@ -181,21 +183,21 @@ class _CompeteAppState extends State<CompeteApp> {
     _saveCloset();
   }
 
-  Future<void> _openCreatePost({String? initialProductUrl}) async {
+  Future<void> _openCreatePost() async {
     final context = _navigatorKey.currentContext;
     if (context == null || _composerOpen) return;
     _composerOpen = true;
     final post = await Navigator.of(context).push<SocialPost>(
       MaterialPageRoute(
         builder: (_) => CreatePostScreen(
-          ingestLink: widget.ingestLink,
-          initialProductUrl: initialProductUrl,
+          fetchCollections:
+              widget.fetchCollections ?? CollectionService.fetchCollections,
           fetchModelPhotos:
               widget.fetchModelPhotos ?? ModelPhotoService.fetchPhotos,
           checkYouCamConfigured:
               widget.checkYouCamConfigured ?? SocialService.youCamConfigured,
-          generateLook:
-              widget.generateYouCamLook ?? SocialService.createYouCamLook,
+          generateOutfit:
+              widget.generateOutfitLook ?? SocialService.createOutfitLook,
         ),
       ),
     );
@@ -262,6 +264,12 @@ class _CompeteAppState extends State<CompeteApp> {
                     profileName: _profile?.name ?? 'YouCam Creator',
                     profileAvatarUrl: _profile?.avatarUrl,
                     fetchPosts: widget.fetchPosts ?? SocialService.fetchPosts,
+                    fetchModelPhotos:
+                        widget.fetchModelPhotos ??
+                        ModelPhotoService.fetchPhotos,
+                    generateOutfit:
+                        widget.generateOutfitLook ??
+                        SocialService.createOutfitLook,
                   ),
                   AppTab.photos => ModelPhotosScreen(
                     onSearch: () => setState(() => _searchOpen = true),
