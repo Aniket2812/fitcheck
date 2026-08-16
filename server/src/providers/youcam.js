@@ -1,6 +1,8 @@
 const BASE_URL = process.env.YOUCAM_API_URL || 'https://yce-api-01.makeupar.com';
 const TASK_PATH = '/s2s/v2.0/task/cloth-v3';
 const FILE_PATH = '/s2s/v2.0/file/cloth-v3';
+const SHOES_TASK_PATH = '/s2s/v2.0/task/shoes';
+const SHOES_FILE_PATH = '/s2s/v2.0/file/shoes';
 const TIMEOUT_MS = Number(process.env.YOUCAM_TIMEOUT_MS || 180_000);
 const POLL_MS = Number(process.env.YOUCAM_POLL_MS || 2_000);
 
@@ -44,9 +46,9 @@ function normaliseContentType(type) {
   throw new YouCamError('YouCam try-on accepts JPG or PNG photos.', 422);
 }
 
-async function upload(buffer, contentType, fileName) {
+async function upload(buffer, contentType, fileName, filePath = FILE_PATH) {
   const type = normaliseContentType(contentType);
-  const payload = await jsonRequest(FILE_PATH, {
+  const payload = await jsonRequest(filePath, {
     method: 'POST',
     body: JSON.stringify({
       files: [{ content_type: type, file_name: fileName, file_size: buffer.length }],
@@ -72,6 +74,30 @@ async function upload(buffer, contentType, fileName) {
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
+async function downloadCompletedTask(taskPath, taskId) {
+  const deadline = Date.now() + TIMEOUT_MS;
+  while (Date.now() < deadline) {
+    await sleep(POLL_MS);
+    const status = await jsonRequest(`${taskPath}/${encodeURIComponent(taskId)}`, { method: 'GET' });
+    const data = status.data || status;
+    if (data.task_status === 'success') {
+      const url = data.results?.url;
+      if (!url) throw new YouCamError('YouCam completed without an output image.');
+      const image = await fetch(url, { signal: AbortSignal.timeout(30_000) });
+      if (!image.ok) throw new YouCamError('Could not download the YouCam result.');
+      return {
+        buffer: Buffer.from(await image.arrayBuffer()),
+        contentType: image.headers.get('content-type')?.split(';')[0] || 'image/jpeg',
+        taskId,
+      };
+    }
+    if (data.task_status === 'error') {
+      throw new YouCamError(data.error?.message || data.error || 'YouCam could not create this look.', 422);
+    }
+  }
+  throw new YouCamError('YouCam try-on timed out. Try a clearer, front-facing photo.', 504);
+}
+
 /**
  * Runs Perfect Corp's AI Clothes v3 workflow: upload a user photo, submit a
  * garment reference, poll the asynchronous task, and return the generated
@@ -96,27 +122,42 @@ export async function createTryOn({ personBuffer, personContentType, garmentUrl,
   const taskId = task.data?.task_id;
   if (!taskId) throw new YouCamError('YouCam did not return a task id.');
 
-  const deadline = Date.now() + TIMEOUT_MS;
-  while (Date.now() < deadline) {
-    await sleep(POLL_MS);
-    const status = await jsonRequest(`${TASK_PATH}/${encodeURIComponent(taskId)}`, { method: 'GET' });
-    const data = status.data || status;
-    if (data.task_status === 'success') {
-      const url = data.results?.url;
-      if (!url) throw new YouCamError('YouCam completed without an output image.');
-      const image = await fetch(url, { signal: AbortSignal.timeout(30_000) });
-      if (!image.ok) throw new YouCamError('Could not download the YouCam result.');
-      return {
-        buffer: Buffer.from(await image.arrayBuffer()),
-        contentType: image.headers.get('content-type')?.split(';')[0] || 'image/jpeg',
-        taskId,
-      };
-    }
-    if (data.task_status === 'error') {
-      throw new YouCamError(data.error?.message || data.error || 'YouCam could not create this look.', 422);
-    }
+  return downloadCompletedTask(TASK_PATH, taskId);
+}
+
+export async function createShoesTryOn({ personBuffer, personContentType, garmentUrl }) {
+  if (!garmentUrl || !/^https?:\/\//i.test(garmentUrl)) {
+    throw new YouCamError('The shoes need a public reference image.', 422);
   }
-  throw new YouCamError('YouCam try-on timed out. Try a clearer, front-facing photo.', 504);
+  const sourceId = await upload(
+    personBuffer,
+    personContentType,
+    'shoes-source.jpg',
+    SHOES_FILE_PATH,
+  );
+  const task = await jsonRequest(SHOES_TASK_PATH, {
+    method: 'POST',
+    body: JSON.stringify({
+      src_file_id: sourceId,
+      ref_file_url: garmentUrl,
+      gender: 'female',
+      style: 'random',
+    }),
+  });
+  const taskId = task.data?.task_id;
+  if (!taskId) throw new YouCamError('YouCam did not return a shoes task id.');
+  return downloadCompletedTask(SHOES_TASK_PATH, taskId);
+}
+
+export function createFashionTryOn(input) {
+  if (input.category === 'shoes') return createShoesTryOn(input);
+  if (input.category === 'accessory') {
+    throw new YouCamError(
+      'This accessory can be tagged and shopped, but it needs a dedicated YouCam accessory engine.',
+      422,
+    );
+  }
+  return createTryOn(input);
 }
 
 export const name = 'youcam-clothes-v3';

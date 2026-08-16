@@ -1,7 +1,8 @@
 # YouCam Social
 
 Flutter social-shopping app for publishing outfits, tagging garments, opening
-shoppable cutouts, and generating virtual try-on images with YouCam AI Clothes.
+shoppable cutouts, receiving products from other shopping apps, and generating
+virtual try-on images with YouCam.
 
 ## Run
 
@@ -33,15 +34,28 @@ flutter run --dart-define=API_URL=http://192.168.1.10:8787
 
 ## Outfit publishing flow
 
-1. Tap the center plus button and choose an outfit photo.
-2. Paste one or more product links and extract each garment.
-3. Select a garment and tap the outfit photo to position its hotspot.
-4. Optionally generate the final outfit with YouCam.
-5. Publish. The feed updates immediately.
+1. Open **My photos** and upload one or more clear full-body photos once.
+2. Share a product from Myntra, Flipkart, Amazon, AJIO, or another shopping app
+   to **Post to Compete**. The app opens the composer and extracts the item.
+   Pasting a link after tapping the center plus button also works.
+3. Choose which saved photo YouCam should dress.
+4. Generate and review the virtual try-on preview.
+5. Position the product hotspot and publish. The feed updates immediately.
 
 Opening a post and tapping a hotspot enlarges the transparent garment cutout
 and exposes its original buying link. Likes and comments are persisted by the
 backend.
+
+## Native share targets
+
+- Android registers a `text/plain` `ACTION_SEND` target and handles both cold
+  and warm app starts in a single task.
+- iOS embeds `ShareExtension.appex`, stores the shared text in the app group,
+  and opens the Flutter host through its private URL scheme.
+
+Both paths extract the first `http` or `https` URL from retailer share text.
+Device builds need the `group.com.compete.youcam2.share` App Group enabled for
+the Runner and ShareExtension identifiers in the Apple developer account.
 
 In local development the app creates a persistent development session. Set
 `GOOGLE_CLIENT_ID` on the server and provide a real Google ID token for

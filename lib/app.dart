@@ -27,6 +27,8 @@ class CompeteApp extends StatefulWidget {
     this.persistCloset = true,
     this.shareIntentReceiver,
     this.fetchModelPhotos,
+    this.checkYouCamConfigured,
+    this.generateYouCamLook,
   });
 
   final IngestLink? ingestLink;
@@ -34,6 +36,8 @@ class CompeteApp extends StatefulWidget {
   final bool persistCloset;
   final ShareIntentReceiver? shareIntentReceiver;
   final FetchModelPhotos? fetchModelPhotos;
+  final CheckYouCamConfigured? checkYouCamConfigured;
+  final GenerateYouCamLook? generateYouCamLook;
 
   @override
   State<CompeteApp> createState() => _CompeteAppState();
@@ -132,6 +136,10 @@ class _CompeteAppState extends State<CompeteApp> {
           initialProductUrl: initialProductUrl,
           fetchModelPhotos:
               widget.fetchModelPhotos ?? ModelPhotoService.fetchPhotos,
+          checkYouCamConfigured:
+              widget.checkYouCamConfigured ?? SocialService.youCamConfigured,
+          generateLook:
+              widget.generateYouCamLook ?? SocialService.createYouCamLook,
         ),
       ),
     );

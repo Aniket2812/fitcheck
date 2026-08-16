@@ -17,11 +17,15 @@ class CreatePostScreen extends StatefulWidget {
     this.ingestLink,
     this.initialProductUrl,
     this.fetchModelPhotos = ModelPhotoService.fetchPhotos,
+    this.checkYouCamConfigured = SocialService.youCamConfigured,
+    this.generateLook = SocialService.createYouCamLook,
   });
 
   final IngestLink? ingestLink;
   final String? initialProductUrl;
   final FetchModelPhotos fetchModelPhotos;
+  final CheckYouCamConfigured checkYouCamConfigured;
+  final GenerateYouCamLook generateLook;
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -48,7 +52,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   void initState() {
     super.initState();
-    SocialService.youCamConfigured().then((value) {
+    widget.checkYouCamConfigured().then((value) {
       if (mounted) setState(() => _youCamConfigured = value);
     });
     _loadModelPhotos();
@@ -169,6 +173,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       setState(() {
         _garments = [..._garments, garment];
         _selectedGarment = _garments.length - 1;
+        _youCamImageUrl = null;
         _productLink.clear();
       });
     } catch (error) {
@@ -190,14 +195,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _generateWithYouCam() async {
-    if (_photo == null || _garments.isEmpty) return;
+    if ((_photo == null && _selectedModelPhoto == null) || _garments.isEmpty) {
+      return;
+    }
     setState(() {
       _generating = true;
       _error = null;
     });
     try {
-      final url = await SocialService.createYouCamLook(
-        photo: _photo!,
+      final url = await widget.generateLook(
+        photo: _photo,
+        modelPhoto: _selectedModelPhoto,
         garment: _garments.first,
       );
       if (mounted) setState(() => _youCamImageUrl = url);
@@ -209,8 +217,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _publish() async {
-    if (_photo == null) return _setError('Choose an outfit photo.');
+    if (_photo == null && _selectedModelPhoto == null) {
+      return _setError('Choose an outfit photo.');
+    }
     if (_garments.isEmpty) return _setError('Tag at least one garment.');
+    if (_selectedModelPhoto != null && _youCamImageUrl == null) {
+      return _setError('Generate the YouCam preview before posting this look.');
+    }
     setState(() {
       _publishing = true;
       _error = null;
@@ -345,6 +358,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         setState(() {
                           _garments = updated;
                           _selectedGarment = updated.isEmpty ? null : 0;
+                          _youCamImageUrl = null;
                         });
                       },
                     ),
@@ -352,7 +366,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ],
               if (_youCamConfigured &&
-                  _photo != null &&
+                  (_photo != null || _selectedModelPhoto != null) &&
                   _garments.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.x4),
                 OutlinedButton.icon(
@@ -596,7 +610,20 @@ class _TaggablePhoto extends StatelessWidget {
             children: [
               networkUrl == null
                   ? Image.memory(bytes!, fit: BoxFit.cover)
-                  : Image.network(networkUrl!, fit: BoxFit.cover),
+                  : Image.network(
+                      networkUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => const ColoredBox(
+                        color: AppColors.photo,
+                        child: Center(
+                          child: Icon(
+                            Icons.person,
+                            size: 54,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ),
+                    ),
               ...garments.asMap().entries.map(
                 (entry) => Positioned(
                   left: entry.value.x * size.width - 17,

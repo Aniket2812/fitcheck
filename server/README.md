@@ -102,6 +102,19 @@ a clash returns `409`.
 ### `GET /api/users/:handle`
 Public profile. Email and model photo are never in this projection.
 
+## Reusable full-body photos
+
+- `GET /api/model-photos` — lists the signed-in user's saved photos.
+- `POST /api/model-photos` — uploads multipart field `image`; the first upload
+  becomes the default.
+- `POST /api/model-photos/:id/primary` — changes the default try-on photo.
+- `DELETE /api/model-photos/:id` — removes the photo from future selection.
+
+Each account can keep up to 12 photos. Only the signed-in owner can list or
+mutate their records. The bundled local server uses unguessable media names;
+production deployments should serve model photos from private object storage
+through short-lived signed URLs.
+
 ## Social feed
 
 Posts are persisted beside accounts and sessions; uploaded images and garment
@@ -121,7 +134,7 @@ Garment coordinates are normalized `x`/`y` values. The client renders them as
 hotspots over the outfit; opening one displays the already extracted transparent
 product asset and its original buying link.
 
-## YouCam AI Clothes v3
+## YouCam virtual try-on
 
 `POST /api/try-on` accepts a bearer-authenticated multipart body with `photo`,
 `garmentUrl`, and `category` (`upper_body`, `lower_body`, or `full_body`). The
@@ -129,6 +142,12 @@ server performs Perfect Corp's complete File API → signed upload → Clothes t
 → polling workflow, downloads the temporary result, and stores it under a stable
 local media URL before returning it. `GET /api/try-on/config` lets the app hide
 the action when no key is configured.
+
+`POST /api/try-on/model` accepts JSON with `modelPhotoId`, `garmentUrl`, and
+`category`, loads the authenticated user's stored photo server-side, and
+returns the stable generated preview URL. Clothes use AI Clothes v3; products
+classified as shoes use the dedicated AI Shoes workflow. Other accessories
+remain shoppable/taggable but require their matching YouCam accessory engine.
 
 ## How ingestion works
 
@@ -210,6 +229,6 @@ rows gate the exit code.
 ## Provider responsibilities
 
 OpenAI creates the transparent product cutout used by garment hotspots. YouCam
-AI Clothes v3 combines a person's source photo with the product reference to
-generate the optional virtual-try-on look. They are separate stages because
-the Clothes API is not a background-removal API.
+AI Clothes v3 or AI Shoes combines a saved user photo with the product
+reference to generate the virtual-try-on look. They are separate stages because
+the YouCam try-on APIs are not background-removal APIs.

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:youcam2/app.dart';
 import 'package:youcam2/components/outfit_post_image.dart';
 import 'package:youcam2/models/closet_item.dart';
@@ -9,6 +10,7 @@ import 'package:youcam2/services/share_intent_service.dart';
 
 Future<List<SocialPost>> emptyFeed() async => const [];
 Future<List<ModelPhoto>> emptyModelPhotos() async => const [];
+Future<bool> youCamOff() async => false;
 
 class FakeShareIntentReceiver implements ShareIntentReceiver {
   FakeShareIntentReceiver({this.initialLink});
@@ -34,6 +36,7 @@ void main() {
         persistCloset: false,
         fetchPosts: emptyFeed,
         fetchModelPhotos: emptyModelPhotos,
+        checkYouCamConfigured: youCamOff,
         shareIntentReceiver: FakeShareIntentReceiver(),
       ),
     );
@@ -89,6 +92,7 @@ void main() {
         ingestLink: fakeIngest,
         fetchPosts: emptyFeed,
         fetchModelPhotos: emptyModelPhotos,
+        checkYouCamConfigured: youCamOff,
         persistCloset: false,
         shareIntentReceiver: FakeShareIntentReceiver(),
       ),
@@ -136,6 +140,7 @@ void main() {
         ingestLink: fakeIngest,
         fetchPosts: emptyFeed,
         fetchModelPhotos: emptyModelPhotos,
+        checkYouCamConfigured: youCamOff,
         persistCloset: false,
         shareIntentReceiver: FakeShareIntentReceiver(
           initialLink: 'https://www.myntra.com/shared-top/buy',
@@ -175,6 +180,7 @@ void main() {
         persistCloset: false,
         fetchPosts: emptyFeed,
         fetchModelPhotos: photos,
+        checkYouCamConfigured: youCamOff,
         shareIntentReceiver: FakeShareIntentReceiver(),
       ),
     );
@@ -185,6 +191,71 @@ void main() {
     expect(find.text('My full-body photos'), findsOneWidget);
     expect(find.text('Front pose'), findsOneWidget);
     expect(find.text('Default'), findsOneWidget);
+  });
+
+  testWidgets('selected saved photo generates a YouCam preview', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final model = ModelPhoto(
+      id: 'model-preview',
+      imageUrl: 'https://example.com/model.jpg',
+      label: 'Studio pose',
+      isPrimary: true,
+      createdAt: DateTime(2026),
+    );
+    String? generatedFor;
+
+    Future<ClosetItem> fakeIngest(String url) async => const ClosetItem(
+      id: 'top-1',
+      title: 'Black top',
+      image:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+      originalImage: 'https://example.com/top.jpg',
+      pageUrl: 'https://example.com/top',
+      category: 'upper_body',
+    );
+    Future<String> fakeGenerate({
+      XFile? photo,
+      ModelPhoto? modelPhoto,
+      required PostGarment garment,
+    }) async {
+      generatedFor = modelPhoto?.id;
+      return 'https://example.com/generated-look.jpg';
+    }
+
+    await tester.pumpWidget(
+      CompeteApp(
+        ingestLink: fakeIngest,
+        fetchPosts: emptyFeed,
+        fetchModelPhotos: () async => [model],
+        checkYouCamConfigured: () async => true,
+        generateYouCamLook: fakeGenerate,
+        persistCloset: false,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('add-post-button')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const Key('post-product-link-field')),
+      'https://example.com/top',
+    );
+    await tester.tap(find.byKey(const Key('tag-product-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('youcam-generate-button')));
+    await tester.pumpAndSettle();
+
+    expect(generatedFor, 'model-preview');
+    expect(
+      find.text('YouCam look ready. This generated image will be posted.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('garment hotspot opens the enlarged shoppable product', (

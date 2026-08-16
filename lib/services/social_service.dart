@@ -4,9 +4,18 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../models/model_photo.dart';
 import '../models/social_post.dart';
 import 'ingest_service.dart';
 import 'session_service.dart';
+
+typedef CheckYouCamConfigured = Future<bool> Function();
+typedef GenerateYouCamLook =
+    Future<String> Function({
+      XFile? photo,
+      ModelPhoto? modelPhoto,
+      required PostGarment garment,
+    });
 
 abstract final class SocialService {
   static String mediaUrl(String value) {
@@ -126,7 +135,8 @@ abstract final class SocialService {
   }
 
   static Future<String> createYouCamLook({
-    required XFile photo,
+    XFile? photo,
+    ModelPhoto? modelPhoto,
     required PostGarment garment,
   }) async {
     final reference = garment.originalImageUrl;
@@ -134,13 +144,33 @@ abstract final class SocialService {
       throw Exception('This garment has no public reference image for YouCam.');
     }
     final session = await SessionService.ensureSession();
+    if (modelPhoto != null) {
+      final response = await http
+          .post(
+            Uri.parse('${IngestService.apiUrl}/api/try-on/model'),
+            headers: {
+              'authorization': 'Bearer ${session.token}',
+              'content-type': 'application/json',
+            },
+            body: jsonEncode({
+              'modelPhotoId': modelPhoto.id,
+              'garmentUrl': reference,
+              'category': _youCamCategory(garment),
+            }),
+          )
+          .timeout(const Duration(minutes: 4));
+      final data = _json(response);
+      _ensureSuccess(response, data);
+      return mediaUrl(data['imageUrl'].toString());
+    }
+    if (photo == null) throw Exception('Choose a full-body photo.');
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('${IngestService.apiUrl}/api/try-on'),
     );
     request.headers['authorization'] = 'Bearer ${session.token}';
     request.fields['garmentUrl'] = reference;
-    request.fields['category'] = _youCamCategory(garment.category);
+    request.fields['category'] = _youCamCategory(garment);
     request.files.add(
       http.MultipartFile.fromBytes(
         'photo',
@@ -174,9 +204,30 @@ abstract final class SocialService {
     return MediaType('image', 'jpeg');
   }
 
-  static String _youCamCategory(String? value) {
-    if (value == 'bottom' || value == 'lower_body') return 'lower_body';
-    if (value == 'dress' || value == 'full_body') return 'full_body';
+  static String _youCamCategory(PostGarment garment) {
+    final value = '${garment.category ?? ''} ${garment.title}'.toLowerCase();
+    if (RegExp(
+      r'\b(shoe|shoes|sneaker|loafer|boot|sandal|heel)',
+    ).hasMatch(value)) {
+      return 'shoes';
+    }
+    if (RegExp(
+      r'\b(ring|earring|bracelet|necklace|watch|bag|belt|sunglasses|accessor)',
+    ).hasMatch(value)) {
+      return 'accessory';
+    }
+    if (value.contains('bottom') ||
+        value.contains('lower_body') ||
+        RegExp(
+          r'\b(jeans|trouser|pants|shorts|skirt|jogger|leggings)',
+        ).hasMatch(value)) {
+      return 'lower_body';
+    }
+    if (value.contains('dress') ||
+        value.contains('full_body') ||
+        RegExp(r'\b(gown|jumpsuit|romper|saree|sari)').hasMatch(value)) {
+      return 'full_body';
+    }
     return 'upper_body';
   }
 

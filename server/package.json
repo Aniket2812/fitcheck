@@ -8,7 +8,8 @@
     "start": "node --env-file=.env src/index.js",
     "coverage": "node --env-file=.env test/coverage.js",
     "test:social": "node test/social.js",
-    "test:model-photos": "node test/modelPhotos.js"
+    "test:model-photos": "node test/modelPhotos.js",
+    "test:http-model-photos": "node test/httpModelPhotos.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",

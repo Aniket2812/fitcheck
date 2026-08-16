@@ -66,6 +66,21 @@ async function downloadImage(imageUrl, pageUrl) {
   });
 }
 
+function inferFashionCategory(...values) {
+  const text = values.filter(Boolean).join(' ').toLowerCase();
+  if (/\b(shoe|shoes|sneaker|sneakers|loafer|loafers|boot|boots|sandal|slipper|heels?)\b/.test(text)) {
+    return 'shoes';
+  }
+  if (/\b(ring|earring|bracelet|necklace|watch|bag|handbag|belt|sunglasses|accessor)/.test(text)) {
+    return 'accessory';
+  }
+  if (/\b(dress|gown|jumpsuit|romper|saree|sari)\b/.test(text)) return 'full_body';
+  if (/\b(jeans|trouser|pants|shorts|skirt|jogger|leggings|bottom)\b/.test(text)) {
+    return 'lower_body';
+  }
+  return 'upper_body';
+}
+
 /**
  * POST /api/ingest  { url }
  *
@@ -113,6 +128,7 @@ app.post('/api/ingest', async (c) => {
       category = described.category;
       mark('product-described');
     }
+    category = category || inferFashionCategory(title, product.pageUrl);
 
     // The upgraded (full-size) URL is a rewrite, so fall back to the original
     // if the CDN does not recognise it.
