@@ -51,6 +51,16 @@ void main() {
 
     expect(find.text('COMPETE'), findsOneWidget);
     expect(find.text('No outfits yet'), findsOneWidget);
+    expect(
+      tester.getSize(find.byKey(const Key('feed-tab'))),
+      const Size.square(44),
+    );
+    expect(
+      Theme.of(
+        tester.element(find.byKey(const Key('feed-tab'))),
+      ).textTheme.bodyMedium?.fontFamily,
+      'Jost',
+    );
 
     await tester.tap(find.byKey(const Key('collections-tab')));
     await tester.pumpAndSettle();

@@ -156,10 +156,10 @@ class _FeedScreenState extends State<FeedScreen> {
             child: ListView(
               key: const Key('social-feed'),
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 108),
+              padding: const EdgeInsets.only(bottom: 84),
               children: [
                 const Padding(
-                  padding: EdgeInsets.fromLTRB(14, 18, 14, 4),
+                  padding: EdgeInsets.fromLTRB(12, 10, 12, 2),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -171,7 +171,7 @@ class _FeedScreenState extends State<FeedScreen> {
                               'DISCOVER',
                               style: TextStyle(
                                 color: AppColors.textMuted,
-                                fontSize: 11,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.8,
                               ),
@@ -180,8 +180,8 @@ class _FeedScreenState extends State<FeedScreen> {
                             Text(
                               'Fits worth trying',
                               style: TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 21,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -199,11 +199,11 @@ class _FeedScreenState extends State<FeedScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: 52,
+                  height: 44,
                   child: ListView.separated(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.x3,
-                      vertical: AppSpacing.x2,
+                      vertical: AppSpacing.x1,
                     ),
                     scrollDirection: Axis.horizontal,
                     itemCount: _filters.length,
@@ -270,7 +270,7 @@ class _MasonryFeed extends StatelessWidget {
         final ratio = _DiscoveryCard.ratioFor(index);
         columns[shortest].add(
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.x3),
+            padding: const EdgeInsets.only(bottom: AppSpacing.x2),
             child: _DiscoveryCard(
               post: posts[index],
               imageRatio: ratio,
@@ -283,12 +283,12 @@ class _MasonryFeed extends StatelessWidget {
         heights[shortest] += 1 / ratio + 0.52;
       }
       return Padding(
-        padding: const EdgeInsets.fromLTRB(10, 4, 10, 0),
+        padding: const EdgeInsets.fromLTRB(8, 3, 8, 0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             for (var index = 0; index < columns.length; index++) ...[
-              if (index > 0) const SizedBox(width: 10),
+              if (index > 0) const SizedBox(width: 8),
               Expanded(child: Column(children: columns[index])),
             ],
           ],
@@ -331,7 +331,7 @@ class _DiscoveryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: AppColors.raised,
-    borderRadius: BorderRadius.circular(18),
+    borderRadius: BorderRadius.circular(AppRadii.large),
     clipBehavior: Clip.antiAlias,
     child: InkWell(
       onTap: onOpen,
@@ -341,9 +341,9 @@ class _DiscoveryCard extends StatelessWidget {
           EditorialPhotoFrame(
             key: Key('editorial-frame-${post.id}'),
             aspectRatio: imageRatio,
-            inset: 6,
-            borderRadius: 18,
-            photoRadius: 13,
+            inset: 4,
+            borderRadius: AppRadii.large,
+            photoRadius: AppRadii.medium,
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -369,8 +369,8 @@ class _DiscoveryCard extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: 6,
+                  right: 6,
                   child: Material(
                     color: const Color(0xEFFFFFFF),
                     borderRadius: BorderRadius.circular(18),
@@ -380,8 +380,8 @@ class _DiscoveryCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(18),
                       child: const Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 9,
-                          vertical: 7,
+                          horizontal: 8,
+                          vertical: 5,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -391,7 +391,7 @@ class _DiscoveryCard extends StatelessWidget {
                             Text(
                               'TRY',
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 9,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.8,
                               ),
@@ -450,20 +450,20 @@ class _DiscoveryCard extends StatelessWidget {
           ),
           if (post.caption.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 9, 10, 5),
+              padding: const EdgeInsets.fromLTRB(9, 7, 9, 3),
               child: Text(
                 post.caption,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontSize: 13,
+                  fontSize: 12.5,
                   fontWeight: FontWeight.w500,
                   height: 1.25,
                 ),
               ),
             ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(9, 3, 6, 8),
+            padding: const EdgeInsets.fromLTRB(8, 2, 5, 6),
             child: Row(
               children: [
                 CircleAvatar(

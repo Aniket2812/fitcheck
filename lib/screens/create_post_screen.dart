@@ -472,21 +472,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 child: ListView(
                   key: const Key('outfit-studio'),
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 28),
                   children: [
                     _StudioProgress(
                       hasPieces: _selectedIds.isNotEmpty,
                       hasPhoto: _selectedModelPhoto != null,
                       hasPreview: _previewUrl != null,
                     ),
-                    const SizedBox(height: AppSpacing.x4),
+                    const SizedBox(height: AppSpacing.x3),
                     const _StepTitle(
                       number: '01',
                       title: 'Pick your pieces',
                       subtitle:
                           'Mix items from your collections. Tops, bottoms, dresses, and shoes stay category-aware.',
                     ),
-                    const SizedBox(height: AppSpacing.x3),
+                    const SizedBox(height: AppSpacing.x2),
                     Wrap(
                       spacing: AppSpacing.x2,
                       runSpacing: AppSpacing.x2,
@@ -525,24 +525,24 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSpacing.x3),
+                    const SizedBox(height: AppSpacing.x2),
                     _CollectionPicker(
                       collections: _collections,
                       selectedIds: _selectedIds,
                       onToggle: _toggle,
                     ),
                     if (_selectedItems.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.x3),
+                      const SizedBox(height: AppSpacing.x2),
                       _SelectedPieces(items: _selectedItems, onRemove: _toggle),
                     ],
-                    const SizedBox(height: AppSpacing.x8),
+                    const SizedBox(height: AppSpacing.x6),
                     const _StepTitle(
                       number: '02',
                       title: 'Choose your photo',
                       subtitle:
                           'Select a full-body photo you already saved in My Photos.',
                     ),
-                    const SizedBox(height: AppSpacing.x3),
+                    const SizedBox(height: AppSpacing.x2),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: OutlinedButton.icon(
@@ -571,14 +571,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       selected: _selectedModelPhoto,
                       onSelect: _selectPhoto,
                     ),
-                    const SizedBox(height: AppSpacing.x8),
+                    const SizedBox(height: AppSpacing.x6),
                     const _StepTitle(
                       number: '03',
                       title: 'Create the look',
                       subtitle:
                           'YouCam applies compatible pieces in outfit order and returns one post-ready image.',
                     ),
-                    const SizedBox(height: AppSpacing.x3),
+                    const SizedBox(height: AppSpacing.x2),
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton.icon(
@@ -614,7 +614,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ),
                         ),
                       ),
-                    const SizedBox(height: AppSpacing.x3),
+                    const SizedBox(height: AppSpacing.x2),
                     AspectRatio(
                       aspectRatio: 4 / 5,
                       child: _OutfitPreview(
@@ -627,7 +627,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         onPlace: _placeTag,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.x4),
+                    const SizedBox(height: AppSpacing.x3),
                     TextField(
                       controller: _caption,
                       maxLength: 500,
@@ -668,7 +668,10 @@ class _StudioProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(AppSpacing.x3),
+    padding: const EdgeInsets.symmetric(
+      horizontal: AppSpacing.x3,
+      vertical: AppSpacing.x2,
+    ),
     decoration: BoxDecoration(
       color: AppColors.sunken,
       borderRadius: BorderRadius.circular(AppRadii.medium),

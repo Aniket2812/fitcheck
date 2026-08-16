@@ -71,19 +71,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           child: ListView(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 child: EditorialPhotoFrame(
                   key: Key('editorial-frame-${_post.id}'),
                   aspectRatio: 0.77,
-                  inset: 11,
-                  borderRadius: 22,
-                  photoRadius: 14,
+                  inset: 8,
+                  borderRadius: 16,
+                  photoRadius: 11,
                   label: 'COMPETE  /  OUTFIT EDIT',
                   child: OutfitPostImage(post: _post),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
                 child: Row(
                   children: [
                     IconButton(
@@ -108,7 +108,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               ),
               if (_post.caption.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
                   child: Text.rich(
                     TextSpan(
                       children: [
@@ -124,7 +124,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               const Divider(height: 1),
               if (_post.comments.isEmpty)
                 const Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: EdgeInsets.all(16),
                   child: Text(
                     'No comments yet. Start the conversation.',
                     textAlign: TextAlign.center,
@@ -146,7 +146,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+            padding: const EdgeInsets.fromLTRB(10, 6, 10, 8),
             child: Row(
               children: [
                 Expanded(

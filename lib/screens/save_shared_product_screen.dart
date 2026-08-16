@@ -84,16 +84,16 @@ class _SaveSharedProductScreenState extends State<SaveSharedProductScreen> {
     body: _loading
         ? const Center(child: CircularProgressIndicator())
         : ListView(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+            padding: const EdgeInsets.fromLTRB(14, 8, 14, 24),
             children: [
               const Text(
                 'Choose a collection',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: AppSpacing.x2),
               const Text(
                 'We’ll fetch the product, cut it out, and keep its original buying link.',
-                style: TextStyle(color: AppColors.textSecondary, height: 1.4),
+                style: TextStyle(color: AppColors.textSecondary, height: 1.3),
               ),
               if (_error != null)
                 Padding(
@@ -103,7 +103,7 @@ class _SaveSharedProductScreenState extends State<SaveSharedProductScreen> {
                     style: const TextStyle(color: Color(0xFF8B5751)),
                   ),
                 ),
-              const SizedBox(height: AppSpacing.x4),
+              const SizedBox(height: AppSpacing.x3),
               ..._collections.map(
                 (collection) => Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.x2),

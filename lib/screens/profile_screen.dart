@@ -141,13 +141,13 @@ class _ProfileContent extends StatelessWidget {
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
               child: Column(
                 children: [
                   Avatar(
                     name: profile.name,
                     imageUrl: profile.avatarUrl,
-                    size: 92,
+                    size: 76,
                   ),
                   const SizedBox(height: AppSpacing.x4),
                   Text(
@@ -155,7 +155,7 @@ class _ProfileContent extends StatelessWidget {
                     key: const Key('profile-name'),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 26,
+                      fontSize: 22,
                       height: 1.1,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
@@ -166,7 +166,7 @@ class _ProfileContent extends StatelessWidget {
                     '@${profile.handle}',
                     key: const Key('profile-handle'),
                     style: const TextStyle(
-                      fontSize: 15,
+                      fontSize: 13,
                       color: AppColors.textMuted,
                     ),
                   ),
@@ -179,8 +179,8 @@ class _ProfileContent extends StatelessWidget {
                         key: const Key('profile-bio'),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 15,
-                          height: 1.45,
+                          fontSize: 13,
+                          height: 1.35,
                           color: AppColors.textSecondary,
                         ),
                       ),
@@ -188,7 +188,7 @@ class _ProfileContent extends StatelessWidget {
                   ],
                   const SizedBox(height: AppSpacing.x4),
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 11),
                     decoration: BoxDecoration(
                       color: AppColors.raised,
                       borderRadius: BorderRadius.circular(AppRadii.large),
@@ -213,7 +213,7 @@ class _ProfileContent extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.textPrimary,
                         side: const BorderSide(color: AppColors.borderStrong),
-                        padding: const EdgeInsets.symmetric(vertical: 13),
+                        padding: const EdgeInsets.symmetric(vertical: 9),
                       ),
                       child: const Text('Edit profile'),
                     ),
@@ -224,15 +224,15 @@ class _ProfileContent extends StatelessWidget {
           ),
           const SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 12),
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
               child: Row(
                 children: [
-                  Icon(Icons.grid_view_rounded, size: 18),
+                  Icon(Icons.grid_view_rounded, size: 16),
                   SizedBox(width: AppSpacing.x2),
                   Text(
                     'OUTFITS',
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 2,
                     ),
@@ -245,12 +245,12 @@ class _ProfileContent extends StatelessWidget {
             const SliverToBoxAdapter(child: _EmptyProfilePosts())
           else
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 24),
               sliver: SliverGrid.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6,
                   childAspectRatio: 0.8,
                 ),
                 itemCount: posts.length,

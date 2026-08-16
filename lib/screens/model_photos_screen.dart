@@ -173,7 +173,7 @@ class _ModelPhotosScreenState extends State<ModelPhotosScreen> {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 18, 16, 12),
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -184,8 +184,8 @@ class _ModelPhotosScreenState extends State<ModelPhotosScreen> {
                           Text(
                             'My full-body photos',
                             style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           SizedBox(height: AppSpacing.x1),
@@ -233,13 +233,13 @@ class _ModelPhotosScreenState extends State<ModelPhotosScreen> {
               )
             else
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 112),
+                padding: const EdgeInsets.fromLTRB(12, 6, 12, 88),
                 sliver: SliverGrid.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 0.72,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 0.76,
                   ),
                   itemCount: _photos.length,
                   itemBuilder: (context, index) {
@@ -365,8 +365,8 @@ class _PhotoCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

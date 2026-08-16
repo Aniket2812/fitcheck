@@ -189,7 +189,7 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
             )
           : ListView(
               key: const Key('collections-page'),
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 108),
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 84),
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,8 +201,8 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                           Text(
                             'Collections',
                             style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           SizedBox(height: AppSpacing.x1),
@@ -210,7 +210,7 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                             'Save pieces by category, then mix them into a complete look.',
                             style: TextStyle(
                               color: AppColors.textSecondary,
-                              height: 1.4,
+                              height: 1.3,
                             ),
                           ),
                         ],
@@ -225,10 +225,10 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.x4),
+                const SizedBox(height: AppSpacing.x3),
                 ..._collections.map(
                   (collection) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.x4),
+                    padding: const EdgeInsets.only(bottom: AppSpacing.x3),
                     child: _CollectionSection(
                       collection: collection,
                       busy: _busyCollectionId == collection.id,
@@ -267,17 +267,17 @@ class _CollectionSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 8, 8),
+          padding: const EdgeInsets.fromLTRB(12, 8, 6, 5),
           child: Row(
             children: [
-              Icon(_collectionIcon(collection.kind), size: 20),
+              Icon(_collectionIcon(collection.kind), size: 18),
               const SizedBox(width: AppSpacing.x2),
               Expanded(
                 child: Text(
                   collection.name,
                   style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -301,7 +301,7 @@ class _CollectionSection extends StatelessWidget {
         ),
         if (collection.items.isEmpty)
           const Padding(
-            padding: EdgeInsets.fromLTRB(14, 4, 14, 16),
+            padding: EdgeInsets.fromLTRB(12, 2, 12, 12),
             child: Text(
               'Share a product here or paste its buying link.',
               style: TextStyle(color: AppColors.textMuted),
@@ -309,9 +309,9 @@ class _CollectionSection extends StatelessWidget {
           )
         else
           SizedBox(
-            height: 174,
+            height: 154,
             child: ListView.separated(
-              padding: const EdgeInsets.fromLTRB(12, 4, 12, 14),
+              padding: const EdgeInsets.fromLTRB(10, 2, 10, 10),
               scrollDirection: Axis.horizontal,
               itemCount: collection.items.length,
               separatorBuilder: (_, _) => const SizedBox(width: 10),
@@ -336,7 +336,7 @@ class _CollectionItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: 116,
+    width: 104,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -345,7 +345,7 @@ class _CollectionItemCard extends StatelessWidget {
             children: [
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: AppColors.photo,
                   borderRadius: BorderRadius.circular(AppRadii.medium),
@@ -377,13 +377,13 @@ class _CollectionItemCard extends StatelessWidget {
           item.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
         if (item.price != null)
           Text(
             item.price!,
             maxLines: 1,
-            style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+            style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
           ),
       ],
     ),

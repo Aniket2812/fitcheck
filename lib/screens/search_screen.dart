@@ -38,10 +38,10 @@ class _SearchScreenState extends State<SearchScreen> {
             bottom: false,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(
+                AppSpacing.x2,
+                AppSpacing.x1,
                 AppSpacing.x3,
-                AppSpacing.x3,
-                AppSpacing.x3,
-                AppSpacing.x3,
+                AppSpacing.x1,
               ),
               child: Row(
                 children: [
@@ -62,7 +62,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   const SizedBox(width: AppSpacing.x2),
                   Expanded(
                     child: Container(
-                      height: AppSizes.hitTarget,
+                      height: 40,
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.x3,
                       ),
@@ -93,13 +93,13 @@ class _SearchScreenState extends State<SearchScreen> {
                               onChanged: (value) =>
                                   setState(() => _query = value),
                               style: const TextStyle(
-                                fontSize: 15,
+                                fontSize: 13,
                                 color: AppColors.textPrimary,
                               ),
                               decoration: const InputDecoration.collapsed(
                                 hintText: 'Search looks, pieces, people',
                                 hintStyle: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 13,
                                   color: AppColors.textMuted,
                                 ),
                               ),
@@ -146,7 +146,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       trimmed.isEmpty ? 'Search Compete' : 'No results',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.w500,
                         color: AppColors.textPrimary,
                       ),
@@ -158,8 +158,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           : 'Nothing matches “$trimmed” yet.',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 15,
-                        height: 1.5,
+                        fontSize: 13.5,
+                        height: 1.4,
                         color: AppColors.textSecondary,
                       ),
                     ),

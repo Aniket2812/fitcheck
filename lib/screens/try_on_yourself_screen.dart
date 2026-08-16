@@ -174,28 +174,28 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
     body: _loading
         ? const Center(child: CircularProgressIndicator())
         : ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+            padding: const EdgeInsets.fromLTRB(12, 6, 12, 28),
             children: [
               const Text(
                 'MAKE IT YOURS',
                 style: TextStyle(
                   color: AppColors.textMuted,
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.8,
                 ),
               ),
-              const SizedBox(height: AppSpacing.x2),
+              const SizedBox(height: AppSpacing.x1),
               Text(
                 _resultUrl == null
                     ? 'See this complete fit on you.'
                     : 'Your version is ready.',
                 style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 21,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: AppSpacing.x4),
+              const SizedBox(height: AppSpacing.x3),
               AspectRatio(
                 aspectRatio: 4 / 5,
                 child: ClipRRect(
@@ -222,11 +222,11 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.x4),
+              const SizedBox(height: AppSpacing.x3),
               if (_photos.isEmpty)
                 Container(
                   key: const Key('try-on-no-photos'),
-                  padding: const EdgeInsets.all(AppSpacing.x4),
+                  padding: const EdgeInsets.all(AppSpacing.x3),
                   decoration: BoxDecoration(
                     color: AppColors.sunken,
                     borderRadius: BorderRadius.circular(AppRadii.medium),
@@ -243,7 +243,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                         'Use it immediately for this fit. It will also be saved in My Photos for future try-ons.',
                         style: TextStyle(height: 1.4),
                       ),
-                      const SizedBox(height: AppSpacing.x3),
+                      const SizedBox(height: AppSpacing.x2),
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton.icon(
@@ -286,7 +286,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                 ),
                 const SizedBox(height: AppSpacing.x2),
                 SizedBox(
-                  height: 108,
+                  height: 92,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: _photos.length,
@@ -304,7 +304,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                                 _resultUrl = null;
                               }),
                         child: Container(
-                          width: 84,
+                          width: 70,
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
@@ -333,7 +333,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                     },
                   ),
                 ),
-                const SizedBox(height: AppSpacing.x3),
+                const SizedBox(height: AppSpacing.x2),
                 FilledButton.icon(
                   key: const Key('run-try-on-button'),
                   onPressed: _generating ? null : _generate,
