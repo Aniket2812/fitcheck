@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../components/outfit_post_image.dart';
 import '../components/screen.dart';
 import '../models/social_post.dart';
 import '../services/model_photo_service.dart';
@@ -40,7 +39,10 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
+  static const _filters = ['For you', 'Tops', 'Bottoms', 'Shoes', 'Dresses'];
+
   List<SocialPost> _posts = const [];
+  String _activeFilter = _filters.first;
   bool _loading = true;
   String? _error;
 
@@ -80,10 +82,28 @@ class _FeedScreenState extends State<FeedScreen> {
         : message;
   }
 
-  Future<void> _like(int index) async {
+  List<SocialPost> get _visiblePosts {
+    if (_activeFilter == 'For you') return _posts;
+    final category = switch (_activeFilter) {
+      'Bottoms' => 'lower_body',
+      'Shoes' => 'shoes',
+      'Dresses' => 'full_body',
+      _ => 'upper_body',
+    };
+    return _posts
+        .where(
+          (post) =>
+              post.garments.any((garment) => garment.category == category),
+        )
+        .toList();
+  }
+
+  Future<void> _like(String postId) async {
     try {
-      final updated = await SocialService.toggleLike(_posts[index].id);
+      final updated = await SocialService.toggleLike(postId);
       if (!mounted) return;
+      final index = _posts.indexWhere((post) => post.id == postId);
+      if (index < 0) return;
       final posts = [..._posts]..[index] = updated;
       setState(() => _posts = posts);
     } catch (error) {
@@ -132,109 +152,361 @@ class _FeedScreenState extends State<FeedScreen> {
         ? const _EmptyState()
         : RefreshIndicator(
             onRefresh: _load,
-            child: ListView.separated(
+            child: ListView(
               key: const Key('social-feed'),
-              padding: const EdgeInsets.only(bottom: 100),
-              itemCount: _posts.length,
-              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.x4),
-              itemBuilder: (context, index) => _PostCard(
-                post: _posts[index],
-                onOpen: () => _open(_posts[index]),
-                onLike: () => _like(index),
-                onTryOn: () => _tryOn(_posts[index]),
-              ),
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 108),
+              children: [
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(14, 18, 14, 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'DISCOVER',
+                              style: TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.8,
+                              ),
+                            ),
+                            SizedBox(height: AppSpacing.x1),
+                            Text(
+                              'Fits worth trying',
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        'SHOP · TRY · POST',
+                        style: TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 10,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 52,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.x3,
+                      vertical: AppSpacing.x2,
+                    ),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _filters.length,
+                    separatorBuilder: (_, _) =>
+                        const SizedBox(width: AppSpacing.x2),
+                    itemBuilder: (context, index) {
+                      final filter = _filters[index];
+                      return ChoiceChip(
+                        key: Key('feed-filter-${filter.toLowerCase()}'),
+                        label: Text(filter),
+                        selected: filter == _activeFilter,
+                        onSelected: (_) =>
+                            setState(() => _activeFilter = filter),
+                      );
+                    },
+                  ),
+                ),
+                if (_visiblePosts.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.all(AppSpacing.x8),
+                    child: Center(
+                      child: Text(
+                        'No fits in this edit yet.',
+                        style: TextStyle(color: AppColors.textSecondary),
+                      ),
+                    ),
+                  )
+                else
+                  _MasonryFeed(
+                    posts: _visiblePosts,
+                    onOpen: _open,
+                    onLike: _like,
+                    onTryOn: _tryOn,
+                  ),
+              ],
             ),
           ),
   );
 }
 
-class _PostCard extends StatelessWidget {
-  const _PostCard({
-    required this.post,
+class _MasonryFeed extends StatelessWidget {
+  const _MasonryFeed({
+    required this.posts,
     required this.onOpen,
     required this.onLike,
     required this.onTryOn,
   });
+
+  final List<SocialPost> posts;
+  final ValueChanged<SocialPost> onOpen;
+  final ValueChanged<String> onLike;
+  final ValueChanged<SocialPost> onTryOn;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final columnCount = constraints.maxWidth >= 760 ? 3 : 2;
+      final columns = List.generate(columnCount, (_) => <Widget>[]);
+      final heights = List<double>.filled(columnCount, 0);
+      for (var index = 0; index < posts.length; index++) {
+        final shortest = heights.indexOf(
+          heights.reduce((a, b) => a < b ? a : b),
+        );
+        final ratio = _DiscoveryCard.ratioFor(index);
+        columns[shortest].add(
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.x3),
+            child: _DiscoveryCard(
+              post: posts[index],
+              imageRatio: ratio,
+              onOpen: () => onOpen(posts[index]),
+              onLike: () => onLike(posts[index].id),
+              onTryOn: () => onTryOn(posts[index]),
+            ),
+          ),
+        );
+        heights[shortest] += 1 / ratio + 0.52;
+      }
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(10, 4, 10, 0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (var index = 0; index < columns.length; index++) ...[
+              if (index > 0) const SizedBox(width: 10),
+              Expanded(child: Column(children: columns[index])),
+            ],
+          ],
+        ),
+      );
+    },
+  );
+}
+
+class _DiscoveryCard extends StatelessWidget {
+  const _DiscoveryCard({
+    required this.post,
+    required this.imageRatio,
+    required this.onOpen,
+    required this.onLike,
+    required this.onTryOn,
+  });
+
   final SocialPost post;
+  final double imageRatio;
   final VoidCallback onOpen;
   final VoidCallback onLike;
   final VoidCallback onTryOn;
 
+  static const _ratios = [0.74, 0.9, 0.68, 0.82, 1.02, 0.77];
+
+  static double ratioFor(int index) => _ratios[index % _ratios.length];
+
+  String get _categoryLabel {
+    final category = post.garments.firstOrNull?.category;
+    return switch (category) {
+      'lower_body' => 'BOTTOMS',
+      'full_body' => 'ONE PIECE',
+      'shoes' => 'SHOES',
+      'accessory' => 'ACCESSORIES',
+      _ => 'TOPS',
+    };
+  }
+
   @override
   Widget build(BuildContext context) => Material(
     color: AppColors.raised,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ListTile(
-          dense: true,
-          leading: CircleAvatar(
-            backgroundColor: AppColors.sunken,
-            backgroundImage: post.author.avatarUrl == null
-                ? null
-                : NetworkImage(post.author.avatarUrl!),
-            child: post.author.avatarUrl == null
-                ? Text(post.author.name.characters.first.toUpperCase())
-                : null,
-          ),
-          title: Text(
-            post.author.name,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          subtitle: Text('@${post.author.handle}'),
-          trailing: TextButton.icon(
-            key: Key('try-on-post-${post.id}'),
-            onPressed: onTryOn,
-            icon: const Icon(Icons.auto_awesome, size: 16),
-            label: const Text('Try on yourself'),
-          ),
-          onTap: onOpen,
-        ),
-        OutfitPostImage(post: post, onOpenPost: onOpen),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 6, 12, 0),
-          child: Row(
-            children: [
-              IconButton(
-                key: Key('like-${post.id}'),
-                onPressed: onLike,
-                icon: Icon(
-                  post.likedByMe ? Icons.favorite : Icons.favorite_border,
-                ),
-                color: post.likedByMe
-                    ? const Color(0xFFB64F55)
-                    : AppColors.textPrimary,
-              ),
-              Text('${post.likeCount}'),
-              IconButton(
-                onPressed: onOpen,
-                icon: const Icon(Icons.chat_bubble_outline),
-              ),
-              Text('${post.comments.length}'),
-              const Spacer(),
-              Text(
-                '${post.garments.length} tagged',
-                style: const TextStyle(color: AppColors.textMuted),
-              ),
-            ],
-          ),
-        ),
-        if (post.caption.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: '@${post.author.handle} ',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+    borderRadius: BorderRadius.circular(18),
+    clipBehavior: Clip.antiAlias,
+    child: InkWell(
+      onTap: onOpen,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AspectRatio(
+            aspectRatio: imageRatio,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Hero(
+                  tag: 'post-${post.id}',
+                  child: Image.network(
+                    post.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => const ColoredBox(
+                      color: AppColors.sunken,
+                      child: Icon(Icons.broken_image_outlined),
+                    ),
                   ),
-                  TextSpan(text: post.caption),
-                ],
-              ),
+                ),
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.transparent, Color(0x66000000)],
+                      stops: [0.62, 1],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Material(
+                    color: const Color(0xEFFFFFFF),
+                    borderRadius: BorderRadius.circular(18),
+                    child: InkWell(
+                      key: Key('try-on-post-${post.id}'),
+                      onTap: onTryOn,
+                      borderRadius: BorderRadius.circular(18),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 7,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.auto_awesome, size: 14),
+                            SizedBox(width: 4),
+                            Text(
+                              'TRY',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 9,
+                  right: 9,
+                  bottom: 9,
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xCC1E1D1B),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          _categoryLabel,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      const Icon(
+                        Icons.sell_outlined,
+                        color: Colors.white,
+                        size: 14,
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        '${post.garments.length}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-      ],
+          if (post.caption.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 9, 10, 5),
+              child: Text(
+                post.caption,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  height: 1.25,
+                ),
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(9, 3, 6, 8),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 11,
+                  backgroundColor: AppColors.sunken,
+                  backgroundImage: post.author.avatarUrl == null
+                      ? null
+                      : NetworkImage(post.author.avatarUrl!),
+                  child: post.author.avatarUrl == null
+                      ? Text(
+                          post.author.name.characters.first.toUpperCase(),
+                          style: const TextStyle(fontSize: 9),
+                        )
+                      : null,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    '@${post.author.handle}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+                InkResponse(
+                  key: Key('like-${post.id}'),
+                  onTap: onLike,
+                  radius: 20,
+                  child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Icon(
+                      post.likedByMe ? Icons.favorite : Icons.favorite_border,
+                      size: 18,
+                      color: post.likedByMe
+                          ? const Color(0xFFB64F55)
+                          : AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+                Text('${post.likeCount}', style: const TextStyle(fontSize: 11)),
+              ],
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
