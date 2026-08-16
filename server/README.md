@@ -149,6 +149,10 @@ returns the stable generated preview URL. Clothes use AI Clothes v3; products
 classified as shoes use the dedicated AI Shoes workflow. Other accessories
 remain shoppable/taggable but require their matching YouCam accessory engine.
 
+The client passes the product image URL extracted from the retailer page as
+YouCam's reference image. Retailer webpage URLs are never sent directly to the
+try-on task.
+
 ## How ingestion works
 
 Four stages, each falling back only when the cheaper one fails.

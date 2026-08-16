@@ -30,7 +30,10 @@ tryOn.post('/', requireUser, async (c) => {
     return c.json({
       imageUrl,
       taskId: result.taskId,
-      provider: body.category === 'shoes' ? 'youcam-shoes-v2' : 'youcam-clothes-v3',
+      provider:
+        String(form.get('category') || '') === 'shoes'
+          ? 'youcam-shoes-v2'
+          : 'youcam-clothes-v3',
     });
   } catch (error) {
     if (error instanceof YouCamError) return c.json({ error: error.message }, error.status);
@@ -57,7 +60,11 @@ tryOn.post('/model', requireUser, async (c) => {
       category: String(body?.category || 'upper_body'),
     });
     const imageUrl = await saveImageBuffer(result.buffer, result.contentType, 'youcam');
-    return c.json({ imageUrl, taskId: result.taskId, provider: 'youcam-clothes-v3' });
+    return c.json({
+      imageUrl,
+      taskId: result.taskId,
+      provider: body.category === 'shoes' ? 'youcam-shoes-v2' : 'youcam-clothes-v3',
+    });
   } catch (error) {
     if (error instanceof YouCamError) return c.json({ error: error.message }, error.status);
     throw error;

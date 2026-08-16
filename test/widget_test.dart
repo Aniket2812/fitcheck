@@ -102,6 +102,11 @@ void main() {
     await tester.tap(find.byKey(const Key('add-post-button')));
     await tester.pumpAndSettle();
     expect(find.text('New outfit'), findsOneWidget);
+    expect(find.byKey(const Key('choose-outfit-photo')), findsNothing);
+    expect(find.byKey(const Key('composer-new-photo')), findsNothing);
+    expect(find.text('Choose from gallery'), findsNothing);
+    expect(find.text('Take a photo'), findsNothing);
+    expect(find.byKey(const Key('composer-no-saved-photos')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('tag-product-button')));
     await tester.pump();
@@ -117,7 +122,10 @@ void main() {
 
     await tester.tap(find.byKey(const Key('publish-post-button')));
     await tester.pump();
-    expect(find.text('Choose an outfit photo.'), findsOneWidget);
+    expect(
+      find.text('Choose a saved full-body photo from My Photos.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('shared fashion link opens a prefilled post composer', (
@@ -193,7 +201,7 @@ void main() {
     expect(find.text('Default'), findsOneWidget);
   });
 
-  testWidgets('selected saved photo generates a YouCam preview', (
+  testWidgets('linked product automatically generates a YouCam preview', (
     WidgetTester tester,
   ) async {
     tester.view.physicalSize = const Size(800, 1800);
@@ -247,8 +255,6 @@ void main() {
       'https://example.com/top',
     );
     await tester.tap(find.byKey(const Key('tag-product-button')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('youcam-generate-button')));
     await tester.pumpAndSettle();
 
     expect(generatedFor, 'model-preview');

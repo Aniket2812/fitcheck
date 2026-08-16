@@ -1,7 +1,4 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../components/garment_image.dart';
 import '../models/model_photo.dart';
@@ -34,9 +31,6 @@ class CreatePostScreen extends StatefulWidget {
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _caption = TextEditingController();
   final _productLink = TextEditingController();
-  final _picker = ImagePicker();
-  XFile? _photo;
-  Uint8List? _photoBytes;
   List<ModelPhoto> _modelPhotos = const [];
   ModelPhoto? _selectedModelPhoto;
   String? _youCamImageUrl;
@@ -47,13 +41,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool _generating = false;
   bool _youCamConfigured = false;
   bool _loadingModelPhotos = true;
+  String? _activeGenerationKey;
   String? _error;
 
   @override
   void initState() {
     super.initState();
     widget.checkYouCamConfigured().then((value) {
-      if (mounted) setState(() => _youCamConfigured = value);
+      if (!mounted) return;
+      setState(() => _youCamConfigured = value);
+      if (value) _generateWithYouCam();
     });
     _loadModelPhotos();
     final initialProductUrl = widget.initialProductUrl?.trim();
@@ -72,8 +69,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         _modelPhotos = photos;
         _selectedModelPhoto = primary ?? photos.firstOrNull;
       });
-    } catch (_) {
-      // Direct camera/gallery selection remains available if the library fails.
+      _generateWithYouCam();
+    } catch (error) {
+      _setError(error.toString().replaceFirst('Exception: ', ''));
     } finally {
       if (mounted) setState(() => _loadingModelPhotos = false);
     }
@@ -86,62 +84,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     super.dispose();
   }
 
-  Future<void> _choosePhoto(ImageSource source) async {
-    final picked = await _picker.pickImage(
-      source: source,
-      imageQuality: 90,
-      maxWidth: 2048,
-      maxHeight: 2048,
-    );
-    if (picked == null) return;
-    final bytes = await picked.readAsBytes();
-    if (!mounted) return;
-    setState(() {
-      _photo = picked;
-      _photoBytes = bytes;
-      _selectedModelPhoto = null;
-      _youCamImageUrl = null;
-      _error = null;
-    });
-  }
-
   void _selectModelPhoto(ModelPhoto photo) {
     setState(() {
       _selectedModelPhoto = photo;
-      _photo = null;
-      _photoBytes = null;
       _youCamImageUrl = null;
       _error = null;
     });
-  }
-
-  Future<void> _showPhotoSource() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Choose from gallery'),
-              onTap: () {
-                Navigator.pop(context);
-                _choosePhoto(ImageSource.gallery);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt_outlined),
-              title: const Text('Take a photo'),
-              onTap: () {
-                Navigator.pop(context);
-                _choosePhoto(ImageSource.camera);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+    _generateWithYouCam();
   }
 
   Future<void> _addGarment() async {
@@ -156,7 +105,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (item.pageUrl == null) {
         throw Exception('The product has no buying link.');
       }
-      final index = _garments.length;
       final garment = PostGarment(
         id: item.id,
         title: item.title,
@@ -167,15 +115,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         buyUrl: item.pageUrl!,
         category: item.category,
         x: 0.5,
-        y: (0.25 + index * 0.18).clamp(0.15, 0.85),
+        y: 0.5,
       );
       if (!mounted) return;
       setState(() {
-        _garments = [..._garments, garment];
-        _selectedGarment = _garments.length - 1;
+        _garments = [garment];
+        _selectedGarment = 0;
         _youCamImageUrl = null;
         _productLink.clear();
       });
+      _generateWithYouCam();
     } catch (error) {
       _setError(error.toString().replaceFirst('Exception: ', ''));
     } finally {
@@ -195,34 +144,57 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _generateWithYouCam() async {
-    if ((_photo == null && _selectedModelPhoto == null) || _garments.isEmpty) {
+    final modelPhoto = _selectedModelPhoto;
+    final garment = _garments.firstOrNull;
+    if (!_youCamConfigured || modelPhoto == null || garment == null) {
       return;
     }
+    final generationKey = '${modelPhoto.id}:${garment.id}';
+    if (_activeGenerationKey == generationKey) return;
     setState(() {
+      _activeGenerationKey = generationKey;
       _generating = true;
+      _youCamImageUrl = null;
       _error = null;
     });
     try {
       final url = await widget.generateLook(
-        photo: _photo,
-        modelPhoto: _selectedModelPhoto,
-        garment: _garments.first,
+        modelPhoto: modelPhoto,
+        garment: garment,
       );
-      if (mounted) setState(() => _youCamImageUrl = url);
+      if (mounted && _activeGenerationKey == generationKey) {
+        setState(() => _youCamImageUrl = url);
+      }
     } catch (error) {
-      _setError(error.toString().replaceFirst('Exception: ', ''));
+      if (_activeGenerationKey == generationKey) {
+        _setError(error.toString().replaceFirst('Exception: ', ''));
+      }
     } finally {
-      if (mounted) setState(() => _generating = false);
+      if (mounted && _activeGenerationKey == generationKey) {
+        setState(() {
+          _activeGenerationKey = null;
+          _generating = false;
+        });
+      }
     }
   }
 
   Future<void> _publish() async {
-    if (_photo == null && _selectedModelPhoto == null) {
-      return _setError('Choose an outfit photo.');
+    if (_selectedModelPhoto == null) {
+      return _setError('Choose a saved full-body photo from My Photos.');
     }
-    if (_garments.isEmpty) return _setError('Tag at least one garment.');
-    if (_selectedModelPhoto != null && _youCamImageUrl == null) {
-      return _setError('Generate the YouCam preview before posting this look.');
+    if (_garments.isEmpty) {
+      return _setError('Add a fashion product link first.');
+    }
+    if (!_youCamConfigured) {
+      return _setError('YouCam is not available. Try again later.');
+    }
+    if (_generating) {
+      return _setError('Wait for YouCam to finish creating your preview.');
+    }
+    if (_youCamImageUrl == null) {
+      _generateWithYouCam();
+      return _setError('YouCam is creating your preview.');
     }
     setState(() {
       _publishing = true;
@@ -230,7 +202,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
     try {
       final post = await SocialService.createPost(
-        photo: _youCamImageUrl == null ? _photo : null,
+        photo: null,
         photoUrl: _youCamImageUrl,
         caption: _caption.text,
         garments: _garments,
@@ -276,40 +248,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
             children: [
-              AspectRatio(
-                aspectRatio: 4 / 5,
-                child: _photoBytes == null && _selectedModelPhoto == null
-                    ? _PhotoPlaceholder(onTap: _showPhotoSource)
-                    : _TaggablePhoto(
-                        bytes: _photoBytes,
-                        networkUrl:
-                            _youCamImageUrl ?? _selectedModelPhoto?.imageUrl,
-                        garments: _garments,
-                        selected: _selectedGarment,
-                        onSelect: (index) =>
-                            setState(() => _selectedGarment = index),
-                        onPlace: _placeTag,
-                        onReplace: _showPhotoSource,
-                      ),
+              const Text(
+                'Add a fashion product',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(height: AppSpacing.x3),
-              _ModelPhotoPicker(
-                loading: _loadingModelPhotos,
-                photos: _modelPhotos,
-                selected: _selectedModelPhoto,
-                onSelect: _selectModelPhoto,
-                onChooseNew: _showPhotoSource,
-              ),
-              const SizedBox(height: AppSpacing.x4),
-              TextField(
-                controller: _caption,
-                maxLength: 500,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Caption',
-                  hintText: 'Tell people about this fit…',
-                  border: OutlineInputBorder(),
-                ),
+              const SizedBox(height: AppSpacing.x1),
+              const Text(
+                'Paste a Myntra, Flipkart, Amazon, AJIO, or other fashion product link. We fetch the product image and buying details automatically.',
+                style: TextStyle(color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.x3),
               TextField(
@@ -320,69 +266,94 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 textInputAction: TextInputAction.go,
                 onSubmitted: (_) => _addGarment(),
                 decoration: InputDecoration(
-                  labelText: 'Product buying link',
-                  hintText: 'Paste Myntra, Zara, Nike…',
+                  labelText: 'Fashion product link',
+                  hintText: 'Paste the retailer URL',
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     key: const Key('tag-product-button'),
+                    tooltip: 'Fetch product',
                     onPressed: _extracting ? null : _addGarment,
                     icon: _extracting
                         ? const Padding(
                             padding: EdgeInsets.all(12),
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Icon(Icons.add_link),
+                        : const Icon(Icons.arrow_forward),
                   ),
                 ),
               ),
               if (_garments.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.x3),
-                const Text(
-                  'Tap a garment, then tap its position in the photo.',
-                ),
-                const SizedBox(height: AppSpacing.x2),
                 SizedBox(
                   height: 92,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _garments.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(width: AppSpacing.x2),
-                    itemBuilder: (context, index) => _GarmentChip(
-                      garment: _garments[index],
-                      number: index + 1,
-                      selected: index == _selectedGarment,
-                      onTap: () => setState(() => _selectedGarment = index),
-                      onRemove: () {
-                        final updated = [..._garments]..removeAt(index);
-                        setState(() {
-                          _garments = updated;
-                          _selectedGarment = updated.isEmpty ? null : 0;
-                          _youCamImageUrl = null;
-                        });
-                      },
-                    ),
+                  child: _GarmentChip(
+                    garment: _garments.first,
+                    number: 1,
+                    selected: true,
+                    onTap: () => setState(() => _selectedGarment = 0),
+                    onRemove: () {
+                      setState(() {
+                        _garments = const [];
+                        _selectedGarment = null;
+                        _youCamImageUrl = null;
+                        _activeGenerationKey = null;
+                        _generating = false;
+                      });
+                    },
                   ),
                 ),
               ],
-              if (_youCamConfigured &&
-                  (_photo != null || _selectedModelPhoto != null) &&
+              const SizedBox(height: AppSpacing.x4),
+              _ModelPhotoPicker(
+                loading: _loadingModelPhotos,
+                photos: _modelPhotos,
+                selected: _selectedModelPhoto,
+                onSelect: _selectModelPhoto,
+              ),
+              const SizedBox(height: AppSpacing.x4),
+              AspectRatio(
+                aspectRatio: 4 / 5,
+                child: _selectedModelPhoto == null
+                    ? const _PhotoPlaceholder()
+                    : _TaggablePhoto(
+                        networkUrl:
+                            _youCamImageUrl ?? _selectedModelPhoto?.imageUrl,
+                        garments: _garments,
+                        selected: _selectedGarment,
+                        onSelect: (index) =>
+                            setState(() => _selectedGarment = index),
+                        onPlace: _placeTag,
+                      ),
+              ),
+              if (_generating) ...[
+                const SizedBox(height: AppSpacing.x3),
+                const LinearProgressIndicator(),
+                const SizedBox(height: AppSpacing.x2),
+                const Text(
+                  'YouCam is creating your try-on automatically…',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
+              ] else if (_youCamConfigured &&
+                  _selectedModelPhoto != null &&
                   _garments.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.x4),
                 OutlinedButton.icon(
                   key: const Key('youcam-generate-button'),
-                  onPressed: _generating ? null : _generateWithYouCam,
-                  icon: _generating
-                      ? const SizedBox.square(
-                          dimension: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.auto_awesome),
+                  onPressed: _generateWithYouCam,
+                  icon: const Icon(Icons.refresh),
                   label: Text(
-                    _generating
-                        ? 'YouCam is creating your look…'
-                        : 'Generate fit with YouCam',
+                    _youCamImageUrl == null
+                        ? 'Try YouCam again'
+                        : 'Regenerate preview',
                   ),
+                ),
+              ] else if (!_youCamConfigured && _garments.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.x3),
+                const Text(
+                  'YouCam is currently unavailable, so this outfit cannot be posted yet.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.textSecondary),
                 ),
               ],
               if (_youCamImageUrl != null)
@@ -394,6 +365,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     style: TextStyle(color: AppColors.textSecondary),
                   ),
                 ),
+              const SizedBox(height: AppSpacing.x4),
+              TextField(
+                controller: _caption,
+                maxLength: 500,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'Caption',
+                  hintText: 'Tell people about this fit…',
+                  border: OutlineInputBorder(),
+                ),
+              ),
               if (_error != null)
                 Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.x3),
@@ -417,14 +399,12 @@ class _ModelPhotoPicker extends StatelessWidget {
     required this.photos,
     required this.selected,
     required this.onSelect,
-    required this.onChooseNew,
   });
 
   final bool loading;
   final List<ModelPhoto> photos;
   final ModelPhoto? selected;
   final ValueChanged<ModelPhoto> onSelect;
-  final VoidCallback onChooseNew;
 
   @override
   Widget build(BuildContext context) {
@@ -432,12 +412,12 @@ class _ModelPhotoPicker extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Choose your photo',
+          'Choose a saved full-body photo',
           style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppSpacing.x1),
         const Text(
-          'This is the person YouCam will dress in the selected garment.',
+          'YouCam will apply the linked product to this photo automatically.',
           style: TextStyle(color: AppColors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.x2),
@@ -446,38 +426,36 @@ class _ModelPhotoPicker extends StatelessWidget {
             height: 92,
             child: Center(child: CircularProgressIndicator()),
           )
+        else if (photos.isEmpty)
+          Container(
+            key: const Key('composer-no-saved-photos'),
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.x3),
+            decoration: BoxDecoration(
+              color: AppColors.sunken,
+              borderRadius: BorderRadius.circular(AppRadii.medium),
+              border: Border.all(color: AppColors.borderDefault),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.photo_library_outlined),
+                SizedBox(width: AppSpacing.x2),
+                Expanded(
+                  child: Text(
+                    'No saved photos yet. Close this screen and add one from the My Photos tab.',
+                  ),
+                ),
+              ],
+            ),
+          )
         else
           SizedBox(
             height: 112,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: photos.length + 1,
+              itemCount: photos.length,
               separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.x2),
               itemBuilder: (context, index) {
-                if (index == photos.length) {
-                  return InkWell(
-                    key: const Key('composer-new-photo'),
-                    onTap: onChooseNew,
-                    borderRadius: BorderRadius.circular(AppRadii.medium),
-                    child: Container(
-                      width: 88,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: AppColors.sunken,
-                        borderRadius: BorderRadius.circular(AppRadii.medium),
-                        border: Border.all(color: AppColors.borderDefault),
-                      ),
-                      child: const Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.add_a_photo_outlined),
-                          SizedBox(height: AppSpacing.x1),
-                          Text('New photo'),
-                        ],
-                      ),
-                    ),
-                  );
-                }
                 final photo = photos[index];
                 final isSelected = selected?.id == photo.id;
                 return Semantics(
@@ -544,32 +522,32 @@ class _ModelPhotoPicker extends StatelessWidget {
 }
 
 class _PhotoPlaceholder extends StatelessWidget {
-  const _PhotoPlaceholder({required this.onTap});
-  final VoidCallback onTap;
+  const _PhotoPlaceholder();
 
   @override
-  Widget build(BuildContext context) => InkWell(
-    key: const Key('choose-outfit-photo'),
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(AppRadii.large),
-    child: Container(
-      decoration: BoxDecoration(
-        color: AppColors.sunken,
-        borderRadius: BorderRadius.circular(AppRadii.large),
-        border: Border.all(color: AppColors.borderDefault),
-      ),
-      child: const Column(
+  Widget build(BuildContext context) => Container(
+    key: const Key('outfit-preview-placeholder'),
+    decoration: BoxDecoration(
+      color: AppColors.sunken,
+      borderRadius: BorderRadius.circular(AppRadii.large),
+      border: Border.all(color: AppColors.borderDefault),
+    ),
+    child: const Padding(
+      padding: EdgeInsets.all(AppSpacing.x8),
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.add_a_photo_outlined, size: 42),
+          Icon(Icons.person_outline, size: 42),
           SizedBox(height: AppSpacing.x3),
           Text(
-            'Add your outfit photo',
+            'Select a saved full-body photo',
+            textAlign: TextAlign.center,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
           ),
           SizedBox(height: AppSpacing.x1),
           Text(
-            'Camera or gallery',
+            'Photos are added only from the My Photos tab.',
+            textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.textMuted),
           ),
         ],
@@ -580,22 +558,18 @@ class _PhotoPlaceholder extends StatelessWidget {
 
 class _TaggablePhoto extends StatelessWidget {
   const _TaggablePhoto({
-    required this.bytes,
     required this.networkUrl,
     required this.garments,
     required this.selected,
     required this.onSelect,
     required this.onPlace,
-    required this.onReplace,
   });
 
-  final Uint8List? bytes;
   final String? networkUrl;
   final List<PostGarment> garments;
   final int? selected;
   final ValueChanged<int> onSelect;
   final void Function(TapDownDetails, Size) onPlace;
-  final VoidCallback onReplace;
 
   @override
   Widget build(BuildContext context) => ClipRRect(
@@ -608,22 +582,20 @@ class _TaggablePhoto extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              networkUrl == null
-                  ? Image.memory(bytes!, fit: BoxFit.cover)
-                  : Image.network(
-                      networkUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => const ColoredBox(
-                        color: AppColors.photo,
-                        child: Center(
-                          child: Icon(
-                            Icons.person,
-                            size: 54,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ),
+              Image.network(
+                networkUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => const ColoredBox(
+                  color: AppColors.photo,
+                  child: Center(
+                    child: Icon(
+                      Icons.person,
+                      size: 54,
+                      color: AppColors.textMuted,
                     ),
+                  ),
+                ),
+              ),
               ...garments.asMap().entries.map(
                 (entry) => Positioned(
                   left: entry.value.x * size.width - 17,
@@ -635,15 +607,6 @@ class _TaggablePhoto extends StatelessWidget {
                       selected: selected == entry.key,
                     ),
                   ),
-                ),
-              ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: IconButton.filledTonal(
-                  onPressed: onReplace,
-                  tooltip: 'Replace photo',
-                  icon: const Icon(Icons.edit_outlined, size: 19),
                 ),
               ),
             ],

@@ -38,8 +38,10 @@ flutter run --dart-define=API_URL=http://192.168.1.10:8787
 2. Share a product from Myntra, Flipkart, Amazon, AJIO, or another shopping app
    to **Post to Compete**. The app opens the composer and extracts the item.
    Pasting a link after tapping the center plus button also works.
-3. Choose which saved photo YouCam should dress.
-4. Generate and review the virtual try-on preview.
+3. Choose which previously saved photo YouCam should dress. The composer never
+   opens the camera or gallery; new photos are managed only in **My photos**.
+4. YouCam generates the virtual try-on automatically after the URL is resolved.
+   Review the preview, or retry generation if the provider rejects the image.
 5. Position the product hotspot and publish. The feed updates immediately.
 
 Opening a post and tapping a hotspot enlarges the transparent garment cutout
