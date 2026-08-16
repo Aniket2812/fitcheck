@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../components/outfit_post_image.dart';
@@ -60,10 +62,20 @@ class _FeedScreenState extends State<FeedScreen> {
       if (mounted) {
         setState(() {
           _loading = false;
-          _error = error.toString().replaceFirst('Exception: ', '');
+          _error = _friendlyError(error);
         });
       }
     }
+  }
+
+  String _friendlyError(Object error) {
+    if (error is TimeoutException) {
+      return 'The feed server is not reachable right now. Keep the backend running and reconnect wireless debugging, then tap Retry.';
+    }
+    final message = error.toString().replaceFirst('Exception: ', '');
+    return message.contains('TimeoutException')
+        ? 'The feed server is not reachable right now. Keep the backend running and reconnect wireless debugging, then tap Retry.'
+        : message;
   }
 
   Future<void> _like(int index) async {

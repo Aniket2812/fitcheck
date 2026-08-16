@@ -14,7 +14,11 @@ abstract final class IngestService {
     if (configured.isNotEmpty) return configured;
 
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:8787';
+      // This project is demoed on a physical Android phone over wireless ADB.
+      // `adb reverse tcp:8787 tcp:8787` exposes the Mac backend here. The old
+      // 10.0.2.2 default only works inside an Android emulator and caused every
+      // physical-phone request to sit until its client timeout.
+      return 'http://127.0.0.1:8787';
     }
     return 'http://localhost:8787';
   }

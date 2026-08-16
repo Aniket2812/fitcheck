@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/model_photo.dart';
 import '../models/social_post.dart';
@@ -23,25 +25,60 @@ typedef GenerateOutfitLook =
     });
 
 abstract final class SocialService {
+  static const _feedCacheKey = 'compete.feed.last-good.v1';
+
   static String mediaUrl(String value) {
     if (value.startsWith('/')) return '${IngestService.apiUrl}$value';
     return value;
   }
 
   static Future<List<SocialPost>> fetchPosts() async {
-    final session = await SessionService.ensureSession();
-    final response = await http
-        .get(
-          Uri.parse('${IngestService.apiUrl}/api/posts'),
-          headers: {'authorization': 'Bearer ${session.token}'},
-        )
-        .timeout(const Duration(seconds: 20));
-    final data = _json(response);
-    _ensureSuccess(response, data);
-    return (data['posts'] as List? ?? const [])
-        .whereType<Map>()
-        .map((post) => _post(Map<String, dynamic>.from(post)))
-        .toList();
+    try {
+      // The feed endpoint is intentionally public. Do not make the first paint
+      // wait for session restore/sign-in; include a token only when one is
+      // already available so likedByMe still works for an active session.
+      final token = SessionService.current?.token;
+      final response = await http
+          .get(
+            Uri.parse('${IngestService.apiUrl}/api/posts'),
+            headers: token == null
+                ? const {}
+                : {'authorization': 'Bearer $token'},
+          )
+          .timeout(const Duration(seconds: 8));
+      final data = _json(response);
+      _ensureSuccess(response, data);
+      final rawPosts = data['posts'] as List? ?? const [];
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setString(_feedCacheKey, jsonEncode(rawPosts));
+      return _posts(rawPosts);
+    } catch (error) {
+      final cached = await _cachedPosts();
+      if (cached.isNotEmpty) return cached;
+      if (error is TimeoutException || error is http.ClientException) {
+        throw Exception(
+          'Could not reach the feed server. Keep the backend running and reconnect wireless debugging, then tap Retry.',
+        );
+      }
+      rethrow;
+    }
+  }
+
+  static List<SocialPost> _posts(List<dynamic> posts) => posts
+      .whereType<Map>()
+      .map((post) => _post(Map<String, dynamic>.from(post)))
+      .toList();
+
+  static Future<List<SocialPost>> _cachedPosts() async {
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      final raw = preferences.getString(_feedCacheKey);
+      if (raw == null) return const [];
+      final decoded = jsonDecode(raw);
+      return decoded is List ? _posts(decoded) : const [];
+    } catch (_) {
+      return const [];
+    }
   }
 
   static Future<SocialPost> createPost({

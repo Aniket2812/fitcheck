@@ -72,6 +72,28 @@ void main() {
     expect(find.text('Collections'), findsOneWidget);
   });
 
+  testWidgets('feed replaces raw timeout exceptions with recovery guidance', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: () => Future<List<SocialPost>>.error(
+          TimeoutException('Future not completed'),
+        ),
+        fetchModelPhotos: emptyModelPhotos,
+        fetchCollections: emptyCollections,
+        checkYouCamConfigured: youCamOff,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('feed server is not reachable'), findsOneWidget);
+    expect(find.textContaining('TimeoutException'), findsNothing);
+    expect(find.text('Retry'), findsOneWidget);
+  });
+
   testWidgets('plus button builds outfits only from saved collections', (
     WidgetTester tester,
   ) async {
