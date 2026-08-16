@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../components/diagonal_processing_overlay.dart';
 import '../components/garment_image.dart';
@@ -6,21 +7,42 @@ import '../models/fashion_collection.dart';
 import '../models/model_photo.dart';
 import '../models/social_post.dart';
 import '../services/collection_service.dart';
+import '../services/ingest_service.dart';
 import '../services/model_photo_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
+
+typedef PickComposerPhoto = Future<XFile?> Function(ImageSource source);
+
+Future<XFile?> _pickComposerPhoto(ImageSource source) =>
+    ImagePicker().pickImage(
+      source: source,
+      imageQuality: 90,
+      maxWidth: 2048,
+      maxHeight: 2048,
+    );
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({
     super.key,
     this.fetchCollections = CollectionService.fetchCollections,
+    this.createCollection = CollectionService.createCollection,
+    this.ingestLink = IngestService.ingest,
+    this.saveCollectionItem = CollectionService.addItem,
     this.fetchModelPhotos = ModelPhotoService.fetchPhotos,
+    this.uploadModelPhoto = ModelPhotoService.upload,
+    this.pickPhoto = _pickComposerPhoto,
     this.checkYouCamConfigured = SocialService.youCamConfigured,
     this.generateOutfit = SocialService.createOutfitLook,
   });
 
   final FetchCollections fetchCollections;
+  final CreateFashionCollection createCollection;
+  final IngestLink ingestLink;
+  final SaveCollectionItem saveCollectionItem;
   final FetchModelPhotos fetchModelPhotos;
+  final UploadModelPhoto uploadModelPhoto;
+  final PickComposerPhoto pickPhoto;
   final CheckYouCamConfigured checkYouCamConfigured;
   final GenerateOutfitLook generateOutfit;
 
@@ -40,6 +62,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool _youCamConfigured = false;
   bool _generating = false;
   bool _publishing = false;
+  bool _addingProduct = false;
+  bool _uploadingPhoto = false;
   String? _error;
 
   List<CollectionItem> get _selectedItems => _collections
@@ -60,28 +84,240 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _load() async {
+    final collectionsFuture = widget.fetchCollections();
+    final photosFuture = widget.fetchModelPhotos();
+    final configuredFuture = widget.checkYouCamConfigured();
+    List<FashionCollection> collections = const [];
+    List<ModelPhoto> photos = const [];
+    var configured = false;
+    String? loadError;
     try {
-      final collectionsFuture = widget.fetchCollections();
-      final photosFuture = widget.fetchModelPhotos();
-      final configuredFuture = widget.checkYouCamConfigured();
-      final collections = await collectionsFuture;
-      final photos = await photosFuture;
-      final configured = await configuredFuture;
+      collections = await collectionsFuture;
+    } catch (error) {
+      loadError = _friendlyError(error);
+    }
+    try {
+      photos = await photosFuture;
+    } catch (error) {
+      loadError ??= _friendlyError(error);
+    }
+    try {
+      configured = await configuredFuture;
+    } catch (_) {
+      configured = false;
+    }
+    if (!mounted) return;
+    final primary = photos.where((photo) => photo.isPrimary).firstOrNull;
+    setState(() {
+      _collections = collections;
+      _modelPhotos = photos;
+      _selectedModelPhoto ??= primary ?? photos.firstOrNull;
+      _youCamConfigured = configured;
+      _loading = false;
+      _error = loadError;
+    });
+  }
+
+  String _friendlyError(Object error) {
+    final message = error.toString().replaceFirst('Exception: ', '');
+    if (message.contains('ClientConnection') ||
+        message.contains('SocketException') ||
+        message.contains('TimeoutException')) {
+      return 'Some studio data could not load. Keep the backend running and reconnect wireless debugging, then refresh.';
+    }
+    return message;
+  }
+
+  Future<FashionCollection?> _createCollection() async {
+    final controller = TextEditingController();
+    final name = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Create a collection'),
+        content: TextField(
+          key: const Key('composer-new-collection-name'),
+          controller: controller,
+          autofocus: true,
+          maxLength: 40,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(
+            labelText: 'Collection name',
+            hintText: 'Date night layers',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            key: const Key('composer-create-collection-submit'),
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+    if (name == null || name.isEmpty) return null;
+    try {
+      final collection = await widget.createCollection(name);
+      if (mounted) {
+        setState(() {
+          _collections = [..._collections, collection];
+          _error = null;
+        });
+      }
+      return collection;
+    } catch (error) {
+      _setError(_friendlyError(error));
+      return null;
+    }
+  }
+
+  Future<FashionCollection?> _chooseCollection() async {
+    if (_collections.isEmpty) return _createCollection();
+    return showModalBottomSheet<FashionCollection>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          children: [
+            const Text(
+              'Save product into',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: AppSpacing.x2),
+            ..._collections.map(
+              (collection) => ListTile(
+                key: Key('composer-target-${collection.id}'),
+                leading: const Icon(Icons.folder_outlined),
+                title: Text(collection.name),
+                subtitle: Text('${collection.items.length} items'),
+                trailing: const Icon(Icons.arrow_forward),
+                onTap: () => Navigator.pop(sheetContext, collection),
+              ),
+            ),
+            const Divider(),
+            ListTile(
+              key: const Key('composer-new-collection-from-picker'),
+              leading: const Icon(Icons.create_new_folder_outlined),
+              title: const Text('Create a new collection'),
+              onTap: () async {
+                Navigator.pop(sheetContext);
+                await _createCollection();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _addProduct() async {
+    final collection = await _chooseCollection();
+    if (collection == null || !mounted) return;
+    final controller = TextEditingController();
+    final link = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Add to ${collection.name}'),
+        content: TextField(
+          key: const Key('composer-product-link'),
+          controller: controller,
+          autofocus: true,
+          keyboardType: TextInputType.url,
+          decoration: const InputDecoration(
+            labelText: 'Fashion product link',
+            hintText: 'Paste a Myntra, AJIO, Amazon or Flipkart URL',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            key: const Key('composer-fetch-product-submit'),
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: const Text('Fetch item'),
+          ),
+        ],
+      ),
+    );
+    if (link == null || link.isEmpty) return;
+    setState(() {
+      _addingProduct = true;
+      _error = null;
+    });
+    try {
+      final product = await widget.ingestLink(link);
+      final saved = await widget.saveCollectionItem(collection.id, product);
+      final refreshed = await widget.fetchCollections();
       if (!mounted) return;
-      final primary = photos.where((photo) => photo.isPrimary).firstOrNull;
       setState(() {
-        _collections = collections;
-        _modelPhotos = photos;
-        _selectedModelPhoto = primary ?? photos.firstOrNull;
-        _youCamConfigured = configured;
-        _loading = false;
+        _collections = refreshed;
+        _selectedIds.add(saved.id);
+        _previewUrl = null;
       });
     } catch (error) {
+      _setError(_friendlyError(error));
+    } finally {
+      if (mounted) setState(() => _addingProduct = false);
+    }
+  }
+
+  Future<void> _choosePhotoSource() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              key: const Key('composer-gallery-option'),
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Choose from gallery'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+            ListTile(
+              key: const Key('composer-camera-option'),
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text('Take a full-body photo'),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source != null) await _pickAndUploadPhoto(source);
+  }
+
+  Future<void> _pickAndUploadPhoto(ImageSource source) async {
+    try {
+      final picked = await widget.pickPhoto(source);
+      if (picked == null || !mounted) return;
+      setState(() {
+        _uploadingPhoto = true;
+        _error = null;
+      });
+      final photo = await widget.uploadModelPhoto(picked);
       if (!mounted) return;
       setState(() {
-        _loading = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _modelPhotos = [
+          photo,
+          ..._modelPhotos.where((item) => item.id != photo.id),
+        ];
+        _selectedModelPhoto = photo;
+        _previewUrl = null;
       });
+    } catch (error) {
+      _setError(_friendlyError(error));
+    } finally {
+      if (mounted) setState(() => _uploadingPhoto = false);
     }
   }
 
@@ -231,99 +467,288 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             alignment: Alignment.topCenter,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 680),
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
-                children: [
-                  const _StepTitle(
-                    number: '01',
-                    title: 'Pick your pieces',
-                    subtitle:
-                        'Mix items from your collections. Tops, bottoms, dresses, and shoes stay category-aware.',
-                  ),
-                  const SizedBox(height: AppSpacing.x3),
-                  _CollectionPicker(
-                    collections: _collections,
-                    selectedIds: _selectedIds,
-                    onToggle: _toggle,
-                  ),
-                  const SizedBox(height: AppSpacing.x8),
-                  const _StepTitle(
-                    number: '02',
-                    title: 'Choose your photo',
-                    subtitle:
-                        'Select a full-body photo you already saved in My Photos.',
-                  ),
-                  const SizedBox(height: AppSpacing.x3),
-                  _PhotoPicker(
-                    photos: _modelPhotos,
-                    selected: _selectedModelPhoto,
-                    onSelect: _selectPhoto,
-                  ),
-                  const SizedBox(height: AppSpacing.x8),
-                  const _StepTitle(
-                    number: '03',
-                    title: 'Create the look',
-                    subtitle:
-                        'YouCam applies compatible pieces in outfit order and returns one post-ready image.',
-                  ),
-                  const SizedBox(height: AppSpacing.x3),
-                  AspectRatio(
-                    aspectRatio: 4 / 5,
-                    child: _OutfitPreview(
-                      imageUrl: _previewUrl ?? _selectedModelPhoto?.imageUrl,
-                      garments: _garments,
-                      selectedIndex: _selectedGarmentIndex,
-                      generating: _generating,
-                      onSelect: (index) =>
-                          setState(() => _selectedGarmentIndex = index),
-                      onPlace: _placeTag,
+              child: RefreshIndicator(
+                onRefresh: _load,
+                child: ListView(
+                  key: const Key('outfit-studio'),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+                  children: [
+                    _StudioProgress(
+                      hasPieces: _selectedIds.isNotEmpty,
+                      hasPhoto: _selectedModelPhoto != null,
+                      hasPreview: _previewUrl != null,
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.x3),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      key: const Key('generate-outfit-button'),
-                      onPressed: _generating ? null : _generate,
-                      icon: _generating
-                          ? const SizedBox.square(
-                              dimension: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.auto_awesome),
-                      label: Text(
-                        _generating
-                            ? 'Styling your complete look…'
-                            : _previewUrl == null
-                            ? 'Generate outfit preview'
-                            : 'Regenerate outfit',
+                    const SizedBox(height: AppSpacing.x4),
+                    const _StepTitle(
+                      number: '01',
+                      title: 'Pick your pieces',
+                      subtitle:
+                          'Mix items from your collections. Tops, bottoms, dresses, and shoes stay category-aware.',
+                    ),
+                    const SizedBox(height: AppSpacing.x3),
+                    Wrap(
+                      spacing: AppSpacing.x2,
+                      runSpacing: AppSpacing.x2,
+                      children: [
+                        FilledButton.icon(
+                          key: const Key('composer-add-product-button'),
+                          onPressed: _addingProduct ? null : _addProduct,
+                          icon: _addingProduct
+                              ? const SizedBox.square(
+                                  dimension: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.add_link, size: 18),
+                          label: Text(
+                            _addingProduct
+                                ? 'Fetching product…'
+                                : 'Add product link',
+                          ),
+                        ),
+                        OutlinedButton.icon(
+                          key: const Key('composer-create-collection-button'),
+                          onPressed: _addingProduct ? null : _createCollection,
+                          icon: const Icon(
+                            Icons.create_new_folder_outlined,
+                            size: 18,
+                          ),
+                          label: const Text('New collection'),
+                        ),
+                        IconButton.outlined(
+                          key: const Key('composer-refresh-button'),
+                          tooltip: 'Refresh studio data',
+                          onPressed: _load,
+                          icon: const Icon(Icons.refresh),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.x3),
+                    _CollectionPicker(
+                      collections: _collections,
+                      selectedIds: _selectedIds,
+                      onToggle: _toggle,
+                    ),
+                    if (_selectedItems.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.x3),
+                      _SelectedPieces(items: _selectedItems, onRemove: _toggle),
+                    ],
+                    const SizedBox(height: AppSpacing.x8),
+                    const _StepTitle(
+                      number: '02',
+                      title: 'Choose your photo',
+                      subtitle:
+                          'Select a full-body photo you already saved in My Photos.',
+                    ),
+                    const SizedBox(height: AppSpacing.x3),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: OutlinedButton.icon(
+                        key: const Key('composer-add-photo-button'),
+                        onPressed: _uploadingPhoto ? null : _choosePhotoSource,
+                        icon: _uploadingPhoto
+                            ? const SizedBox.square(
+                                dimension: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.add_a_photo_outlined, size: 18),
+                        label: Text(
+                          _uploadingPhoto
+                              ? 'Saving photo…'
+                              : _modelPhotos.isEmpty
+                              ? 'Add full-body photo'
+                              : 'Add another photo',
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.x4),
-                  TextField(
-                    controller: _caption,
-                    maxLength: 500,
-                    maxLines: 3,
-                    decoration: const InputDecoration(
-                      labelText: 'Caption',
-                      hintText: 'Tell people about this fit…',
-                      border: OutlineInputBorder(),
+                    const SizedBox(height: AppSpacing.x2),
+                    _PhotoPicker(
+                      photos: _modelPhotos,
+                      selected: _selectedModelPhoto,
+                      onSelect: _selectPhoto,
                     ),
-                  ),
-                  if (_error != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: AppSpacing.x2),
-                      child: Text(
-                        _error!,
-                        key: const Key('create-post-error'),
-                        style: const TextStyle(color: Color(0xFF8B5751)),
+                    const SizedBox(height: AppSpacing.x8),
+                    const _StepTitle(
+                      number: '03',
+                      title: 'Create the look',
+                      subtitle:
+                          'YouCam applies compatible pieces in outfit order and returns one post-ready image.',
+                    ),
+                    const SizedBox(height: AppSpacing.x3),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        key: const Key('generate-outfit-button'),
+                        onPressed: _generating ? null : _generate,
+                        icon: _generating
+                            ? const SizedBox.square(
+                                dimension: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.auto_awesome),
+                        label: Text(
+                          _generating
+                              ? 'Styling your complete look…'
+                              : _previewUrl == null
+                              ? 'Generate outfit preview'
+                              : 'Regenerate outfit',
+                        ),
                       ),
                     ),
-                ],
+                    if (_selectedIds.isEmpty || _selectedModelPhoto == null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.x2),
+                        child: Text(
+                          _selectedIds.isEmpty
+                              ? 'Choose at least one product to continue.'
+                              : 'Choose or add a full-body photo to continue.',
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: AppSpacing.x3),
+                    AspectRatio(
+                      aspectRatio: 4 / 5,
+                      child: _OutfitPreview(
+                        imageUrl: _previewUrl ?? _selectedModelPhoto?.imageUrl,
+                        garments: _garments,
+                        selectedIndex: _selectedGarmentIndex,
+                        generating: _generating,
+                        onSelect: (index) =>
+                            setState(() => _selectedGarmentIndex = index),
+                        onPlace: _placeTag,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.x4),
+                    TextField(
+                      controller: _caption,
+                      maxLength: 500,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        labelText: 'Caption',
+                        hintText: 'Tell people about this fit…',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    if (_error != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.x2),
+                        child: Text(
+                          _error!,
+                          key: const Key('create-post-error'),
+                          style: const TextStyle(color: Color(0xFF8B5751)),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
+  );
+}
+
+class _StudioProgress extends StatelessWidget {
+  const _StudioProgress({
+    required this.hasPieces,
+    required this.hasPhoto,
+    required this.hasPreview,
+  });
+
+  final bool hasPieces;
+  final bool hasPhoto;
+  final bool hasPreview;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(AppSpacing.x3),
+    decoration: BoxDecoration(
+      color: AppColors.sunken,
+      borderRadius: BorderRadius.circular(AppRadii.medium),
+      border: Border.all(color: AppColors.borderDefault),
+    ),
+    child: Row(
+      children: [
+        _ProgressNode(label: 'Pieces', complete: hasPieces),
+        const Expanded(child: Divider()),
+        _ProgressNode(label: 'Photo', complete: hasPhoto),
+        const Expanded(child: Divider()),
+        _ProgressNode(label: 'Preview', complete: hasPreview),
+      ],
+    ),
+  );
+}
+
+class _ProgressNode extends StatelessWidget {
+  const _ProgressNode({required this.label, required this.complete});
+
+  final String label;
+  final bool complete;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      CircleAvatar(
+        radius: 13,
+        backgroundColor: complete ? AppColors.accent : AppColors.raised,
+        child: Icon(
+          complete ? Icons.check : Icons.circle_outlined,
+          size: 14,
+          color: complete ? AppColors.textOnAccent : AppColors.textMuted,
+        ),
+      ),
+      const SizedBox(height: AppSpacing.x1),
+      Text(label, style: const TextStyle(fontSize: 11)),
+    ],
+  );
+}
+
+class _SelectedPieces extends StatelessWidget {
+  const _SelectedPieces({required this.items, required this.onRemove});
+
+  final List<CollectionItem> items;
+  final ValueChanged<CollectionItem> onRemove;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(AppSpacing.x3),
+    decoration: BoxDecoration(
+      color: AppColors.raised,
+      borderRadius: BorderRadius.circular(AppRadii.medium),
+      border: Border.all(color: AppColors.borderDefault),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '${items.length} ${items.length == 1 ? 'piece' : 'pieces'} in this look',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: AppSpacing.x2),
+        Wrap(
+          spacing: AppSpacing.x2,
+          runSpacing: AppSpacing.x1,
+          children: items
+              .map(
+                (item) => InputChip(
+                  key: Key('selected-piece-${item.id}'),
+                  label: Text(item.title),
+                  avatar: const Icon(Icons.checkroom_outlined, size: 16),
+                  onDeleted: () => onRemove(item),
+                ),
+              )
+              .toList(),
+        ),
+      ],
+    ),
   );
 }
 
@@ -386,10 +811,7 @@ class _CollectionPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final populated = collections
-        .where((collection) => collection.items.isNotEmpty)
-        .toList();
-    if (populated.isEmpty) {
+    if (collections.isEmpty) {
       return Container(
         key: const Key('composer-no-collection-items'),
         padding: const EdgeInsets.all(AppSpacing.x4),
@@ -399,13 +821,13 @@ class _CollectionPicker extends StatelessWidget {
           border: Border.all(color: AppColors.borderDefault),
         ),
         child: const Text(
-          'Your collections are empty. Share products from fashion apps or add buying links in Collections first.',
+          'No products yet. Add a retailer link above or create a collection without leaving this studio.',
           style: TextStyle(color: AppColors.textSecondary, height: 1.4),
         ),
       );
     }
     return Column(
-      children: populated
+      children: collections
           .map(
             (collection) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.x3),
@@ -427,23 +849,37 @@ class _CollectionPicker extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.x2),
-                  SizedBox(
-                    height: 152,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: collection.items.length,
-                      separatorBuilder: (_, _) => const SizedBox(width: 10),
-                      itemBuilder: (context, index) {
-                        final item = collection.items[index];
-                        final selected = selectedIds.contains(item.id);
-                        return _SelectableItem(
-                          item: item,
-                          selected: selected,
-                          onTap: () => onToggle(item),
-                        );
-                      },
+                  if (collection.items.isEmpty)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(AppSpacing.x3),
+                      decoration: BoxDecoration(
+                        color: AppColors.sunken,
+                        borderRadius: BorderRadius.circular(AppRadii.medium),
+                      ),
+                      child: const Text(
+                        'No products yet — use Add product link above.',
+                        style: TextStyle(color: AppColors.textSecondary),
+                      ),
+                    )
+                  else
+                    SizedBox(
+                      height: 152,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: collection.items.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 10),
+                        itemBuilder: (context, index) {
+                          final item = collection.items[index];
+                          final selected = selectedIds.contains(item.id);
+                          return _SelectableItem(
+                            item: item,
+                            selected: selected,
+                            onTap: () => onToggle(item),
+                          );
+                        },
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -537,7 +973,7 @@ class _PhotoPicker extends StatelessWidget {
           border: Border.all(color: AppColors.borderDefault),
         ),
         child: const Text(
-          'No full-body photos yet. Add one from My Photos before building an outfit.',
+          'No full-body photos yet. Add one from camera or gallery above and use it immediately.',
           style: TextStyle(color: AppColors.textSecondary),
         ),
       );

@@ -194,8 +194,14 @@ class _CompeteAppState extends State<CompeteApp> {
         builder: (_) => CreatePostScreen(
           fetchCollections:
               widget.fetchCollections ?? CollectionService.fetchCollections,
+          createCollection:
+              widget.createCollection ?? CollectionService.createCollection,
+          ingestLink: widget.ingestLink ?? IngestService.ingest,
+          saveCollectionItem:
+              widget.saveCollectionItem ?? CollectionService.addItem,
           fetchModelPhotos:
               widget.fetchModelPhotos ?? ModelPhotoService.fetchPhotos,
+          uploadModelPhoto: widget.uploadModelPhoto ?? ModelPhotoService.upload,
           checkYouCamConfigured:
               widget.checkYouCamConfigured ?? SocialService.youCamConfigured,
           generateOutfit:

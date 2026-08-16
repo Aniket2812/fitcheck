@@ -129,9 +129,10 @@ void main() {
     );
     expect(find.byKey(const Key('composer-no-saved-photos')), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('publish-post-button')));
-    await tester.pump();
-    expect(find.text('Choose at least one collection item.'), findsOneWidget);
+    expect(
+      find.text('Choose at least one product to continue.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('shared fashion link asks which collection should receive it', (
@@ -376,6 +377,128 @@ void main() {
     expect(find.text('Regenerate outfit'), findsOneWidget);
   });
 
+  testWidgets(
+    'outfit studio creates collections, adds links and uploads photos',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(800, 2200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      var collections = <FashionCollection>[];
+      Future<FashionCollection> createCollection(String name) async {
+        final collection = FashionCollection(
+          id: 'studio-collection',
+          name: name,
+          kind: 'custom',
+          isDefault: false,
+          items: const [],
+        );
+        collections = [collection];
+        return collection;
+      }
+
+      Future<ClosetItem> ingest(String url) async => ClosetItem(
+        id: 'studio-shirt',
+        title: 'Studio shirt',
+        image:
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+        originalImage: 'https://example.com/studio-shirt.jpg',
+        pageUrl: url,
+        category: 'upper_body',
+      );
+
+      Future<CollectionItem> saveItem(
+        String collectionId,
+        ClosetItem item,
+      ) async {
+        final saved = CollectionItem(
+          id: item.id,
+          collectionId: collectionId,
+          title: item.title,
+          imageUrl: item.image,
+          originalImageUrl: item.originalImage,
+          buyUrl: item.pageUrl!,
+          category: item.category!,
+        );
+        collections = [
+          FashionCollection(
+            id: collections.single.id,
+            name: collections.single.name,
+            kind: collections.single.kind,
+            isDefault: false,
+            items: [saved],
+          ),
+        ];
+        return saved;
+      }
+
+      await tester.pumpWidget(
+        CompeteApp(
+          persistCloset: false,
+          fetchPosts: emptyFeed,
+          fetchCollections: () async => collections,
+          createCollection: createCollection,
+          ingestLink: ingest,
+          saveCollectionItem: saveItem,
+          fetchModelPhotos: emptyModelPhotos,
+          uploadModelPhoto: (file) async => ModelPhoto(
+            id: 'studio-photo',
+            imageUrl: 'https://example.com/studio-photo.jpg',
+            label: 'Studio photo',
+            isPrimary: true,
+            createdAt: DateTime(2026),
+          ),
+          checkYouCamConfigured: () async => true,
+          shareIntentReceiver: FakeShareIntentReceiver(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('add-post-button')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(
+        find.byKey(const Key('composer-create-collection-button')),
+      );
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const Key('composer-new-collection-name')),
+        'Studio picks',
+      );
+      await tester.tap(
+        find.byKey(const Key('composer-create-collection-submit')),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('composer-add-product-button')));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const Key('composer-target-studio-collection')),
+      );
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const Key('composer-product-link')),
+        'https://example.com/studio-shirt',
+      );
+      await tester.tap(find.byKey(const Key('composer-fetch-product-submit')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const Key('selected-piece-studio-shirt')),
+        findsOneWidget,
+      );
+
+      // Camera/gallery choice is available inline; its platform picker is
+      // separately covered by the try-on upload test.
+      await tester.ensureVisible(
+        find.byKey(const Key('composer-add-photo-button')),
+      );
+      await tester.tap(find.byKey(const Key('composer-add-photo-button')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('composer-gallery-option')), findsOneWidget);
+      expect(find.byKey(const Key('composer-camera-option')), findsOneWidget);
+    },
+  );
+
   testWidgets('garment hotspot opens the enlarged shoppable product', (
     WidgetTester tester,
   ) async {
@@ -387,6 +510,7 @@ void main() {
         PostGarment(
           id: 'garment-1',
           title: 'Test jacket',
+          brand: 'Compete',
           imageUrl:
               'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
           buyUrl: 'https://example.com/jacket',
@@ -412,9 +536,14 @@ void main() {
         ),
       ),
     );
+    expect(
+      tester.getSize(find.byKey(const Key('garment-hotspot-post-1-garment-1'))),
+      const Size.square(48),
+    );
     await tester.tap(find.bySemanticsLabel('Shop Test jacket'));
     await tester.pumpAndSettle();
     expect(find.text('Test jacket'), findsOneWidget);
+    expect(find.text('Compete · example.com'), findsOneWidget);
     expect(find.text('View product'), findsOneWidget);
   });
 
