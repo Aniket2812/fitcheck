@@ -15,10 +15,10 @@ class CompeteLogo extends StatelessWidget {
         'COMPETE',
         style: TextStyle(
           fontFamily: 'Jost',
-          fontSize: 17,
+          fontSize: 15,
           fontWeight: FontWeight.w500,
           color: color,
-          letterSpacing: 5,
+          letterSpacing: 4.2,
         ),
       ),
     );

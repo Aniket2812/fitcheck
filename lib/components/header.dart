@@ -24,10 +24,10 @@ class CompeteHeader extends StatelessWidget {
       bottom: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
-          AppSpacing.x4,
-          AppSpacing.x3,
-          AppSpacing.x4,
-          AppSpacing.x3,
+          14,
+          AppSpacing.x1,
+          12,
+          AppSpacing.x1,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -39,7 +39,7 @@ class CompeteHeader extends StatelessWidget {
                   key: const Key('search-button'),
                   onPressed: onSearch,
                   tooltip: 'Search',
-                  icon: const Icon(Icons.search, size: 22),
+                  icon: const Icon(Icons.search, size: 20),
                   color: AppColors.textPrimary,
                   style: const ButtonStyle(
                     fixedSize: WidgetStatePropertyAll(

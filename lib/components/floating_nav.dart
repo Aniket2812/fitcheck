@@ -25,37 +25,57 @@ class FloatingNav extends StatelessWidget {
     return Positioned(
       left: 0,
       right: 0,
-      bottom: math.max(safeBottom, AppSpacing.x3) + AppSpacing.x3,
+      bottom: math.max(safeBottom, AppSpacing.x2) + AppSpacing.x2,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _NavButton(
-            key: const Key('feed-tab'),
-            label: 'Feed',
-            icon: Icons.home_outlined,
-            activeIcon: Icons.home,
-            active: active == AppTab.feed,
-            onPressed: () => onChange(AppTab.feed),
-          ),
-          const SizedBox(width: AppSpacing.x2),
-          _NavButton(
-            key: const Key('photos-tab'),
-            label: 'My photos',
-            icon: Icons.person_outline,
-            activeIcon: Icons.person,
-            active: active == AppTab.photos,
-            onPressed: () => onChange(AppTab.photos),
-          ),
-          const SizedBox(width: AppSpacing.x2),
-          _AddButton(onPressed: onAdd ?? () {}),
-          const SizedBox(width: AppSpacing.x2),
-          _NavButton(
-            key: const Key('collections-tab'),
-            label: 'Collections',
-            icon: Icons.folder_outlined,
-            activeIcon: Icons.folder,
-            active: active == AppTab.collections,
-            onPressed: () => onChange(AppTab.collections),
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: AppColors.raised.withValues(alpha: 0.96),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: AppColors.borderDefault, width: 0.7),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x1A1E1D1B),
+                  blurRadius: 18,
+                  offset: Offset(0, 7),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _NavButton(
+                  key: const Key('feed-tab'),
+                  label: 'Feed',
+                  icon: Icons.home_outlined,
+                  activeIcon: Icons.home,
+                  active: active == AppTab.feed,
+                  onPressed: () => onChange(AppTab.feed),
+                ),
+                const SizedBox(width: 2),
+                _NavButton(
+                  key: const Key('photos-tab'),
+                  label: 'My photos',
+                  icon: Icons.person_outline,
+                  activeIcon: Icons.person,
+                  active: active == AppTab.photos,
+                  onPressed: () => onChange(AppTab.photos),
+                ),
+                const SizedBox(width: 4),
+                _AddButton(onPressed: onAdd ?? () {}),
+                const SizedBox(width: 4),
+                _NavButton(
+                  key: const Key('collections-tab'),
+                  label: 'Collections',
+                  icon: Icons.folder_outlined,
+                  activeIcon: Icons.folder,
+                  active: active == AppTab.collections,
+                  onPressed: () => onChange(AppTab.collections),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -97,17 +117,13 @@ class _NavButton extends StatelessWidget {
               Size.square(AppSizes.navButton),
             ),
             padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-            backgroundColor: const WidgetStatePropertyAll(AppColors.raised),
+            backgroundColor: WidgetStatePropertyAll(
+              active ? AppColors.sunken : Colors.transparent,
+            ),
             overlayColor: const WidgetStatePropertyAll(Colors.transparent),
             shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppRadii.large),
-                side: BorderSide(
-                  color: active
-                      ? AppColors.borderStrong
-                      : AppColors.borderDefault,
-                  width: 0.5,
-                ),
               ),
             ),
           ),
@@ -128,7 +144,7 @@ class _AddButton extends StatelessWidget {
       key: const Key('add-post-button'),
       onPressed: onPressed,
       tooltip: 'Create post',
-      icon: const Icon(Icons.add, size: 24),
+      icon: const Icon(Icons.add, size: 22),
       color: AppColors.textOnAccent,
       style: ButtonStyle(
         fixedSize: const WidgetStatePropertyAll(
@@ -139,7 +155,7 @@ class _AddButton extends StatelessWidget {
         overlayColor: const WidgetStatePropertyAll(Colors.transparent),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadii.large),
+            borderRadius: BorderRadius.circular(AppRadii.medium),
           ),
         ),
       ),
