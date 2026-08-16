@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
-enum AppTab { feed, saved }
+enum AppTab { feed, photos, saved }
 
 class FloatingNav extends StatelessWidget {
   const FloatingNav({
@@ -37,9 +37,18 @@ class FloatingNav extends StatelessWidget {
             active: active == AppTab.feed,
             onPressed: () => onChange(AppTab.feed),
           ),
-          const SizedBox(width: AppSpacing.x3),
+          const SizedBox(width: AppSpacing.x2),
+          _NavButton(
+            key: const Key('photos-tab'),
+            label: 'My photos',
+            icon: Icons.person_outline,
+            activeIcon: Icons.person,
+            active: active == AppTab.photos,
+            onPressed: () => onChange(AppTab.photos),
+          ),
+          const SizedBox(width: AppSpacing.x2),
           _AddButton(onPressed: onAdd ?? () {}),
-          const SizedBox(width: AppSpacing.x3),
+          const SizedBox(width: AppSpacing.x2),
           _NavButton(
             key: const Key('saved-tab'),
             label: 'Saved',

@@ -13,6 +13,7 @@ import { supportedSites } from './sites.js';
 import { cutoutProvider, describeProduct } from './providers/index.js';
 import { configured as youcamConfigured } from './providers/youcam.js';
 import { authRoutes, meRoutes, userRoutes } from './routes/auth.js';
+import { modelPhotoRoutes } from './routes/modelPhotos.js';
 import { postRoutes } from './routes/posts.js';
 import { tryOnRoutes } from './routes/tryon.js';
 import { loadStore } from './store.js';
@@ -38,6 +39,7 @@ app.get('/health', (c) =>
 app.route('/api/auth', authRoutes);
 app.route('/api/me', meRoutes);
 app.route('/api/users', userRoutes);
+app.route('/api/model-photos', modelPhotoRoutes);
 app.route('/api/posts', postRoutes);
 app.route('/api/try-on', tryOnRoutes);
 

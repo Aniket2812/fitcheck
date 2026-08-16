@@ -4,16 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../components/garment_image.dart';
+import '../models/model_photo.dart';
 import '../models/social_post.dart';
 import '../services/ingest_service.dart';
+import '../services/model_photo_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({super.key, this.ingestLink, this.initialProductUrl});
+  const CreatePostScreen({
+    super.key,
+    this.ingestLink,
+    this.initialProductUrl,
+    this.fetchModelPhotos = ModelPhotoService.fetchPhotos,
+  });
 
   final IngestLink? ingestLink;
   final String? initialProductUrl;
+  final FetchModelPhotos fetchModelPhotos;
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -25,6 +33,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final _picker = ImagePicker();
   XFile? _photo;
   Uint8List? _photoBytes;
+  List<ModelPhoto> _modelPhotos = const [];
+  ModelPhoto? _selectedModelPhoto;
   String? _youCamImageUrl;
   List<PostGarment> _garments = const [];
   int? _selectedGarment;
@@ -32,6 +42,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool _publishing = false;
   bool _generating = false;
   bool _youCamConfigured = false;
+  bool _loadingModelPhotos = true;
   String? _error;
 
   @override
@@ -40,10 +51,27 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     SocialService.youCamConfigured().then((value) {
       if (mounted) setState(() => _youCamConfigured = value);
     });
+    _loadModelPhotos();
     final initialProductUrl = widget.initialProductUrl?.trim();
     if (initialProductUrl != null && initialProductUrl.isNotEmpty) {
       _productLink.text = initialProductUrl;
       WidgetsBinding.instance.addPostFrameCallback((_) => _addGarment());
+    }
+  }
+
+  Future<void> _loadModelPhotos() async {
+    try {
+      final photos = await widget.fetchModelPhotos();
+      if (!mounted) return;
+      final primary = photos.where((photo) => photo.isPrimary).firstOrNull;
+      setState(() {
+        _modelPhotos = photos;
+        _selectedModelPhoto = primary ?? photos.firstOrNull;
+      });
+    } catch (_) {
+      // Direct camera/gallery selection remains available if the library fails.
+    } finally {
+      if (mounted) setState(() => _loadingModelPhotos = false);
     }
   }
 
@@ -67,6 +95,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     setState(() {
       _photo = picked;
       _photoBytes = bytes;
+      _selectedModelPhoto = null;
+      _youCamImageUrl = null;
+      _error = null;
+    });
+  }
+
+  void _selectModelPhoto(ModelPhoto photo) {
+    setState(() {
+      _selectedModelPhoto = photo;
+      _photo = null;
+      _photoBytes = null;
       _youCamImageUrl = null;
       _error = null;
     });
@@ -226,11 +265,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             children: [
               AspectRatio(
                 aspectRatio: 4 / 5,
-                child: _photoBytes == null
+                child: _photoBytes == null && _selectedModelPhoto == null
                     ? _PhotoPlaceholder(onTap: _showPhotoSource)
                     : _TaggablePhoto(
-                        bytes: _photoBytes!,
-                        networkUrl: _youCamImageUrl,
+                        bytes: _photoBytes,
+                        networkUrl:
+                            _youCamImageUrl ?? _selectedModelPhoto?.imageUrl,
                         garments: _garments,
                         selected: _selectedGarment,
                         onSelect: (index) =>
@@ -238,6 +278,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         onPlace: _placeTag,
                         onReplace: _showPhotoSource,
                       ),
+              ),
+              const SizedBox(height: AppSpacing.x3),
+              _ModelPhotoPicker(
+                loading: _loadingModelPhotos,
+                photos: _modelPhotos,
+                selected: _selectedModelPhoto,
+                onSelect: _selectModelPhoto,
+                onChooseNew: _showPhotoSource,
               ),
               const SizedBox(height: AppSpacing.x4),
               TextField(
@@ -349,6 +397,138 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 }
 
+class _ModelPhotoPicker extends StatelessWidget {
+  const _ModelPhotoPicker({
+    required this.loading,
+    required this.photos,
+    required this.selected,
+    required this.onSelect,
+    required this.onChooseNew,
+  });
+
+  final bool loading;
+  final List<ModelPhoto> photos;
+  final ModelPhoto? selected;
+  final ValueChanged<ModelPhoto> onSelect;
+  final VoidCallback onChooseNew;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Choose your photo',
+          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: AppSpacing.x1),
+        const Text(
+          'This is the person YouCam will dress in the selected garment.',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
+        const SizedBox(height: AppSpacing.x2),
+        if (loading)
+          const SizedBox(
+            height: 92,
+            child: Center(child: CircularProgressIndicator()),
+          )
+        else
+          SizedBox(
+            height: 112,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: photos.length + 1,
+              separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.x2),
+              itemBuilder: (context, index) {
+                if (index == photos.length) {
+                  return InkWell(
+                    key: const Key('composer-new-photo'),
+                    onTap: onChooseNew,
+                    borderRadius: BorderRadius.circular(AppRadii.medium),
+                    child: Container(
+                      width: 88,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.sunken,
+                        borderRadius: BorderRadius.circular(AppRadii.medium),
+                        border: Border.all(color: AppColors.borderDefault),
+                      ),
+                      child: const Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.add_a_photo_outlined),
+                          SizedBox(height: AppSpacing.x1),
+                          Text('New photo'),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                final photo = photos[index];
+                final isSelected = selected?.id == photo.id;
+                return Semantics(
+                  button: true,
+                  selected: isSelected,
+                  label: 'Use ${photo.label}',
+                  child: InkWell(
+                    key: Key('composer-model-photo-${photo.id}'),
+                    onTap: () => onSelect(photo),
+                    borderRadius: BorderRadius.circular(AppRadii.medium),
+                    child: Container(
+                      width: 88,
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(AppRadii.medium),
+                        border: Border.all(
+                          color: isSelected
+                              ? AppColors.accent
+                              : AppColors.borderDefault,
+                          width: isSelected ? 2 : 1,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppRadii.medium),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.network(
+                              photo.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, _, _) => const Center(
+                                child: Icon(
+                                  Icons.person,
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                            ),
+                            if (isSelected)
+                              const Positioned(
+                                right: 4,
+                                top: 4,
+                                child: CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor: AppColors.accent,
+                                  child: Icon(
+                                    Icons.check,
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 class _PhotoPlaceholder extends StatelessWidget {
   const _PhotoPlaceholder({required this.onTap});
   final VoidCallback onTap;
@@ -395,7 +575,7 @@ class _TaggablePhoto extends StatelessWidget {
     required this.onReplace,
   });
 
-  final Uint8List bytes;
+  final Uint8List? bytes;
   final String? networkUrl;
   final List<PostGarment> garments;
   final int? selected;
@@ -415,7 +595,7 @@ class _TaggablePhoto extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               networkUrl == null
-                  ? Image.memory(bytes, fit: BoxFit.cover)
+                  ? Image.memory(bytes!, fit: BoxFit.cover)
                   : Image.network(networkUrl!, fit: BoxFit.cover),
               ...garments.asMap().entries.map(
                 (entry) => Positioned(

@@ -3,10 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:youcam2/app.dart';
 import 'package:youcam2/components/outfit_post_image.dart';
 import 'package:youcam2/models/closet_item.dart';
+import 'package:youcam2/models/model_photo.dart';
 import 'package:youcam2/models/social_post.dart';
 import 'package:youcam2/services/share_intent_service.dart';
 
 Future<List<SocialPost>> emptyFeed() async => const [];
+Future<List<ModelPhoto>> emptyModelPhotos() async => const [];
 
 class FakeShareIntentReceiver implements ShareIntentReceiver {
   FakeShareIntentReceiver({this.initialLink});
@@ -31,6 +33,7 @@ void main() {
       CompeteApp(
         persistCloset: false,
         fetchPosts: emptyFeed,
+        fetchModelPhotos: emptyModelPhotos,
         shareIntentReceiver: FakeShareIntentReceiver(),
       ),
     );
@@ -85,6 +88,7 @@ void main() {
       CompeteApp(
         ingestLink: fakeIngest,
         fetchPosts: emptyFeed,
+        fetchModelPhotos: emptyModelPhotos,
         persistCloset: false,
         shareIntentReceiver: FakeShareIntentReceiver(),
       ),
@@ -131,6 +135,7 @@ void main() {
       CompeteApp(
         ingestLink: fakeIngest,
         fetchPosts: emptyFeed,
+        fetchModelPhotos: emptyModelPhotos,
         persistCloset: false,
         shareIntentReceiver: FakeShareIntentReceiver(
           initialLink: 'https://www.myntra.com/shared-top/buy',
@@ -150,6 +155,36 @@ void main() {
       ),
       'https://www.ajio.com/product/p/12345',
     );
+  });
+
+  testWidgets('full-body photos have a dedicated navigation tab', (
+    WidgetTester tester,
+  ) async {
+    Future<List<ModelPhoto>> photos() async => [
+      ModelPhoto(
+        id: 'model-1',
+        imageUrl: 'https://example.com/full-body.jpg',
+        label: 'Front pose',
+        isPrimary: true,
+        createdAt: DateTime(2026),
+      ),
+    ];
+
+    await tester.pumpWidget(
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: emptyFeed,
+        fetchModelPhotos: photos,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('photos-tab')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('My full-body photos'), findsOneWidget);
+    expect(find.text('Front pose'), findsOneWidget);
+    expect(find.text('Default'), findsOneWidget);
   });
 
   testWidgets('garment hotspot opens the enlarged shoppable product', (

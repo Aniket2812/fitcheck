@@ -10,9 +10,11 @@ import 'models/closet_item.dart';
 import 'models/social_post.dart';
 import 'screens/create_post_screen.dart';
 import 'screens/feed_screen.dart';
+import 'screens/model_photos_screen.dart';
 import 'screens/saved_screen.dart';
 import 'screens/search_screen.dart';
 import 'services/ingest_service.dart';
+import 'services/model_photo_service.dart';
 import 'services/share_intent_service.dart';
 import 'services/social_service.dart';
 import 'theme/app_theme.dart';
@@ -24,12 +26,14 @@ class CompeteApp extends StatefulWidget {
     this.fetchPosts,
     this.persistCloset = true,
     this.shareIntentReceiver,
+    this.fetchModelPhotos,
   });
 
   final IngestLink? ingestLink;
   final FetchPosts? fetchPosts;
   final bool persistCloset;
   final ShareIntentReceiver? shareIntentReceiver;
+  final FetchModelPhotos? fetchModelPhotos;
 
   @override
   State<CompeteApp> createState() => _CompeteAppState();
@@ -126,6 +130,8 @@ class _CompeteAppState extends State<CompeteApp> {
         builder: (_) => CreatePostScreen(
           ingestLink: widget.ingestLink,
           initialProductUrl: initialProductUrl,
+          fetchModelPhotos:
+              widget.fetchModelPhotos ?? ModelPhotoService.fetchPhotos,
         ),
       ),
     );
@@ -174,6 +180,12 @@ class _CompeteAppState extends State<CompeteApp> {
                     key: ValueKey(_feedVersion),
                     onSearch: () => setState(() => _searchOpen = true),
                     fetchPosts: widget.fetchPosts ?? SocialService.fetchPosts,
+                  ),
+                  AppTab.photos => ModelPhotosScreen(
+                    onSearch: () => setState(() => _searchOpen = true),
+                    fetchPhotos:
+                        widget.fetchModelPhotos ??
+                        ModelPhotoService.fetchPhotos,
                   ),
                   AppTab.saved => SavedScreen(
                     onSearch: () => setState(() => _searchOpen = true),

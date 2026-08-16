@@ -78,7 +78,22 @@ export async function loadStore() {
   }
 
   const parsed = JSON.parse(raw);
-  for (const user of parsed.users || []) db.users.set(user.id, user);
+  for (const user of parsed.users || []) {
+    if (!Array.isArray(user.modelPhotos)) {
+      user.modelPhotos = user.modelPhotoUrl
+        ? [
+            {
+              id: `legacy-${user.id}`,
+              imageUrl: user.modelPhotoUrl,
+              label: 'My photo',
+              isPrimary: true,
+              createdAt: user.updatedAt || user.createdAt,
+            },
+          ]
+        : [];
+    }
+    db.users.set(user.id, user);
+  }
 
   const now = Date.now();
   for (const session of parsed.sessions || []) {
@@ -191,6 +206,7 @@ export async function upsertGoogleUser({ googleId, email, name, picture }) {
     googleAvatarUrl: picture || null,
     // The full-body shot every try-on renders onto. Null until they upload one.
     modelPhotoUrl: null,
+    modelPhotos: [],
     createdAt: now,
     updatedAt: now,
     lastSignInAt: now,
@@ -244,6 +260,72 @@ export async function updateUser(userId, patch) {
   user.updatedAt = new Date().toISOString();
   await flush();
   return user;
+}
+
+function projectedModelPhoto(photo) {
+  return {
+    id: photo.id,
+    imageUrl: photo.imageUrl,
+    label: photo.label,
+    isPrimary: Boolean(photo.isPrimary),
+    createdAt: photo.createdAt,
+  };
+}
+
+export function listModelPhotos(userId) {
+  const user = db.users.get(userId);
+  if (!user) throw new ProfileError('No such account.', 404);
+  return (user.modelPhotos || []).map(projectedModelPhoto);
+}
+
+export function findModelPhoto(userId, photoId) {
+  const user = db.users.get(userId);
+  return user?.modelPhotos?.find((photo) => photo.id === photoId) || null;
+}
+
+export async function addModelPhoto(userId, imageUrl, label) {
+  const user = db.users.get(userId);
+  if (!user) throw new ProfileError('No such account.', 404);
+  const photos = user.modelPhotos || [];
+  if (photos.length >= 12) {
+    throw new ProfileError('You can keep up to 12 full-body photos.', 409);
+  }
+  const cleanLabel = String(label || '').trim();
+  if (cleanLabel.length > 40) throw new ProfileError('Photo labels can be at most 40 characters.');
+  const photo = {
+    id: randomUUID(),
+    imageUrl,
+    label: cleanLabel || `Photo ${photos.length + 1}`,
+    isPrimary: photos.length === 0,
+    createdAt: new Date().toISOString(),
+  };
+  user.modelPhotos = [...photos, photo];
+  if (photo.isPrimary) user.modelPhotoUrl = imageUrl;
+  user.updatedAt = photo.createdAt;
+  await flush();
+  return projectedModelPhoto(photo);
+}
+
+export async function setPrimaryModelPhoto(userId, photoId) {
+  const user = db.users.get(userId);
+  const selected = user?.modelPhotos?.find((photo) => photo.id === photoId);
+  if (!user || !selected) throw new ProfileError('No such full-body photo.', 404);
+  for (const photo of user.modelPhotos) photo.isPrimary = photo.id === photoId;
+  user.modelPhotoUrl = selected.imageUrl;
+  user.updatedAt = new Date().toISOString();
+  await flush();
+  return projectedModelPhoto(selected);
+}
+
+export async function deleteModelPhoto(userId, photoId) {
+  const user = db.users.get(userId);
+  const photo = user?.modelPhotos?.find((item) => item.id === photoId);
+  if (!user || !photo) throw new ProfileError('No such full-body photo.', 404);
+  user.modelPhotos = user.modelPhotos.filter((item) => item.id !== photoId);
+  if (photo.isPrimary && user.modelPhotos.length) user.modelPhotos[0].isPrimary = true;
+  user.modelPhotoUrl = user.modelPhotos.find((item) => item.isPrimary)?.imageUrl || null;
+  user.updatedAt = new Date().toISOString();
+  await flush();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -429,6 +511,7 @@ export function privateProfile(user) {
     bio: user.bio,
     avatarUrl: user.avatarUrl || user.googleAvatarUrl || null,
     modelPhotoUrl: user.modelPhotoUrl,
+    modelPhotos: (user.modelPhotos || []).map(projectedModelPhoto),
     createdAt: user.createdAt,
   };
 }
