@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,6 +13,7 @@ import 'screens/feed_screen.dart';
 import 'screens/saved_screen.dart';
 import 'screens/search_screen.dart';
 import 'services/ingest_service.dart';
+import 'services/share_intent_service.dart';
 import 'services/social_service.dart';
 import 'theme/app_theme.dart';
 
@@ -20,11 +23,13 @@ class CompeteApp extends StatefulWidget {
     this.ingestLink,
     this.fetchPosts,
     this.persistCloset = true,
+    this.shareIntentReceiver,
   });
 
   final IngestLink? ingestLink;
   final FetchPosts? fetchPosts;
   final bool persistCloset;
+  final ShareIntentReceiver? shareIntentReceiver;
 
   @override
   State<CompeteApp> createState() => _CompeteAppState();
@@ -38,11 +43,42 @@ class _CompeteAppState extends State<CompeteApp> {
   bool _searchOpen = false;
   int _feedVersion = 0;
   List<ClosetItem> _items = const [];
+  StreamSubscription<String>? _shareSubscription;
+  late final ShareIntentReceiver _shareIntentReceiver;
+  bool _composerOpen = false;
 
   @override
   void initState() {
     super.initState();
     if (widget.persistCloset) _loadCloset();
+    _shareIntentReceiver =
+        widget.shareIntentReceiver ??
+        (kIsWeb
+            ? const NoopShareIntentReceiver()
+            : SystemShareIntentReceiver());
+    _listenForSharedProducts();
+  }
+
+  void _listenForSharedProducts() {
+    _shareSubscription = _shareIntentReceiver.productLinks.listen(
+      _openSharedProduct,
+      onError: (_) {},
+    );
+    _shareIntentReceiver
+        .initialProductLink()
+        .then((link) {
+          if (link != null) _openSharedProduct(link);
+        })
+        .catchError((_) {});
+  }
+
+  void _openSharedProduct(String productUrl) {
+    if (_composerOpen || !mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _composerOpen) return;
+      _openCreatePost(initialProductUrl: productUrl);
+      _shareIntentReceiver.reset().catchError((_) {});
+    });
   }
 
   Future<void> _loadCloset() async {
@@ -81,14 +117,19 @@ class _CompeteAppState extends State<CompeteApp> {
     _saveCloset();
   }
 
-  Future<void> _openCreatePost() async {
+  Future<void> _openCreatePost({String? initialProductUrl}) async {
     final context = _navigatorKey.currentContext;
-    if (context == null) return;
+    if (context == null || _composerOpen) return;
+    _composerOpen = true;
     final post = await Navigator.of(context).push<SocialPost>(
       MaterialPageRoute(
-        builder: (_) => CreatePostScreen(ingestLink: widget.ingestLink),
+        builder: (_) => CreatePostScreen(
+          ingestLink: widget.ingestLink,
+          initialProductUrl: initialProductUrl,
+        ),
       ),
     );
+    _composerOpen = false;
     if (post == null || !mounted) return;
     for (final garment in post.garments) {
       if (_items.any((item) => item.id == garment.id)) continue;
@@ -109,6 +150,12 @@ class _CompeteAppState extends State<CompeteApp> {
       _activeTab = AppTab.feed;
       _feedVersion += 1;
     });
+  }
+
+  @override
+  void dispose() {
+    _shareSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -136,7 +183,7 @@ class _CompeteAppState extends State<CompeteApp> {
                 FloatingNav(
                   active: _activeTab,
                   onChange: (tab) => setState(() => _activeTab = tab),
-                  onAdd: _openCreatePost,
+                  onAdd: () => _openCreatePost(),
                 ),
               ],
             ),

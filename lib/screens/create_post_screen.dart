@@ -10,9 +10,10 @@ import '../services/social_service.dart';
 import '../theme/app_theme.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({super.key, this.ingestLink});
+  const CreatePostScreen({super.key, this.ingestLink, this.initialProductUrl});
 
   final IngestLink? ingestLink;
+  final String? initialProductUrl;
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -39,6 +40,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     SocialService.youCamConfigured().then((value) {
       if (mounted) setState(() => _youCamConfigured = value);
     });
+    final initialProductUrl = widget.initialProductUrl?.trim();
+    if (initialProductUrl != null && initialProductUrl.isNotEmpty) {
+      _productLink.text = initialProductUrl;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _addGarment());
+    }
   }
 
   @override
@@ -192,7 +198,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New outfit'),
+        title: Text(
+          widget.initialProductUrl == null ? 'New outfit' : 'Post shared item',
+        ),
         backgroundColor: AppColors.canvas,
         surfaceTintColor: Colors.transparent,
         actions: [

@@ -4,15 +4,35 @@ import 'package:youcam2/app.dart';
 import 'package:youcam2/components/outfit_post_image.dart';
 import 'package:youcam2/models/closet_item.dart';
 import 'package:youcam2/models/social_post.dart';
+import 'package:youcam2/services/share_intent_service.dart';
 
 Future<List<SocialPost>> emptyFeed() async => const [];
+
+class FakeShareIntentReceiver implements ShareIntentReceiver {
+  FakeShareIntentReceiver({this.initialLink});
+
+  final String? initialLink;
+
+  @override
+  Future<String?> initialProductLink() async => initialLink;
+
+  @override
+  Stream<String> get productLinks => const Stream.empty();
+
+  @override
+  Future<void> reset() async {}
+}
 
 void main() {
   testWidgets('feed, saved, and search match the original shell', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      const CompeteApp(persistCloset: false, fetchPosts: emptyFeed),
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: emptyFeed,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -66,6 +86,7 @@ void main() {
         ingestLink: fakeIngest,
         fetchPosts: emptyFeed,
         persistCloset: false,
+        shareIntentReceiver: FakeShareIntentReceiver(),
       ),
     );
     await tester.pumpAndSettle();
@@ -89,6 +110,46 @@ void main() {
     await tester.tap(find.byKey(const Key('publish-post-button')));
     await tester.pump();
     expect(find.text('Choose an outfit photo.'), findsOneWidget);
+  });
+
+  testWidgets('shared fashion link opens a prefilled post composer', (
+    WidgetTester tester,
+  ) async {
+    String? ingestedUrl;
+    Future<ClosetItem> fakeIngest(String url) async {
+      ingestedUrl = url;
+      return ClosetItem(
+        id: 'shared-item',
+        title: 'Shared top',
+        image:
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+        pageUrl: url,
+      );
+    }
+
+    await tester.pumpWidget(
+      CompeteApp(
+        ingestLink: fakeIngest,
+        fetchPosts: emptyFeed,
+        persistCloset: false,
+        shareIntentReceiver: FakeShareIntentReceiver(
+          initialLink: 'https://www.myntra.com/shared-top/buy',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Post shared item'), findsOneWidget);
+    expect(ingestedUrl, 'https://www.myntra.com/shared-top/buy');
+  });
+
+  test('shared text extracts the first clean web link', () {
+    expect(
+      SystemShareIntentReceiver.extractProductLink(
+        'Found this on AJIO: https://www.ajio.com/product/p/12345).',
+      ),
+      'https://www.ajio.com/product/p/12345',
+    );
   });
 
   testWidgets('garment hotspot opens the enlarged shoppable product', (
