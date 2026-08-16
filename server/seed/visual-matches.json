@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "matches": [
     {
       "postId": "demo-post-city-layers",
@@ -144,6 +144,286 @@
       "productImage": "/media/zoya-yellow-dress.jpg",
       "colour": "pastel yellow with multicoloured botanical print",
       "product": "long sleeveless A-line dress"
+    },
+    {
+      "postId": "demo-post-city-layers",
+      "garmentId": "demo-garment-city-black-trousers",
+      "postImage": "/media/studio-maya-city-layers.jpg",
+      "productImage": "/media/maya-black-trousers.jpg",
+      "colour": "black",
+      "product": "wide-leg tailored trousers"
+    },
+    {
+      "postId": "demo-post-denim-day",
+      "garmentId": "demo-garment-denim-white-sneakers",
+      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "productImage": "/media/arjun-white-sneakers.jpg",
+      "colour": "white",
+      "product": "minimal leather sneakers"
+    },
+    {
+      "postId": "demo-post-gallery-night",
+      "garmentId": "demo-garment-gallery-sandals",
+      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "productImage": "/media/zoya-black-sandals.jpg",
+      "colour": "black",
+      "product": "barely-there heeled sandals"
+    },
+    {
+      "postId": "demo-post-coffee-run",
+      "garmentId": "demo-garment-coffee-brown-boots",
+      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "productImage": "/media/kabir-brown-boots.jpg",
+      "colour": "dark brown",
+      "product": "leather Chelsea boots"
+    },
+    {
+      "postId": "demo-post-sand-linen",
+      "garmentId": "demo-garment-sand-white-trousers",
+      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "productImage": "/media/rehan-white-trousers.jpg",
+      "colour": "white",
+      "product": "relaxed linen trousers"
+    },
+    {
+      "postId": "demo-post-sand-linen",
+      "garmentId": "demo-garment-sand-sunglasses",
+      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "productImage": "/media/rehan-sunglasses.jpg",
+      "colour": "tortoiseshell brown",
+      "product": "square sunglasses"
+    },
+    {
+      "postId": "demo-post-indigo-trucker",
+      "garmentId": "demo-garment-indigo-black-skirt",
+      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "productImage": "/media/zoya-black-skirt.jpg",
+      "colour": "black",
+      "product": "fluid midi skirt"
+    },
+    {
+      "postId": "demo-post-indigo-trucker",
+      "garmentId": "demo-garment-indigo-black-boots",
+      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "productImage": "/media/zoya-black-boots.jpg",
+      "colour": "black",
+      "product": "block-heel ankle boots"
+    },
+    {
+      "postId": "demo-post-olive-cargos",
+      "garmentId": "demo-garment-olive-black-tank",
+      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "productImage": "/media/maya-black-tank.jpg",
+      "colour": "black",
+      "product": "fitted sleeveless tank"
+    },
+    {
+      "postId": "demo-post-olive-cargos",
+      "garmentId": "demo-garment-olive-shoulder-bag",
+      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "productImage": "/media/maya-black-shoulder-bag.jpg",
+      "colour": "black",
+      "product": "small shoulder bag"
+    },
+    {
+      "postId": "demo-post-black-sambas",
+      "garmentId": "demo-garment-sambas-cream-polo",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-cream-polo.jpg",
+      "colour": "cream",
+      "product": "textured knit polo"
+    },
+    {
+      "postId": "demo-post-black-sambas",
+      "garmentId": "demo-garment-sambas-black-trousers",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-black-trousers.jpg",
+      "colour": "black",
+      "product": "relaxed tailored trousers"
+    },
+    {
+      "postId": "demo-post-black-sambas",
+      "garmentId": "demo-garment-sambas-sunglasses",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-black-sunglasses.jpg",
+      "colour": "black",
+      "product": "wayfarer sunglasses"
+    },
+    {
+      "postId": "demo-post-lobby-cream-bag",
+      "garmentId": "demo-garment-lobby-brown-blouse",
+      "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
+      "productImage": "/media/zoya-brown-satin-blouse.jpg",
+      "colour": "chocolate brown",
+      "product": "satin blouse"
+    },
+    {
+      "postId": "demo-post-lobby-cream-bag",
+      "garmentId": "demo-garment-lobby-cream-trousers",
+      "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
+      "productImage": "/media/zoya-cream-trousers.jpg",
+      "colour": "cream",
+      "product": "straight tailored trousers"
+    },
+    {
+      "postId": "demo-post-brown-leather",
+      "garmentId": "demo-garment-brown-black-jeans",
+      "postImage": "/media/studio-maya-brown-leather.jpg",
+      "productImage": "/media/maya-black-jeans.jpg",
+      "colour": "washed black",
+      "product": "straight jeans"
+    },
+    {
+      "postId": "demo-post-brown-leather",
+      "garmentId": "demo-garment-brown-black-boots",
+      "postImage": "/media/studio-maya-brown-leather.jpg",
+      "productImage": "/media/maya-black-boots.jpg",
+      "colour": "black",
+      "product": "pointed ankle boots"
+    },
+    {
+      "postId": "demo-post-pink-kicks",
+      "garmentId": "demo-garment-pink-cardigan",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-pink-cardigan.jpg",
+      "colour": "bubblegum pink",
+      "product": "cropped cardigan"
+    },
+    {
+      "postId": "demo-post-pink-kicks",
+      "garmentId": "demo-garment-pink-light-jeans",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-light-blue-jeans.jpg",
+      "colour": "light blue",
+      "product": "wide-leg jeans"
+    },
+    {
+      "postId": "demo-post-pink-kicks",
+      "garmentId": "demo-garment-pink-shoulder-bag",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-pink-shoulder-bag.jpg",
+      "colour": "pink",
+      "product": "mini shoulder bag"
+    },
+    {
+      "postId": "demo-post-book-market",
+      "garmentId": "demo-garment-book-white-shirt",
+      "postImage": "/media/studio-arjun-book-market.jpg",
+      "productImage": "/media/arjun-white-shirt.jpg",
+      "colour": "white",
+      "product": "relaxed cotton shirt"
+    },
+    {
+      "postId": "demo-post-book-market",
+      "garmentId": "demo-garment-book-brown-loafers",
+      "postImage": "/media/studio-arjun-book-market.jpg",
+      "productImage": "/media/arjun-brown-loafers.jpg",
+      "colour": "dark brown",
+      "product": "leather penny loafers"
+    },
+    {
+      "postId": "demo-post-red-cardigan",
+      "garmentId": "demo-garment-red-cream-trousers",
+      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "productImage": "/media/maya-cream-trousers.jpg",
+      "colour": "cream",
+      "product": "wide-leg tailored trousers"
+    },
+    {
+      "postId": "demo-post-red-cardigan",
+      "garmentId": "demo-garment-red-cream-loafers",
+      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "productImage": "/media/maya-cream-loafers.jpg",
+      "colour": "cream",
+      "product": "horsebit loafers"
+    },
+    {
+      "postId": "demo-post-red-cardigan",
+      "garmentId": "demo-garment-red-black-bag",
+      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "productImage": "/media/maya-black-shoulder-bag.jpg",
+      "colour": "black",
+      "product": "curved shoulder bag"
+    },
+    {
+      "postId": "demo-post-garden-party",
+      "garmentId": "demo-garment-garden-tan-sandals",
+      "postImage": "/media/studio-zoya-garden-party.jpg",
+      "productImage": "/media/zoya-tan-sandals.jpg",
+      "colour": "tan",
+      "product": "minimalist heeled sandals"
+    },
+    {
+      "postId": "demo-post-garden-party",
+      "garmentId": "demo-garment-garden-gold-earrings",
+      "postImage": "/media/studio-zoya-garden-party.jpg",
+      "productImage": "/media/zoya-gold-earrings.jpg",
+      "colour": "gold",
+      "product": "filigree drop earrings"
+    },
+    {
+      "postId": "demo-post-city-layers",
+      "garmentId": "demo-garment-city-white-tee",
+      "postImage": "/media/studio-maya-city-layers.jpg",
+      "productImage": "/media/maya-white-fitted-tee.jpg",
+      "colour": "white",
+      "product": "fitted crew-neck T-shirt"
+    },
+    {
+      "postId": "demo-post-coffee-run",
+      "garmentId": "demo-garment-coffee-black-knit",
+      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "productImage": "/media/kabir-black-knit.jpg",
+      "colour": "black",
+      "product": "fine-knit crew-neck sweater"
+    },
+    {
+      "postId": "demo-post-coffee-run",
+      "garmentId": "demo-garment-coffee-black-trousers",
+      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "productImage": "/media/kabir-black-trousers.jpg",
+      "colour": "black",
+      "product": "tapered tailored trousers"
+    },
+    {
+      "postId": "demo-post-sand-linen",
+      "garmentId": "demo-garment-sand-brown-loafers",
+      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "productImage": "/media/rehan-brown-loafers.jpg",
+      "colour": "brown",
+      "product": "leather penny loafers"
+    },
+    {
+      "postId": "demo-post-indigo-trucker",
+      "garmentId": "demo-garment-indigo-grey-tee",
+      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "productImage": "/media/zoya-grey-tee.jpg",
+      "colour": "heather grey",
+      "product": "crew-neck T-shirt"
+    },
+    {
+      "postId": "demo-post-olive-cargos",
+      "garmentId": "demo-garment-olive-black-sandals",
+      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "productImage": "/media/maya-black-sandals.jpg",
+      "colour": "black",
+      "product": "minimal flat sandals"
+    },
+    {
+      "postId": "demo-post-lobby-cream-bag",
+      "garmentId": "demo-garment-lobby-brown-pumps",
+      "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
+      "productImage": "/media/zoya-brown-pumps.jpg",
+      "colour": "chocolate brown",
+      "product": "pointed pumps"
+    },
+    {
+      "postId": "demo-post-brown-leather",
+      "garmentId": "demo-garment-brown-black-top",
+      "postImage": "/media/studio-maya-brown-leather.jpg",
+      "productImage": "/media/maya-black-top.jpg",
+      "colour": "black",
+      "product": "fitted scoop-neck top"
     }
   ]
 }

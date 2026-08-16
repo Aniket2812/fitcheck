@@ -21,10 +21,10 @@ try {
   assert.equal(posts.length, 14);
   assert.equal(
     posts.reduce((total, post) => total + post.garments.length, 0),
-    18,
+    53,
   );
 
-  assert.equal(visualMatches.matches.length, 18);
+  assert.equal(visualMatches.matches.length, 53);
   const matchesByGarment = new Map(
     visualMatches.matches.map((match) => [match.garmentId, match]),
   );
@@ -37,6 +37,10 @@ try {
     'www.charleskeith.in',
     'shop.mango.com',
     'www.adidas.co.in',
+    'www.amazon.in',
+    'www.myntra.com',
+    'www.ajio.com',
+    'www.flipkart.com',
   ]);
   for (const post of posts) {
     assert.match(post.imageUrl, /^\/media\/[a-z0-9-]+\.jpg$/);
@@ -65,7 +69,16 @@ try {
       assert.ok(retailerHosts.has(productUrl.host));
     }
   }
-  assert.equal(matchesByGarment.size, 18);
+  assert.equal(matchesByGarment.size, 53);
+
+  const accessoryCounts = posts.map(
+    (post) =>
+      post.garments.filter((garment) => garment.category === 'accessory')
+        .length,
+  );
+  assert.ok(accessoryCounts.some((count) => count === 0));
+  assert.ok(accessoryCounts.some((count) => count > 0));
+  assert.ok(posts.every((post) => post.garments.length >= 3));
 
   const cityLayers = posts.find((post) => post.id === 'demo-post-city-layers');
   assert.ok(cityLayers);
@@ -73,7 +86,7 @@ try {
   assert.equal(projected.author.handle, 'mayamixes');
   assert.equal(projected.likeCount, 3);
   assert.equal(projected.commentCount, 2);
-  assert.equal(projected.garments.length, 2);
+  assert.equal(projected.garments.length, 4);
   assert.equal(projected.imageUrl, '/media/studio-maya-city-layers.jpg');
   assert.equal(projected.garments[0].imageUrl, '/media/maya-black-blazer.jpg');
   assert.match(projected.garments[0].buyUrl, /^https:\/\/www2\.hm\.com\/en_in\/productpage\./);
@@ -83,7 +96,7 @@ try {
   assert.ok(seededImage.bytes.length > 100_000);
 
   const persisted = JSON.parse(await readFile(process.env.DATA_FILE, 'utf8'));
-  assert.equal(persisted.demoFeedVersion, 4);
+  assert.equal(persisted.demoFeedVersion, 5);
   assert.equal(persisted.posts.length, 14);
 
   await store.loadStore();
@@ -117,7 +130,7 @@ try {
     2,
     Date.parse('2026-08-17T00:00:00.000Z'),
   );
-  assert.equal(migration.version, 4);
+  assert.equal(migration.version, 5);
   assert.equal(migrationDb.posts.size, 14);
   const migratedPost = migrationDb.posts.get('demo-post-city-layers');
   assert.deepEqual(migratedPost.likeUserIds, ['existing-viewer']);
