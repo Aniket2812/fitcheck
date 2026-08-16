@@ -48,6 +48,10 @@ Opening a post and tapping a hotspot enlarges the transparent garment cutout
 and exposes its original buying link. Likes and comments are persisted by the
 backend.
 
+The top-right avatar opens the signed-in creator profile. It includes editable
+name, handle, and bio fields, outfit/like/piece totals, and a grid of the
+creator's published looks.
+
 ## Native share targets
 
 - Android registers a `text/plain` `ACTION_SEND` target and handles both cold

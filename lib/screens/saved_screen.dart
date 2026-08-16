@@ -6,15 +6,28 @@ import '../models/closet_item.dart';
 import '../theme/app_theme.dart';
 
 class SavedScreen extends StatelessWidget {
-  const SavedScreen({super.key, required this.onSearch, this.items = const []});
+  const SavedScreen({
+    super.key,
+    required this.onSearch,
+    required this.onProfile,
+    this.profileName = 'YouCam Creator',
+    this.profileAvatarUrl,
+    this.items = const [],
+  });
 
   final VoidCallback onSearch;
+  final VoidCallback onProfile;
+  final String profileName;
+  final String? profileAvatarUrl;
   final List<ClosetItem> items;
 
   @override
   Widget build(BuildContext context) {
     return CompeteScreen(
       onSearch: onSearch,
+      onProfile: onProfile,
+      profileName: profileName,
+      profileAvatarUrl: profileAvatarUrl,
       child: items.isEmpty
           ? const Center(
               child: Padding(

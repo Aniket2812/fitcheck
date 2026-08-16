@@ -10,6 +10,9 @@ class ModelPhotosScreen extends StatefulWidget {
   const ModelPhotosScreen({
     super.key,
     required this.onSearch,
+    required this.onProfile,
+    this.profileName = 'YouCam Creator',
+    this.profileAvatarUrl,
     this.fetchPhotos = ModelPhotoService.fetchPhotos,
     this.uploadPhoto = ModelPhotoService.upload,
     this.deletePhoto = ModelPhotoService.delete,
@@ -17,6 +20,9 @@ class ModelPhotosScreen extends StatefulWidget {
   });
 
   final VoidCallback onSearch;
+  final VoidCallback onProfile;
+  final String profileName;
+  final String? profileAvatarUrl;
   final FetchModelPhotos fetchPhotos;
   final UploadModelPhoto uploadPhoto;
   final DeleteModelPhoto deletePhoto;
@@ -157,6 +163,9 @@ class _ModelPhotosScreenState extends State<ModelPhotosScreen> {
   Widget build(BuildContext context) {
     return CompeteScreen(
       onSearch: widget.onSearch,
+      onProfile: widget.onProfile,
+      profileName: widget.profileName,
+      profileAvatarUrl: widget.profileAvatarUrl,
       child: RefreshIndicator(
         onRefresh: _load,
         child: CustomScrollView(

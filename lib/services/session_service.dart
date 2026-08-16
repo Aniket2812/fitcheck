@@ -20,6 +20,12 @@ abstract final class SessionService {
 
   static AppSession? get current => _session;
 
+  static void replaceUser(SocialUser user) {
+    final session = _session;
+    if (session == null) return;
+    _session = AppSession(token: session.token, user: user);
+  }
+
   static Future<AppSession> ensureSession() async {
     if (_session != null) return _session!;
     final prefs = await SharedPreferences.getInstance();

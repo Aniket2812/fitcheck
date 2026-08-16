@@ -8,11 +8,15 @@ class CompeteScreen extends StatelessWidget {
     super.key,
     required this.onSearch,
     required this.child,
-    this.onProfile,
+    required this.onProfile,
+    this.profileName = 'YouCam Creator',
+    this.profileAvatarUrl,
   });
 
   final VoidCallback onSearch;
-  final VoidCallback? onProfile;
+  final VoidCallback onProfile;
+  final String profileName;
+  final String? profileAvatarUrl;
   final Widget child;
 
   @override
@@ -21,7 +25,12 @@ class CompeteScreen extends StatelessWidget {
       backgroundColor: AppColors.canvas,
       body: Column(
         children: [
-          CompeteHeader(onSearch: onSearch, onProfile: onProfile),
+          CompeteHeader(
+            onSearch: onSearch,
+            onProfile: onProfile,
+            profileName: profileName,
+            profileAvatarUrl: profileAvatarUrl,
+          ),
           Expanded(child: child),
         ],
       ),

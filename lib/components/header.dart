@@ -5,10 +5,18 @@ import 'avatar.dart';
 import 'logo.dart';
 
 class CompeteHeader extends StatelessWidget {
-  const CompeteHeader({super.key, required this.onSearch, this.onProfile});
+  const CompeteHeader({
+    super.key,
+    required this.onSearch,
+    required this.onProfile,
+    this.profileName = 'YouCam Creator',
+    this.profileAvatarUrl,
+  });
 
   final VoidCallback onSearch;
-  final VoidCallback? onProfile;
+  final VoidCallback onProfile;
+  final String profileName;
+  final String? profileAvatarUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +51,9 @@ class CompeteHeader extends StatelessWidget {
                 ),
                 IconButton(
                   key: const Key('profile-button'),
-                  onPressed: onProfile ?? () {},
+                  onPressed: onProfile,
                   tooltip: 'Profile',
-                  icon: const Avatar(),
+                  icon: Avatar(name: profileName, imageUrl: profileAvatarUrl),
                   style: const ButtonStyle(
                     fixedSize: WidgetStatePropertyAll(
                       Size.square(AppSizes.hitTarget),

@@ -13,11 +13,17 @@ class FeedScreen extends StatefulWidget {
   const FeedScreen({
     super.key,
     required this.onSearch,
+    required this.onProfile,
     required this.fetchPosts,
+    this.profileName = 'YouCam Creator',
+    this.profileAvatarUrl,
   });
 
   final VoidCallback onSearch;
+  final VoidCallback onProfile;
   final FetchPosts fetchPosts;
+  final String profileName;
+  final String? profileAvatarUrl;
 
   @override
   State<FeedScreen> createState() => _FeedScreenState();
@@ -81,6 +87,9 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) => CompeteScreen(
     onSearch: widget.onSearch,
+    onProfile: widget.onProfile,
+    profileName: widget.profileName,
+    profileAvatarUrl: widget.profileAvatarUrl,
     child: _loading
         ? const Center(child: CircularProgressIndicator())
         : _error != null

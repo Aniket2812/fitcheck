@@ -6,6 +6,7 @@ import 'package:youcam2/components/outfit_post_image.dart';
 import 'package:youcam2/models/closet_item.dart';
 import 'package:youcam2/models/model_photo.dart';
 import 'package:youcam2/models/social_post.dart';
+import 'package:youcam2/models/user_profile.dart';
 import 'package:youcam2/services/share_intent_service.dart';
 
 Future<List<SocialPost>> emptyFeed() async => const [];
@@ -199,6 +200,80 @@ void main() {
     expect(find.text('My full-body photos'), findsOneWidget);
     expect(find.text('Front pose'), findsOneWidget);
     expect(find.text('Default'), findsOneWidget);
+  });
+
+  testWidgets('profile button opens themed profile and saves edits', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    var profile = UserProfile(
+      id: 'creator-1',
+      name: 'YouCam Creator',
+      handle: 'youcam_creator',
+      bio: 'Everyday fits, virtually styled.',
+      createdAt: DateTime(2026),
+    );
+    Future<UserProfile> fetchProfile() async => profile;
+    Future<UserProfile> updateProfile({
+      required String name,
+      required String handle,
+      required String bio,
+    }) async {
+      profile = UserProfile(
+        id: profile.id,
+        name: name,
+        handle: handle,
+        bio: bio,
+        createdAt: profile.createdAt,
+      );
+      return profile;
+    }
+
+    await tester.pumpWidget(
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: emptyFeed,
+        fetchModelPhotos: emptyModelPhotos,
+        checkYouCamConfigured: youCamOff,
+        fetchProfile: fetchProfile,
+        updateProfile: updateProfile,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('profile-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('profile-screen')), findsOneWidget);
+    expect(find.text('YouCam Creator'), findsOneWidget);
+    expect(find.text('@youcam_creator'), findsOneWidget);
+    expect(find.text('Everyday fits, virtually styled.'), findsOneWidget);
+    expect(find.text('Your outfit story starts here.'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('profile-edit-button')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const Key('profile-name-field')),
+      'Aniket Styles',
+    );
+    await tester.enterText(
+      find.byKey(const Key('profile-handle-field')),
+      'aniket_styles',
+    );
+    await tester.enterText(
+      find.byKey(const Key('profile-bio-field')),
+      'Building tomorrow’s closet.',
+    );
+    await tester.tap(find.byKey(const Key('profile-save-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Aniket Styles'), findsOneWidget);
+    expect(find.text('@aniket_styles'), findsOneWidget);
+    expect(find.text('Building tomorrow’s closet.'), findsOneWidget);
   });
 
   testWidgets('linked product automatically generates a YouCam preview', (
