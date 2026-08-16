@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/avatar.dart';
+import '../components/editorial_photo_frame.dart';
 import '../models/social_post.dart';
 import '../models/user_profile.dart';
 import '../services/profile_service.dart';
@@ -310,8 +311,12 @@ class _ProfilePost extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,
     borderRadius: BorderRadius.circular(AppRadii.medium),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadii.medium),
+    child: EditorialPhotoFrame(
+      key: Key('editorial-frame-${post.id}'),
+      aspectRatio: 0.8,
+      inset: 6,
+      borderRadius: AppRadii.medium,
+      photoRadius: 9,
       child: Stack(
         fit: StackFit.expand,
         children: [

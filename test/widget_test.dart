@@ -607,6 +607,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(
+      find.byKey(const Key('editorial-frame-post-try-on')),
+      findsOneWidget,
+    );
     await tester.tap(find.byKey(const Key('try-on-post-post-try-on')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('try-on-yourself-screen')), findsOneWidget);

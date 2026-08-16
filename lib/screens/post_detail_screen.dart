@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../components/editorial_photo_frame.dart';
 import '../components/outfit_post_image.dart';
 import '../models/social_post.dart';
 import '../services/social_service.dart';
@@ -69,7 +70,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         Expanded(
           child: ListView(
             children: [
-              OutfitPostImage(post: _post),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                child: EditorialPhotoFrame(
+                  key: Key('editorial-frame-${_post.id}'),
+                  aspectRatio: 0.77,
+                  inset: 11,
+                  borderRadius: 22,
+                  photoRadius: 14,
+                  label: 'COMPETE  /  OUTFIT EDIT',
+                  child: OutfitPostImage(post: _post),
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
                 child: Row(

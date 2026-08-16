@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../components/editorial_photo_frame.dart';
 import '../components/screen.dart';
 import '../models/social_post.dart';
 import '../services/model_photo_service.dart';
@@ -337,8 +338,12 @@ class _DiscoveryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AspectRatio(
+          EditorialPhotoFrame(
+            key: Key('editorial-frame-${post.id}'),
             aspectRatio: imageRatio,
+            inset: 6,
+            borderRadius: 18,
+            photoRadius: 13,
             child: Stack(
               fit: StackFit.expand,
               children: [
