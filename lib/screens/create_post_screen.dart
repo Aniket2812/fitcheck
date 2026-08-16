@@ -826,65 +826,97 @@ class _CollectionPicker extends StatelessWidget {
         ),
       );
     }
+    final populated = collections
+        .where((collection) => collection.items.isNotEmpty)
+        .toList();
+    final empty = collections
+        .where((collection) => collection.items.isEmpty)
+        .toList();
     return Column(
-      children: collections
-          .map(
-            (collection) => Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.x3),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          collection.name,
-                          style: const TextStyle(fontWeight: FontWeight.w600),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (empty.isNotEmpty) ...[
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.x3),
+            decoration: BoxDecoration(
+              color: AppColors.sunken,
+              borderRadius: BorderRadius.circular(AppRadii.medium),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Ready for your first product',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: AppSpacing.x2),
+                Wrap(
+                  spacing: AppSpacing.x2,
+                  runSpacing: AppSpacing.x1,
+                  children: empty
+                      .map(
+                        (collection) => Chip(
+                          key: Key('empty-collection-${collection.id}'),
+                          avatar: const Icon(Icons.folder_outlined, size: 16),
+                          label: Text(collection.name),
                         ),
-                      ),
-                      Text(
-                        '${collection.items.length}',
-                        style: const TextStyle(color: AppColors.textMuted),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.x2),
-                  if (collection.items.isEmpty)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(AppSpacing.x3),
-                      decoration: BoxDecoration(
-                        color: AppColors.sunken,
-                        borderRadius: BorderRadius.circular(AppRadii.medium),
-                      ),
-                      child: const Text(
-                        'No products yet — use Add product link above.',
-                        style: TextStyle(color: AppColors.textSecondary),
-                      ),
-                    )
-                  else
-                    SizedBox(
-                      height: 152,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: collection.items.length,
-                        separatorBuilder: (_, _) => const SizedBox(width: 10),
-                        itemBuilder: (context, index) {
-                          final item = collection.items[index];
-                          final selected = selectedIds.contains(item.id);
-                          return _SelectableItem(
-                            item: item,
-                            selected: selected,
-                            onTap: () => onToggle(item),
-                          );
-                        },
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: AppSpacing.x1),
+                const Text(
+                  'Tap Add product link and choose where to save it.',
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.x3),
+        ],
+        ...populated.map(
+          (collection) => Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.x3),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        collection.name,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
-                ],
-              ),
+                    Text(
+                      '${collection.items.length}',
+                      style: const TextStyle(color: AppColors.textMuted),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.x2),
+                SizedBox(
+                  height: 152,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: collection.items.length,
+                    separatorBuilder: (_, _) => const SizedBox(width: 10),
+                    itemBuilder: (context, index) {
+                      final item = collection.items[index];
+                      final selected = selectedIds.contains(item.id);
+                      return _SelectableItem(
+                        item: item,
+                        selected: selected,
+                        onTap: () => onToggle(item),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          )
-          .toList(),
+          ),
+        ),
+      ],
     );
   }
 }
