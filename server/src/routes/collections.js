@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 
+import { saveDataImage } from '../media.js';
 import {
   addCollectionItem,
   CollectionError,
@@ -38,6 +39,10 @@ collections.post('/', async (c) => {
 collections.post('/:collectionId/items', async (c) => {
   try {
     const body = await c.req.json();
+    const image = String(body?.imageUrl || body?.image || '');
+    if (image.startsWith('data:image/')) {
+      body.imageUrl = await saveDataImage(image, 'collection');
+    }
     const result = await addCollectionItem(
       c.get('user').id,
       c.req.param('collectionId'),

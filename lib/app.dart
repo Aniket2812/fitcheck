@@ -7,15 +7,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'components/floating_nav.dart';
 import 'models/closet_item.dart';
+import 'models/fashion_collection.dart';
 import 'models/social_post.dart';
 import 'models/user_profile.dart';
 import 'screens/create_post_screen.dart';
+import 'screens/collections_screen.dart';
 import 'screens/feed_screen.dart';
 import 'screens/model_photos_screen.dart';
 import 'screens/profile_screen.dart';
-import 'screens/saved_screen.dart';
+import 'screens/save_shared_product_screen.dart';
 import 'screens/search_screen.dart';
 import 'services/ingest_service.dart';
+import 'services/collection_service.dart';
 import 'services/model_photo_service.dart';
 import 'services/profile_service.dart';
 import 'services/share_intent_service.dart';
@@ -34,6 +37,10 @@ class CompeteApp extends StatefulWidget {
     this.generateYouCamLook,
     this.fetchProfile,
     this.updateProfile,
+    this.fetchCollections,
+    this.createCollection,
+    this.saveCollectionItem,
+    this.deleteCollectionItem,
   });
 
   final IngestLink? ingestLink;
@@ -45,6 +52,10 @@ class CompeteApp extends StatefulWidget {
   final GenerateYouCamLook? generateYouCamLook;
   final FetchProfile? fetchProfile;
   final UpdateProfile? updateProfile;
+  final FetchCollections? fetchCollections;
+  final CreateFashionCollection? createCollection;
+  final SaveCollectionItem? saveCollectionItem;
+  final DeleteCollectionItem? deleteCollectionItem;
 
   @override
   State<CompeteApp> createState() => _CompeteAppState();
@@ -57,6 +68,7 @@ class _CompeteAppState extends State<CompeteApp> {
   AppTab _activeTab = AppTab.feed;
   bool _searchOpen = false;
   int _feedVersion = 0;
+  int _collectionsVersion = 0;
   List<ClosetItem> _items = const [];
   StreamSubscription<String>? _shareSubscription;
   late final ShareIntentReceiver _shareIntentReceiver;
@@ -104,9 +116,33 @@ class _CompeteAppState extends State<CompeteApp> {
     if (_composerOpen || !mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || _composerOpen) return;
-      _openCreatePost(initialProductUrl: productUrl);
+      _openSharedProductCollection(productUrl);
       _shareIntentReceiver.reset().catchError((_) {});
     });
+  }
+
+  Future<void> _openSharedProductCollection(String productUrl) async {
+    final context = _navigatorKey.currentContext;
+    if (context == null || _composerOpen) return;
+    _composerOpen = true;
+    final item = await Navigator.of(context).push<CollectionItem>(
+      MaterialPageRoute(
+        builder: (_) => SaveSharedProductScreen(
+          productUrl: productUrl,
+          fetchCollections:
+              widget.fetchCollections ?? CollectionService.fetchCollections,
+          ingestLink: widget.ingestLink ?? IngestService.ingest,
+          saveItem: widget.saveCollectionItem ?? CollectionService.addItem,
+        ),
+      ),
+    );
+    _composerOpen = false;
+    if (item != null && mounted) {
+      setState(() {
+        _activeTab = AppTab.collections;
+        _collectionsVersion += 1;
+      });
+    }
   }
 
   Future<void> _loadCloset() async {
@@ -236,12 +272,24 @@ class _CompeteAppState extends State<CompeteApp> {
                         widget.fetchModelPhotos ??
                         ModelPhotoService.fetchPhotos,
                   ),
-                  AppTab.saved => SavedScreen(
+                  AppTab.collections => CollectionsScreen(
+                    key: ValueKey(_collectionsVersion),
                     onSearch: () => setState(() => _searchOpen = true),
                     onProfile: _openProfile,
                     profileName: _profile?.name ?? 'YouCam Creator',
                     profileAvatarUrl: _profile?.avatarUrl,
-                    items: _items,
+                    fetchCollections:
+                        widget.fetchCollections ??
+                        CollectionService.fetchCollections,
+                    createCollection:
+                        widget.createCollection ??
+                        CollectionService.createCollection,
+                    saveItem:
+                        widget.saveCollectionItem ?? CollectionService.addItem,
+                    deleteItem:
+                        widget.deleteCollectionItem ??
+                        CollectionService.deleteItem,
+                    ingestLink: widget.ingestLink ?? IngestService.ingest,
                   ),
                 },
                 FloatingNav(

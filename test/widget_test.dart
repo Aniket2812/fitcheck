@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:youcam2/app.dart';
 import 'package:youcam2/components/outfit_post_image.dart';
 import 'package:youcam2/models/closet_item.dart';
+import 'package:youcam2/models/fashion_collection.dart';
 import 'package:youcam2/models/model_photo.dart';
 import 'package:youcam2/models/social_post.dart';
 import 'package:youcam2/models/user_profile.dart';
@@ -11,6 +12,7 @@ import 'package:youcam2/services/share_intent_service.dart';
 
 Future<List<SocialPost>> emptyFeed() async => const [];
 Future<List<ModelPhoto>> emptyModelPhotos() async => const [];
+Future<List<FashionCollection>> emptyCollections() async => const [];
 Future<bool> youCamOff() async => false;
 
 class FakeShareIntentReceiver implements ShareIntentReceiver {
@@ -37,6 +39,7 @@ void main() {
         persistCloset: false,
         fetchPosts: emptyFeed,
         fetchModelPhotos: emptyModelPhotos,
+        fetchCollections: emptyCollections,
         checkYouCamConfigured: youCamOff,
         shareIntentReceiver: FakeShareIntentReceiver(),
       ),
@@ -46,9 +49,9 @@ void main() {
     expect(find.text('COMPETE'), findsOneWidget);
     expect(find.text('No outfits yet'), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('saved-tab')));
-    await tester.pump();
-    expect(find.text('Nothing saved'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('collections-tab')));
+    await tester.pumpAndSettle();
+    expect(find.text('Collections'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('search-button')));
     await tester.pump();
@@ -64,8 +67,8 @@ void main() {
     expect(find.text('Search Compete'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('close-search-button')));
-    await tester.pump();
-    expect(find.text('Nothing saved'), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.text('Collections'), findsOneWidget);
   });
 
   testWidgets('plus button opens the post composer and tags a product', (
@@ -129,10 +132,18 @@ void main() {
     );
   });
 
-  testWidgets('shared fashion link opens a prefilled post composer', (
+  testWidgets('shared fashion link asks which collection should receive it', (
     WidgetTester tester,
   ) async {
     String? ingestedUrl;
+    String? savedCollectionId;
+    final shirts = FashionCollection(
+      id: 'shirts',
+      name: 'Shirts & Tops',
+      kind: 'shirt',
+      isDefault: true,
+      items: const [],
+    );
     Future<ClosetItem> fakeIngest(String url) async {
       ingestedUrl = url;
       return ClosetItem(
@@ -144,11 +155,28 @@ void main() {
       );
     }
 
+    Future<CollectionItem> fakeSave(
+      String collectionId,
+      ClosetItem item,
+    ) async {
+      savedCollectionId = collectionId;
+      return CollectionItem(
+        id: item.id,
+        collectionId: collectionId,
+        title: item.title,
+        imageUrl: item.image,
+        buyUrl: item.pageUrl!,
+        category: item.category ?? 'upper_body',
+      );
+    }
+
     await tester.pumpWidget(
       CompeteApp(
         ingestLink: fakeIngest,
         fetchPosts: emptyFeed,
         fetchModelPhotos: emptyModelPhotos,
+        fetchCollections: () async => [shirts],
+        saveCollectionItem: fakeSave,
         checkYouCamConfigured: youCamOff,
         persistCloset: false,
         shareIntentReceiver: FakeShareIntentReceiver(
@@ -158,8 +186,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Post shared item'), findsOneWidget);
+    expect(find.text('Choose a collection'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('share-collection-shirts')));
+    await tester.pumpAndSettle();
     expect(ingestedUrl, 'https://www.myntra.com/shared-top/buy');
+    expect(savedCollectionId, 'shirts');
+    expect(find.text('Collections'), findsOneWidget);
   });
 
   test('shared text extracts the first clean web link', () {
