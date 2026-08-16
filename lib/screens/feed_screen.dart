@@ -313,9 +313,9 @@ class _DiscoveryCard extends StatelessWidget {
   final VoidCallback onLike;
   final VoidCallback onTryOn;
 
-  static const _ratios = [0.74, 0.9, 0.68, 0.82, 1.02, 0.77];
-
-  static double ratioFor(int index) => _ratios[index % _ratios.length];
+  // Every post uses the same catalog crop. Card copy can still create the
+  // staggered Pinterest rhythm without cropping different people differently.
+  static double ratioFor(int index) => 4 / 5;
 
   String get _categoryLabel {
     final category = post.garments.firstOrNull?.category;

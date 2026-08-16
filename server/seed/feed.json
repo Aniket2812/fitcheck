@@ -1,0 +1,464 @@
+{
+  "version": 4,
+  "users": [
+    {
+      "id": "demo-user-maya",
+      "name": "Maya Kapoor",
+      "handle": "mayamixes",
+      "bio": "High-low layers and coffee runs.",
+      "avatarUrl": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=240&h=240&q=85",
+      "ageDays": 120
+    },
+    {
+      "id": "demo-user-arjun",
+      "name": "Arjun Mehta",
+      "handle": "arjunwears",
+      "bio": "Quiet colours, loud sneakers.",
+      "avatarUrl": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=240&h=240&q=85",
+      "ageDays": 95
+    },
+    {
+      "id": "demo-user-zoya",
+      "name": "Zoya Shah",
+      "handle": "zoyastyledit",
+      "bio": "Vintage silhouettes with a modern mood.",
+      "avatarUrl": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=240&h=240&q=85",
+      "ageDays": 72
+    },
+    {
+      "id": "demo-user-kabir",
+      "name": "Kabir Rao",
+      "handle": "kabirafterdark",
+      "bio": "Fits for galleries, gigs, and everywhere after.",
+      "avatarUrl": "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=240&h=240&q=85",
+      "ageDays": 48
+    }
+  ],
+  "posts": [
+    {
+      "id": "demo-post-city-layers",
+      "userId": "demo-user-maya",
+      "caption": "Soft tailoring for a very unstructured Saturday. The red trainers won the vote.",
+      "imageUrl": "/media/studio-maya-city-layers.jpg",
+      "ageMinutes": 38,
+      "likeUserIds": ["demo-user-arjun", "demo-user-zoya", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-black-jacket",
+          "title": "Single-breasted black blazer",
+          "brand": "H&M",
+          "price": "₹2,459",
+          "imageUrl": "/media/maya-black-blazer.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www2.hm.com/en_in/productpage.1290869003.html",
+          "category": "upper_body",
+          "x": 0.53,
+          "y": 0.34
+        },
+        {
+          "id": "demo-garment-red-sneakers",
+          "title": "ST Runner V2 red sneakers",
+          "brand": "PUMA",
+          "price": null,
+          "imageUrl": "/media/maya-red-sneakers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://in.puma.com/in/en/pd/st-runner-v2-sneakers/365277?swatch=24",
+          "category": "shoes",
+          "x": 0.55,
+          "y": 0.92
+        }
+      ],
+      "comments": [
+        {
+          "id": "demo-comment-city-1",
+          "userId": "demo-user-zoya",
+          "text": "The proportions are perfect.",
+          "ageMinutes": 24
+        },
+        {
+          "id": "demo-comment-city-2",
+          "userId": "demo-user-kabir",
+          "text": "Red trainers were absolutely the move.",
+          "ageMinutes": 12
+        }
+      ]
+    },
+    {
+      "id": "demo-post-denim-day",
+      "userId": "demo-user-arjun",
+      "caption": "One good tee, broken-in denim, and nowhere urgent to be.",
+      "imageUrl": "/media/studio-arjun-denim-day.jpg",
+      "ageMinutes": 190,
+      "likeUserIds": ["demo-user-maya", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-white-tee",
+          "title": "Crew Neck Short Sleeve T-Shirt",
+          "brand": "Uniqlo U",
+          "price": "₹990",
+          "imageUrl": "/media/arjun-white-tee.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.uniqlo.com/in/en/products/E422992-000/02?colorDisplayCode=30",
+          "category": "upper_body",
+          "x": 0.53,
+          "y": 0.29
+        },
+        {
+          "id": "demo-garment-straight-jeans",
+          "title": "Men's 505 Blue Straight Fit Jeans",
+          "brand": "Levi's",
+          "price": "₹2,204",
+          "imageUrl": "/media/arjun-blue-jeans.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://levi.in/collections/men-straight-jeans/products/mens-505-blue-straight-fit-mid-rise-jeans-005rc0092",
+          "category": "lower_body",
+          "x": 0.53,
+          "y": 0.61
+        }
+      ],
+      "comments": [
+        {
+          "id": "demo-comment-denim-1",
+          "userId": "demo-user-maya",
+          "text": "This is making me reconsider every complicated outfit I own.",
+          "ageMinutes": 155
+        }
+      ]
+    },
+    {
+      "id": "demo-post-gallery-night",
+      "userId": "demo-user-zoya",
+      "caption": "Gallery opening uniform: a clean line, one great bag, zero fuss.",
+      "imageUrl": "/media/studio-zoya-gallery-night.jpg",
+      "ageMinutes": 510,
+      "likeUserIds": ["demo-user-maya", "demo-user-arjun", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-black-dress",
+          "title": "Black satin slip dress",
+          "brand": "H&M",
+          "price": "₹1,799",
+          "imageUrl": "/media/zoya-black-dress.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www2.hm.com/en_in/productpage.1235183001.html",
+          "category": "full_body",
+          "x": 0.49,
+          "y": 0.43
+        },
+        {
+          "id": "demo-garment-shoulder-bag",
+          "title": "Acelynn tan shoulder bag",
+          "brand": "Charles & Keith",
+          "price": "₹8,800",
+          "imageUrl": "/media/zoya-tan-bag.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.charleskeith.in/in/CK2-20701632_DS.TAN-IN.html",
+          "category": "accessory",
+          "x": 0.65,
+          "y": 0.41
+        }
+      ],
+      "comments": [
+        {
+          "id": "demo-comment-gallery-1",
+          "userId": "demo-user-arjun",
+          "text": "The bag ties the whole thing together.",
+          "ageMinutes": 430
+        }
+      ]
+    },
+    {
+      "id": "demo-post-coffee-run",
+      "userId": "demo-user-kabir",
+      "caption": "A light coat fixes almost every last-minute outfit decision.",
+      "imageUrl": "/media/studio-kabir-coffee-run.jpg",
+      "ageMinutes": 1320,
+      "likeUserIds": ["demo-user-maya", "demo-user-zoya"],
+      "garments": [
+        {
+          "id": "demo-garment-camel-coat",
+          "title": "Medium-brown wool overcoat",
+          "brand": "Mango Man",
+          "price": "₹15,490",
+          "imageUrl": "/media/kabir-camel-coat.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://shop.mango.com/in/en/p/men/coats/coats/wool-overcoat_17086720?c=09",
+          "category": "upper_body",
+          "x": 0.52,
+          "y": 0.37
+        },
+        {
+          "id": "demo-garment-market-tote",
+          "title": "Daylla dark-brown tote bag",
+          "brand": "Charles & Keith",
+          "price": "₹10,999",
+          "imageUrl": "/media/kabir-brown-tote.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.charleskeith.in/in/CK2-31200033_DK.BRW-IN.html",
+          "category": "accessory",
+          "x": 0.33,
+          "y": 0.68
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-sand-linen",
+      "userId": "demo-user-kabir",
+      "caption": "Linen, late light, and absolutely nowhere to rush to.",
+      "imageUrl": "/media/studio-rehan-sand-linen.jpg",
+      "ageMinutes": 16,
+      "likeUserIds": ["demo-user-maya", "demo-user-arjun", "demo-user-zoya"],
+      "garments": [
+        {
+          "id": "demo-garment-sand-linen-shirt",
+          "title": "Regular-fit sand linen shirt",
+          "brand": "Mango Man",
+          "price": "₹4,952",
+          "imageUrl": "/media/rehan-sand-shirt.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://shop.mango.com/in/en/p/men/shirts/linen/regular-fit-100-linen-shirt/27085939/07/00",
+          "category": "upper_body",
+          "x": 0.49,
+          "y": 0.35
+        }
+      ],
+      "comments": [
+        {
+          "id": "demo-comment-sand-linen-1",
+          "userId": "demo-user-maya",
+          "text": "This is exactly how summer tailoring should feel.",
+          "ageMinutes": 8
+        }
+      ]
+    },
+    {
+      "id": "demo-post-indigo-trucker",
+      "userId": "demo-user-zoya",
+      "caption": "Rainy platform, reliable denim, good boots.",
+      "imageUrl": "/media/studio-zoya-indigo-trucker.jpg",
+      "ageMinutes": 74,
+      "likeUserIds": ["demo-user-maya", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-indigo-trucker",
+          "title": "Regular Fit dark-blue denim jacket",
+          "brand": "H&M",
+          "price": "₹1,199",
+          "imageUrl": "/media/zoya-indigo-jacket.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www2.hm.com/en_in/productpage.1121152002.html",
+          "category": "upper_body",
+          "x": 0.5,
+          "y": 0.34
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-olive-cargos",
+      "userId": "demo-user-maya",
+      "caption": "Utility trousers, but make the whole day feel lighter.",
+      "imageUrl": "/media/studio-maya-olive-cargos.jpg",
+      "ageMinutes": 145,
+      "likeUserIds": ["demo-user-arjun", "demo-user-zoya", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-olive-cargos",
+          "title": "Olive linen-blend cargo trousers",
+          "brand": "H&M",
+          "price": "₹2,799",
+          "imageUrl": "/media/maya-olive-cargo-trousers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www2.hm.com/en_in/productpage.1351818001.html",
+          "category": "lower_body",
+          "x": 0.5,
+          "y": 0.63
+        }
+      ],
+      "comments": [
+        {
+          "id": "demo-comment-olive-cargos-1",
+          "userId": "demo-user-zoya",
+          "text": "The wide-leg shape is so good here.",
+          "ageMinutes": 96
+        }
+      ]
+    },
+    {
+      "id": "demo-post-black-sambas",
+      "userId": "demo-user-arjun",
+      "caption": "Built the whole fit from the gum sole up.",
+      "imageUrl": "/media/studio-arjun-black-sambas.jpg",
+      "ageMinutes": 275,
+      "likeUserIds": ["demo-user-maya", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-black-sambas",
+          "title": "Samba OG black gum-sole shoes",
+          "brand": "adidas",
+          "price": "₹10,999",
+          "imageUrl": "/media/arjun-black-sneakers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.adidas.co.in/samba-og-shoes/IE3438.html",
+          "category": "shoes",
+          "x": 0.5,
+          "y": 0.83
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-lobby-cream-bag",
+      "userId": "demo-user-zoya",
+      "caption": "Chocolate and cream is quietly becoming my favourite combination.",
+      "imageUrl": "/media/studio-zoya-lobby-cream-bag.jpg",
+      "ageMinutes": 420,
+      "likeUserIds": ["demo-user-maya", "demo-user-arjun", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-cream-shoulder-bag",
+          "title": "Augustine cream shoulder bag",
+          "brand": "Charles & Keith",
+          "price": "₹6,300",
+          "imageUrl": "/media/zoya-cream-shoulder-bag.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.charleskeith.in/in/CK2-20782683_CREAM-IN.html",
+          "category": "accessory",
+          "x": 0.43,
+          "y": 0.64
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-brown-leather",
+      "userId": "demo-user-maya",
+      "caption": "A soft brown layer for the first hint of cooler weather.",
+      "imageUrl": "/media/studio-maya-brown-leather.jpg",
+      "ageMinutes": 720,
+      "likeUserIds": ["demo-user-zoya", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-brown-leather-jacket",
+          "title": "Leather-effect jacket with pockets",
+          "brand": "Mango",
+          "price": "₹4,090",
+          "imageUrl": "/media/maya-brown-jacket.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://shop.mango.com/in/en/p/women/jackets/leather-effect/leather-effect-jacket-with-pockets_17137696",
+          "category": "upper_body",
+          "x": 0.5,
+          "y": 0.34
+        }
+      ],
+      "comments": [
+        {
+          "id": "demo-comment-brown-leather-1",
+          "userId": "demo-user-kabir",
+          "text": "That shade works perfectly with black denim.",
+          "ageMinutes": 630
+        }
+      ]
+    },
+    {
+      "id": "demo-post-pink-kicks",
+      "userId": "demo-user-zoya",
+      "caption": "A little fluorescent pink goes a surprisingly long way.",
+      "imageUrl": "/media/studio-zoya-pink-kicks.jpg",
+      "ageMinutes": 930,
+      "likeUserIds": ["demo-user-maya", "demo-user-arjun", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-pink-palermos",
+          "title": "Palermo white and fluorescent-pink sneakers",
+          "brand": "PUMA",
+          "price": "₹6,999",
+          "imageUrl": "/media/zoya-pink-sneakers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://in.puma.com/in/en/pd/palermo-leather-sneakers/402692?swatch=09",
+          "category": "shoes",
+          "x": 0.49,
+          "y": 0.9
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-book-market",
+      "userId": "demo-user-arjun",
+      "caption": "Found three paperbacks and the jeans I will wear all year.",
+      "imageUrl": "/media/studio-arjun-book-market.jpg",
+      "ageMinutes": 1560,
+      "likeUserIds": ["demo-user-maya", "demo-user-zoya"],
+      "garments": [
+        {
+          "id": "demo-garment-light-blue-501",
+          "title": "Light-blue Loose Straight Jeans",
+          "brand": "H&M",
+          "price": "₹2,699",
+          "imageUrl": "/media/arjun-light-blue-jeans.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www2.hm.com/en_in/productpage.1288186012.html",
+          "category": "lower_body",
+          "x": 0.5,
+          "y": 0.63
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-red-cardigan",
+      "userId": "demo-user-maya",
+      "caption": "Coffee first, colour immediately after.",
+      "imageUrl": "/media/studio-maya-red-cardigan.jpg",
+      "ageMinutes": 2280,
+      "likeUserIds": ["demo-user-arjun", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-red-cardigan",
+          "title": "Red short-sleeved collared cardigan",
+          "brand": "H&M",
+          "price": "₹899",
+          "imageUrl": "/media/maya-red-cardigan-product.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www2.hm.com/en_in/productpage.1305653001.html",
+          "category": "upper_body",
+          "x": 0.5,
+          "y": 0.33
+        }
+      ],
+      "comments": [
+        {
+          "id": "demo-comment-red-cardigan-1",
+          "userId": "demo-user-arjun",
+          "text": "The red with cream trousers is such a clean pairing.",
+          "ageMinutes": 2110
+        }
+      ]
+    },
+    {
+      "id": "demo-post-garden-party",
+      "userId": "demo-user-zoya",
+      "caption": "Golden hour understood the assignment.",
+      "imageUrl": "/media/studio-zoya-garden-party.jpg",
+      "ageMinutes": 3120,
+      "likeUserIds": ["demo-user-maya", "demo-user-arjun", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-yellow-printed-dress",
+          "title": "Pastel-yellow A-line printed dress",
+          "brand": "Mango",
+          "price": "₹6,999",
+          "imageUrl": "/media/zoya-yellow-dress.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://shop.mango.com/in/en/p/women/dresses-and-jumpsuits/dresses/a-line-printed-dress_37031465",
+          "category": "full_body",
+          "x": 0.5,
+          "y": 0.5
+        }
+      ],
+      "comments": []
+    }
+  ]
+}

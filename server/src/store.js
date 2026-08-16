@@ -3,6 +3,8 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { seedDemoFeed } from './demoFeed.js';
+
 /**
  * User + session storage, backed by a single JSON file.
  *
@@ -24,8 +26,13 @@ const SESSION_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
 // a disk write per call for no extra benefit.
 const SESSION_RENEW_AFTER_MS = SESSION_TTL_MS / 2;
 
-/** @type {{ users: Map<string, object>, sessions: Map<string, object>, posts: Map<string, object> }} */
-const db = { users: new Map(), sessions: new Map(), posts: new Map() };
+/** @type {{ users: Map<string, object>, sessions: Map<string, object>, posts: Map<string, object>, demoFeedVersion: number }} */
+const db = {
+  users: new Map(),
+  sessions: new Map(),
+  posts: new Map(),
+  demoFeedVersion: 0,
+};
 
 let writing = null;
 let writeAgain = false;
@@ -44,6 +51,7 @@ async function flush() {
         users: [...db.users.values()],
         sessions: [...db.sessions.values()],
         posts: [...db.posts.values()],
+        demoFeedVersion: db.demoFeedVersion,
       },
       null,
       2,
@@ -69,15 +77,14 @@ async function flush() {
 }
 
 export async function loadStore() {
-  let raw;
+  let parsed = {};
   try {
-    raw = await readFile(DATA_FILE, 'utf8');
+    parsed = JSON.parse(await readFile(DATA_FILE, 'utf8'));
   } catch (error) {
-    if (error.code === 'ENOENT') return; // first run
-    throw error;
+    if (error.code !== 'ENOENT') throw error;
+    // A first run starts from empty maps and is seeded below when enabled.
   }
 
-  const parsed = JSON.parse(raw);
   for (const user of parsed.users || []) {
     if (!Array.isArray(user.modelPhotos)) {
       user.modelPhotos = user.modelPhotoUrl
@@ -100,6 +107,13 @@ export async function loadStore() {
     if (Date.parse(session.expiresAt) > now) db.sessions.set(session.token, session);
   }
   for (const post of parsed.posts || []) db.posts.set(post.id, post);
+  db.demoFeedVersion = Number(parsed.demoFeedVersion || 0);
+
+  if (process.env.SEED_DEMO_DATA !== 'false') {
+    const seeded = await seedDemoFeed(db, db.demoFeedVersion, now);
+    db.demoFeedVersion = seeded.version;
+    if (seeded.changed) await flush();
+  }
 }
 
 // ─────────────────────────────────────────────────────────────

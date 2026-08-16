@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const MEDIA_DIR = process.env.MEDIA_DIR || join(HERE, '..', 'data', 'media');
+const SEED_MEDIA_DIR = join(HERE, '..', 'seed', 'media');
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
 const TYPES = {
@@ -53,13 +54,21 @@ export async function saveDataImage(dataUrl, prefix = 'garment') {
 
 export async function readMedia(name) {
   if (!/^[a-z0-9-]+\.(?:jpg|png|webp)$/i.test(name)) return null;
+  let bytes;
   try {
-    const bytes = await readFile(join(MEDIA_DIR, name));
-    const extension = extname(name).slice(1).toLowerCase();
-    const contentType = extension === 'jpg' ? 'image/jpeg' : `image/${extension}`;
-    return { bytes, contentType };
+    bytes = await readFile(join(MEDIA_DIR, name));
   } catch (error) {
-    if (error.code === 'ENOENT') return null;
-    throw error;
+    if (error.code !== 'ENOENT') throw error;
+    try {
+      // Demo imagery is committed separately from mutable uploads so a fresh
+      // checkout renders the complete feed without an external image host.
+      bytes = await readFile(join(SEED_MEDIA_DIR, name));
+    } catch (seedError) {
+      if (seedError.code === 'ENOENT') return null;
+      throw seedError;
+    }
   }
+  const extension = extname(name).slice(1).toLowerCase();
+  const contentType = extension === 'jpg' ? 'image/jpeg' : `image/${extension}`;
+  return { bytes, contentType };
 }

@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 
 const testDir = join(tmpdir(), `compete-social-${randomUUID()}`);
 process.env.DATA_FILE = join(testDir, 'social.json');
+process.env.SEED_DEMO_DATA = 'false';
 
 const store = await import('../src/store.js');
 

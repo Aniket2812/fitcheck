@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "matches": [
+    {
+      "postId": "demo-post-city-layers",
+      "garmentId": "demo-garment-black-jacket",
+      "postImage": "/media/studio-maya-city-layers.jpg",
+      "productImage": "/media/maya-black-blazer.jpg",
+      "colour": "black",
+      "product": "single-breasted blazer"
+    },
+    {
+      "postId": "demo-post-city-layers",
+      "garmentId": "demo-garment-red-sneakers",
+      "postImage": "/media/studio-maya-city-layers.jpg",
+      "productImage": "/media/maya-red-sneakers.jpg",
+      "colour": "red",
+      "product": "low-top sneakers"
+    },
+    {
+      "postId": "demo-post-denim-day",
+      "garmentId": "demo-garment-white-tee",
+      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "productImage": "/media/arjun-white-tee.jpg",
+      "colour": "white",
+      "product": "crew-neck short-sleeve T-shirt"
+    },
+    {
+      "postId": "demo-post-denim-day",
+      "garmentId": "demo-garment-straight-jeans",
+      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "productImage": "/media/arjun-blue-jeans.jpg",
+      "colour": "medium blue",
+      "product": "straight-fit jeans"
+    },
+    {
+      "postId": "demo-post-gallery-night",
+      "garmentId": "demo-garment-black-dress",
+      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "productImage": "/media/zoya-black-dress.jpg",
+      "colour": "black",
+      "product": "satin midi slip dress"
+    },
+    {
+      "postId": "demo-post-gallery-night",
+      "garmentId": "demo-garment-shoulder-bag",
+      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "productImage": "/media/zoya-tan-bag.jpg",
+      "colour": "tan",
+      "product": "structured flap shoulder bag"
+    },
+    {
+      "postId": "demo-post-coffee-run",
+      "garmentId": "demo-garment-camel-coat",
+      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "productImage": "/media/kabir-camel-coat.jpg",
+      "colour": "camel brown",
+      "product": "single-breasted wool overcoat"
+    },
+    {
+      "postId": "demo-post-coffee-run",
+      "garmentId": "demo-garment-market-tote",
+      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "productImage": "/media/kabir-brown-tote.jpg",
+      "colour": "dark brown",
+      "product": "structured double-handle tote"
+    },
+    {
+      "postId": "demo-post-sand-linen",
+      "garmentId": "demo-garment-sand-linen-shirt",
+      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "productImage": "/media/rehan-sand-shirt.jpg",
+      "colour": "sand",
+      "product": "regular-fit linen shirt"
+    },
+    {
+      "postId": "demo-post-indigo-trucker",
+      "garmentId": "demo-garment-indigo-trucker",
+      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "productImage": "/media/zoya-indigo-jacket.jpg",
+      "colour": "dark indigo blue",
+      "product": "regular-fit denim trucker jacket"
+    },
+    {
+      "postId": "demo-post-olive-cargos",
+      "garmentId": "demo-garment-olive-cargos",
+      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "productImage": "/media/maya-olive-cargo-trousers.jpg",
+      "colour": "olive green",
+      "product": "wide-leg cargo trousers"
+    },
+    {
+      "postId": "demo-post-black-sambas",
+      "garmentId": "demo-garment-black-sambas",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-black-sneakers.jpg",
+      "colour": "black with gum sole",
+      "product": "low-profile terrace sneakers"
+    },
+    {
+      "postId": "demo-post-lobby-cream-bag",
+      "garmentId": "demo-garment-cream-shoulder-bag",
+      "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
+      "productImage": "/media/zoya-cream-shoulder-bag.jpg",
+      "colour": "cream",
+      "product": "curved rectangular shoulder bag"
+    },
+    {
+      "postId": "demo-post-brown-leather",
+      "garmentId": "demo-garment-brown-leather-jacket",
+      "postImage": "/media/studio-maya-brown-leather.jpg",
+      "productImage": "/media/maya-brown-jacket.jpg",
+      "colour": "pastel brown",
+      "product": "leather-effect shirt jacket"
+    },
+    {
+      "postId": "demo-post-pink-kicks",
+      "garmentId": "demo-garment-pink-palermos",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-pink-sneakers.jpg",
+      "colour": "white and fluorescent pink",
+      "product": "low-profile terrace sneakers"
+    },
+    {
+      "postId": "demo-post-book-market",
+      "garmentId": "demo-garment-light-blue-501",
+      "postImage": "/media/studio-arjun-book-market.jpg",
+      "productImage": "/media/arjun-light-blue-jeans.jpg",
+      "colour": "light blue",
+      "product": "loose straight jeans"
+    },
+    {
+      "postId": "demo-post-red-cardigan",
+      "garmentId": "demo-garment-red-cardigan",
+      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "productImage": "/media/maya-red-cardigan-product.jpg",
+      "colour": "bright red",
+      "product": "short-sleeved collared cardigan"
+    },
+    {
+      "postId": "demo-post-garden-party",
+      "garmentId": "demo-garment-yellow-printed-dress",
+      "postImage": "/media/studio-zoya-garden-party.jpg",
+      "productImage": "/media/zoya-yellow-dress.jpg",
+      "colour": "pastel yellow with multicoloured botanical print",
+      "product": "long sleeveless A-line dress"
+    }
+  ]
+}
