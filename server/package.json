@@ -1,0 +1,18 @@
+{
+  "name": "fitterest-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env src/index.js",
+    "start": "node --env-file=.env src/index.js",
+    "coverage": "node --env-file=.env test/coverage.js",
+    "test:social": "node test/social.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "hono": "^4.6.14",
+    "cheerio": "^1.0.0",
+    "openai": "^4.77.0"
+  }
+}
