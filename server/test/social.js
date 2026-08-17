@@ -20,6 +20,12 @@ try {
   });
   const session = await store.createSession(user.id);
   assert.equal(store.userForToken(session.token)?.id, user.id);
+  const viewer = await store.upsertGoogleUser({
+    googleId: 'social-viewer',
+    email: 'viewer@example.com',
+    name: 'Feed Viewer',
+    picture: null,
+  });
 
   const created = await store.createPost(user.id, {
     caption: 'Weekend layers',
@@ -32,10 +38,26 @@ try {
         x: 0.51,
         y: 0.34,
       },
+      {
+        title: 'White sneakers',
+        imageUrl: '/media/shoes-test.webp',
+        buyUrl: 'https://shop.example.com/white-sneakers',
+        x: 0.5,
+        y: 0.87,
+      },
     ],
   });
   assert.equal(store.listPosts().length, 1);
-  assert.equal(store.publicPost(created, user.id).garments.length, 1);
+  assert.equal(store.publicPost(created, user.id).garments.length, 2);
+
+  const viewerPost = store.publicPost(created, viewer.id);
+  assert.deepEqual(
+    viewerPost.garments.map((garment) => garment.buyUrl),
+    [
+      'https://example.com/jacket',
+      'https://shop.example.com/white-sneakers',
+    ],
+  );
 
   const liked = await store.togglePostLike(created.id, user.id);
   assert.equal(liked.liked, true);

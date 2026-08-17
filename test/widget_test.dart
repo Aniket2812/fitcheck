@@ -177,6 +177,86 @@ void main() {
     expect(filterText('tops').style?.color, AppColors.textOnAccent);
   });
 
+  testWidgets('another feed viewer can shop every posted collection item', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    const pixel =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==';
+    final post = SocialPost(
+      id: 'shared-shop-post',
+      caption: 'Everything linked',
+      imageUrl: 'https://example.com/look.jpg',
+      garments: const [
+        PostGarment(
+          id: 'shared-shirt',
+          title: 'Blue shirt',
+          imageUrl: pixel,
+          buyUrl: 'https://www.myntra.com/blue-shirt',
+          category: 'upper_body',
+          x: 0.5,
+          y: 0.3,
+        ),
+        PostGarment(
+          id: 'shared-shoes',
+          title: 'White shoes',
+          imageUrl: pixel,
+          buyUrl: 'https://www.ajio.com/white-shoes',
+          category: 'shoes',
+          x: 0.5,
+          y: 0.87,
+        ),
+      ],
+      author: const SocialUser(
+        id: 'another-creator',
+        name: 'Another Creator',
+        handle: 'anothercreator',
+      ),
+      likeCount: 0,
+      likedByMe: false,
+      comments: const [],
+      createdAt: DateTime(2026),
+    );
+
+    await tester.pumpWidget(
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: () async => [post],
+        fetchModelPhotos: emptyModelPhotos,
+        fetchCollections: emptyCollections,
+        checkYouCamConfigured: youCamOff,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('SHOP 2'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('shop-post-shared-shop-post')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Every piece in this fit'), findsOneWidget);
+    expect(
+      find.byKey(const Key('shop-piece-shared-shop-post-shared-shirt')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('shop-piece-shared-shop-post-shared-shoes')),
+      findsOneWidget,
+    );
+    expect(find.textContaining('myntra.com'), findsOneWidget);
+    expect(find.textContaining('ajio.com'), findsOneWidget);
+
+    await tester.tap(
+      find.byKey(const Key('shop-piece-shared-shop-post-shared-shirt')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('View product'), findsOneWidget);
+  });
+
   testWidgets('plus button builds outfits only from saved collections', (
     WidgetTester tester,
   ) async {

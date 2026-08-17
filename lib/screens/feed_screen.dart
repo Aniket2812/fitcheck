@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../components/editorial_photo_frame.dart';
 import '../components/screen.dart';
+import '../components/shoppable_pieces.dart';
 import '../models/social_post.dart';
 import '../services/model_photo_service.dart';
 import '../services/social_service.dart';
@@ -481,18 +482,39 @@ class _DiscoveryCard extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      const Icon(
-                        Icons.sell_outlined,
-                        color: Colors.white,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        '${post.garments.length}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          key: Key('shop-post-${post.id}'),
+                          onTap: () =>
+                              showShoppablePiecesSheet(context, post: post),
+                          borderRadius: BorderRadius.circular(14),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 5,
+                              vertical: 4,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.shopping_bag_outlined,
+                                  color: Colors.white,
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 3),
+                                Text(
+                                  'SHOP ${post.garments.length}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ],

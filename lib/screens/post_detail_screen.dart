@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../components/editorial_photo_frame.dart';
 import '../components/outfit_post_image.dart';
+import '../components/shoppable_pieces.dart';
 import '../models/social_post.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
@@ -119,6 +120,41 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         TextSpan(text: _post.caption),
                       ],
                     ),
+                  ),
+                ),
+              if (_post.garments.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              'Shop every piece',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '${_post.garments.length} ${_post.garments.length == 1 ? 'item' : 'items'}',
+                            style: const TextStyle(
+                              color: AppColors.textMuted,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.x2),
+                      ShoppablePiecesList(
+                        post: _post,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                      ),
+                    ],
                   ),
                 ),
               const Divider(height: 1),

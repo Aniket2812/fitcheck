@@ -10,6 +10,9 @@ Future<void> showGarmentProductDialog(
   required String postId,
   required PostGarment garment,
 }) {
+  final retailerHost = Uri.tryParse(
+    garment.buyUrl,
+  )?.host.replaceFirst(RegExp(r'^www\.'), '');
   return showGeneralDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -62,9 +65,25 @@ Future<void> showGarmentProductDialog(
                     ),
                     if (garment.brand != null) ...[
                       const SizedBox(height: AppSpacing.x1),
-                      Text(
-                        garment.brand!,
-                        style: const TextStyle(color: AppColors.textSecondary),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.verified_outlined,
+                            size: 17,
+                            color: AppColors.textSecondary,
+                          ),
+                          const SizedBox(width: AppSpacing.x1),
+                          Expanded(
+                            child: Text(
+                              retailerHost == null
+                                  ? garment.brand!
+                                  : '${garment.brand!} · $retailerHost',
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                     if (garment.price != null) ...[
@@ -100,8 +119,18 @@ Future<void> showGarmentProductDialog(
                             }
                           }
                         },
-                        icon: const Icon(Icons.shopping_bag_outlined),
+                        icon: const Icon(Icons.open_in_new),
                         label: const Text('View product'),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.x2),
+                    const Center(
+                      child: Text(
+                        'Opens the retailer’s product page',
+                        style: TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
