@@ -110,9 +110,7 @@ async function cacheProductGallery(product, primaryImage, primaryBuffer) {
   );
   stored.push(...extras.filter(Boolean));
 
-  const gallery = [...new Set(stored.length ? stored : [product.imageUrl])].slice(0, 5);
-  while (gallery.length < 4) gallery.push(gallery.at(-1));
-  return gallery;
+  return [...new Set(stored.length ? stored : [product.imageUrl])].slice(0, 5);
 }
 
 function inferFashionCategory(...values) {

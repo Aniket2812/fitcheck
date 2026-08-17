@@ -430,9 +430,9 @@ function cleanGarment(garment, index) {
   )
     .map((value) => String(value || '').trim())
     .filter(Boolean)
+    .filter((value, position, values) => values.indexOf(value) === position)
     .slice(0, 5);
   if (!gallery.length) gallery.push(imageUrl);
-  while (gallery.length < 4) gallery.push(gallery.at(-1));
 
   return {
     id: garment.id || randomUUID(),

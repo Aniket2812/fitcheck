@@ -59,12 +59,12 @@ export async function seedDemoFeed(db, currentVersion = 0, now = Date.now()) {
       imageUrl: post.imageUrl,
       garments: post.garments.map((garment) => ({
         ...garment,
-        // Seed imagery is already a clean, product-only studio packshot. Four
-        // gallery frames let the client present a full view plus detail views
-        // without ever falling back to a crop of the person wearing the look.
+        // Seed imagery is a product reference tied to the retailer link. Keep
+        // one honest frame when that is all we have—never synthesize gallery
+        // angles by cropping or repeating the model/product image.
         productImageUrls: Array.isArray(garment.productImageUrls)
-          ? garment.productImageUrls.slice(0, 5)
-          : Array(4).fill(garment.imageUrl),
+          ? [...new Set(garment.productImageUrls)].slice(0, 5)
+          : [garment.imageUrl],
       })),
       likeUserIds: existing?.likeUserIds || post.likeUserIds || [],
       comments,

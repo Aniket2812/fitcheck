@@ -1116,7 +1116,7 @@ void main() {
     },
   );
 
-  testWidgets('garment hotspot opens the enlarged shoppable product', (
+  testWidgets('garment hotspot shows only genuine product gallery images', (
     WidgetTester tester,
   ) async {
     final post = SocialPost(
@@ -1130,6 +1130,11 @@ void main() {
           brand: 'Compete',
           imageUrl:
               'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+          originalImageUrl: 'https://example.com/model-crop.jpg',
+          productImageUrls: [
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+          ],
           buyUrl: 'https://example.com/jacket',
           x: 0.5,
           y: 0.5,
@@ -1161,13 +1166,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Test jacket'), findsOneWidget);
     expect(find.text('Compete · example.com'), findsOneWidget);
-    expect(find.text('4 product views'), findsOneWidget);
+    expect(find.text('1 retailer product image'), findsOneWidget);
     expect(find.byKey(const Key('product-gallery-page-view')), findsOneWidget);
     expect(find.byKey(const Key('product-gallery-image-0')), findsOneWidget);
-    expect(
-      find.byKey(const Key('product-gallery-thumbnail-3')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const Key('product-gallery-image-1')), findsNothing);
+    expect(find.byKey(const Key('product-gallery-thumbnails')), findsNothing);
     expect(find.text('Shop this exact piece'), findsOneWidget);
   });
 

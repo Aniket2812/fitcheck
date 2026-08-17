@@ -69,7 +69,10 @@ try {
     '/media/jacket-side.webp',
     '/media/jacket-detail.webp',
   ]);
-  assert.equal(store.publicPost(created, user.id).garments[1].productImageUrls.length, 4);
+  assert.deepEqual(
+    store.publicPost(created, user.id).garments[1].productImageUrls,
+    ['/media/shoes-test.webp'],
+  );
 
   const viewerPost = store.publicPost(created, viewer.id);
   assert.deepEqual(

@@ -46,16 +46,20 @@ class _GarmentProductDialogState extends State<_GarmentProductDialog> {
   PostGarment get garment => widget.garment;
 
   List<String> get _gallery {
-    final images = garment.productImageUrls
-        .where((source) => source.isNotEmpty)
-        .take(5)
-        .toList();
-    if (images.isEmpty && garment.originalImageUrl?.isNotEmpty == true) {
-      images.add(garment.originalImageUrl!);
+    final images = <String>[];
+    for (final source in garment.productImageUrls) {
+      final clean = source.trim();
+      if (clean.isNotEmpty && !images.contains(clean)) images.add(clean);
+      if (images.length == 5) break;
     }
-    if (images.isEmpty) images.add(garment.imageUrl);
-    while (images.length < 4) {
-      images.add(images.last);
+    if (images.isEmpty) {
+      final original = garment.originalImageUrl?.trim();
+      if (original?.isNotEmpty == true) images.add(original!);
+    }
+    // The garment image is a product cutout, never the photo of the person.
+    // It is the safe final fallback for older posts with no retailer gallery.
+    if (images.isEmpty && garment.imageUrl.trim().isNotEmpty) {
+      images.add(garment.imageUrl.trim());
     }
     return images;
   }
@@ -125,7 +129,9 @@ class _GarmentProductDialogState extends State<_GarmentProductDialog> {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  '${gallery.length} product views',
+                                  gallery.length == 1
+                                      ? '1 retailer product image'
+                                      : '${gallery.length} retailer product images',
                                   key: const Key('product-gallery-count'),
                                   style: const TextStyle(
                                     fontSize: 13,
@@ -164,56 +170,57 @@ class _GarmentProductDialogState extends State<_GarmentProductDialog> {
                                   source: gallery[index],
                                   title: garment.title,
                                   index: index,
-                                  useDetailCrop:
-                                      index > 0 && gallery.toSet().length == 1,
                                 ),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 70,
-                      child: ListView.separated(
-                        key: const Key('product-gallery-thumbnails'),
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.x3,
-                          vertical: AppSpacing.x2,
-                        ),
-                        itemCount: gallery.length,
-                        separatorBuilder: (_, _) =>
-                            const SizedBox(width: AppSpacing.x2),
-                        itemBuilder: (context, index) => GestureDetector(
-                          key: Key('product-gallery-thumbnail-$index'),
-                          onTap: () => _controller.animateToPage(
-                            index,
-                            duration: const Duration(milliseconds: 220),
-                            curve: Curves.easeOutCubic,
+                    if (gallery.length > 1)
+                      SizedBox(
+                        height: 70,
+                        child: ListView.separated(
+                          key: const Key('product-gallery-thumbnails'),
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.x3,
+                            vertical: AppSpacing.x2,
                           ),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 180),
-                            width: 52,
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              color: AppColors.photo,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: index == _page
-                                    ? AppColors.textPrimary
-                                    : AppColors.borderDefault,
-                                width: index == _page ? 1.5 : 1,
+                          itemCount: gallery.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(width: AppSpacing.x2),
+                          itemBuilder: (context, index) => GestureDetector(
+                            key: Key('product-gallery-thumbnail-$index'),
+                            onTap: () => _controller.animateToPage(
+                              index,
+                              duration: const Duration(milliseconds: 220),
+                              curve: Curves.easeOutCubic,
+                            ),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              width: 52,
+                              padding: const EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                color: AppColors.photo,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: index == _page
+                                      ? AppColors.textPrimary
+                                      : AppColors.borderDefault,
+                                  width: index == _page ? 1.5 : 1,
+                                ),
+                              ),
+                              child: GarmentImage(
+                                source: gallery[index],
+                                semanticLabel:
+                                    '${garment.title}, thumbnail ${index + 1}',
+                                cacheWidth: 140,
                               ),
                             ),
-                            child: GarmentImage(
-                              source: gallery[index],
-                              semanticLabel:
-                                  '${garment.title}, thumbnail ${index + 1}',
-                              cacheWidth: 140,
-                            ),
                           ),
                         ),
-                      ),
-                    ),
+                      )
+                    else
+                      const SizedBox(height: AppSpacing.x3),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
                       child: Column(
@@ -290,40 +297,21 @@ class _ProductGalleryImage extends StatelessWidget {
     required this.source,
     required this.title,
     required this.index,
-    required this.useDetailCrop,
   });
 
   final String source;
   final String title;
   final int index;
-  final bool useDetailCrop;
-
-  static const _detailAlignments = [
-    Alignment.center,
-    Alignment.topCenter,
-    Alignment.centerLeft,
-    Alignment.bottomRight,
-    Alignment.centerRight,
-  ];
 
   @override
-  Widget build(BuildContext context) {
-    final image = GarmentImage(
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(16),
+    child: GarmentImage(
       key: Key('product-gallery-image-$index'),
       source: source,
-      semanticLabel: '$title, product image ${index + 1}',
+      semanticLabel: '$title, retailer product image ${index + 1}',
       cacheWidth: 1100,
-      alignment: _detailAlignments[index % _detailAlignments.length],
-    );
-    if (!useDetailCrop) {
-      return Padding(padding: const EdgeInsets.all(16), child: image);
-    }
-    return ClipRect(
-      child: Transform.scale(
-        scale: 1.18 + (index % 3) * 0.12,
-        alignment: _detailAlignments[index % _detailAlignments.length],
-        child: Padding(padding: const EdgeInsets.all(16), child: image),
-      ),
-    );
-  }
+      alignment: Alignment.center,
+    ),
+  );
 }
