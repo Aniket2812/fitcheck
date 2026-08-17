@@ -1271,6 +1271,17 @@ void main() {
       find.text('Fit saved. Find it in Profile → Saved Fits.'),
       findsOneWidget,
     );
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('editorial-frame-post-try-on')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('detail-try-on-button')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('detail-try-on-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('try-on-yourself-screen')), findsOneWidget);
+    expect(find.byKey(const Key('try-on-photo-my-photo')), findsOneWidget);
   });
 
   testWidgets('try-on can add a camera or gallery photo without leaving', (

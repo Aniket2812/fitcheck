@@ -5,13 +5,27 @@ import '../components/editorial_photo_frame.dart';
 import '../components/outfit_post_image.dart';
 import '../components/shoppable_pieces.dart';
 import '../models/social_post.dart';
+import '../services/model_photo_service.dart';
+import '../services/saved_fit_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
+import 'try_on_yourself_screen.dart';
 
 class PostDetailScreen extends StatefulWidget {
-  const PostDetailScreen({super.key, required this.post});
+  const PostDetailScreen({
+    super.key,
+    required this.post,
+    this.fetchModelPhotos = ModelPhotoService.fetchPhotos,
+    this.uploadModelPhoto = ModelPhotoService.upload,
+    this.generateTryOn = SocialService.createPostTryOn,
+    this.saveFit = SavedFitService.save,
+  });
 
   final SocialPost post;
+  final FetchModelPhotos fetchModelPhotos;
+  final UploadModelPhoto uploadModelPhoto;
+  final GeneratePostTryOn generateTryOn;
+  final SaveFitDraft saveFit;
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
@@ -60,12 +74,53 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
+  void _tryOn() {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => TryOnYourselfScreen(
+          post: _post,
+          fetchModelPhotos: widget.fetchModelPhotos,
+          uploadModelPhoto: widget.uploadModelPhoto,
+          generateTryOn: widget.generateTryOn,
+          saveFit: widget.saveFit,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
       title: Text('@${_post.author.handle}'),
       backgroundColor: AppColors.canvas,
       surfaceTintColor: Colors.transparent,
+      actions: [
+        if (_post.garments.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: TextButton.icon(
+              key: const Key('detail-try-on-button'),
+              onPressed: _tryOn,
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.textOnAccent,
+                backgroundColor: AppColors.textPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 11),
+                minimumSize: const Size(0, 36),
+                shape: const StadiumBorder(),
+              ),
+              icon: const Icon(Icons.auto_awesome, size: 15),
+              label: const Text(
+                'TRY ON',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+          ),
+      ],
     ),
     body: Column(
       children: [

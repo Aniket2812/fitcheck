@@ -138,7 +138,15 @@ class _FeedScreenState extends State<FeedScreen> {
   void _open(SocialPost post) {
     Navigator.push(
       context,
-      MaterialPageRoute<void>(builder: (_) => PostDetailScreen(post: post)),
+      MaterialPageRoute<void>(
+        builder: (_) => PostDetailScreen(
+          post: post,
+          fetchModelPhotos: widget.fetchModelPhotos,
+          uploadModelPhoto: widget.uploadModelPhoto,
+          generateTryOn: widget.generateTryOn,
+          saveFit: widget.saveFit,
+        ),
+      ),
     ).then((_) => _load());
   }
 
