@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "matches": [
     {
       "postId": "demo-post-city-layers",
@@ -7,359 +7,10 @@
       "postImage": "/media/studio-maya-city-layers.jpg",
       "productImage": "/media/maya-black-blazer.jpg",
       "colour": "black",
-      "product": "single-breasted blazer"
-    },
-    {
-      "postId": "demo-post-city-layers",
-      "garmentId": "demo-garment-red-sneakers",
-      "postImage": "/media/studio-maya-city-layers.jpg",
-      "productImage": "/media/maya-red-sneakers.jpg",
-      "colour": "red",
-      "product": "low-top sneakers"
-    },
-    {
-      "postId": "demo-post-denim-day",
-      "garmentId": "demo-garment-white-tee",
-      "postImage": "/media/studio-arjun-denim-day.jpg",
-      "productImage": "/media/arjun-white-tee.jpg",
-      "colour": "white",
-      "product": "crew-neck short-sleeve T-shirt"
-    },
-    {
-      "postId": "demo-post-denim-day",
-      "garmentId": "demo-garment-straight-jeans",
-      "postImage": "/media/studio-arjun-denim-day.jpg",
-      "productImage": "/media/arjun-blue-jeans.jpg",
-      "colour": "medium blue",
-      "product": "straight-fit jeans"
-    },
-    {
-      "postId": "demo-post-gallery-night",
-      "garmentId": "demo-garment-black-dress",
-      "postImage": "/media/studio-zoya-gallery-night.jpg",
-      "productImage": "/media/zoya-black-dress.jpg",
-      "colour": "black",
-      "product": "satin midi slip dress"
-    },
-    {
-      "postId": "demo-post-gallery-night",
-      "garmentId": "demo-garment-shoulder-bag",
-      "postImage": "/media/studio-zoya-gallery-night.jpg",
-      "productImage": "/media/zoya-tan-bag.jpg",
-      "colour": "tan",
-      "product": "structured flap shoulder bag"
-    },
-    {
-      "postId": "demo-post-coffee-run",
-      "garmentId": "demo-garment-camel-coat",
-      "postImage": "/media/studio-kabir-coffee-run.jpg",
-      "productImage": "/media/kabir-camel-coat.jpg",
-      "colour": "camel brown",
-      "product": "single-breasted wool overcoat"
-    },
-    {
-      "postId": "demo-post-coffee-run",
-      "garmentId": "demo-garment-market-tote",
-      "postImage": "/media/studio-kabir-coffee-run.jpg",
-      "productImage": "/media/kabir-brown-tote.jpg",
-      "colour": "dark brown",
-      "product": "structured double-handle tote"
-    },
-    {
-      "postId": "demo-post-sand-linen",
-      "garmentId": "demo-garment-sand-linen-shirt",
-      "postImage": "/media/studio-rehan-sand-linen.jpg",
-      "productImage": "/media/rehan-sand-shirt.jpg",
-      "colour": "sand",
-      "product": "regular-fit linen shirt"
-    },
-    {
-      "postId": "demo-post-indigo-trucker",
-      "garmentId": "demo-garment-indigo-trucker",
-      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
-      "productImage": "/media/zoya-indigo-jacket.jpg",
-      "colour": "dark indigo blue",
-      "product": "regular-fit denim trucker jacket"
-    },
-    {
-      "postId": "demo-post-olive-cargos",
-      "garmentId": "demo-garment-olive-cargos",
-      "postImage": "/media/studio-maya-olive-cargos.jpg",
-      "productImage": "/media/maya-olive-cargo-trousers.jpg",
-      "colour": "olive green",
-      "product": "wide-leg cargo trousers"
-    },
-    {
-      "postId": "demo-post-black-sambas",
-      "garmentId": "demo-garment-black-sambas",
-      "postImage": "/media/studio-arjun-black-sambas.jpg",
-      "productImage": "/media/arjun-black-sneakers.jpg",
-      "colour": "black with gum sole",
-      "product": "low-profile terrace sneakers"
-    },
-    {
-      "postId": "demo-post-lobby-cream-bag",
-      "garmentId": "demo-garment-cream-shoulder-bag",
-      "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
-      "productImage": "/media/zoya-cream-shoulder-bag.jpg",
-      "colour": "cream",
-      "product": "curved rectangular shoulder bag"
-    },
-    {
-      "postId": "demo-post-brown-leather",
-      "garmentId": "demo-garment-brown-leather-jacket",
-      "postImage": "/media/studio-maya-brown-leather.jpg",
-      "productImage": "/media/maya-brown-jacket.jpg",
-      "colour": "pastel brown",
-      "product": "leather-effect shirt jacket"
-    },
-    {
-      "postId": "demo-post-pink-kicks",
-      "garmentId": "demo-garment-pink-palermos",
-      "postImage": "/media/studio-zoya-pink-kicks.jpg",
-      "productImage": "/media/zoya-pink-sneakers.jpg",
-      "colour": "white and fluorescent pink",
-      "product": "low-profile terrace sneakers"
-    },
-    {
-      "postId": "demo-post-book-market",
-      "garmentId": "demo-garment-light-blue-501",
-      "postImage": "/media/studio-arjun-book-market.jpg",
-      "productImage": "/media/arjun-light-blue-jeans.jpg",
-      "colour": "light blue",
-      "product": "loose straight jeans"
-    },
-    {
-      "postId": "demo-post-red-cardigan",
-      "garmentId": "demo-garment-red-cardigan",
-      "postImage": "/media/studio-maya-red-cardigan.jpg",
-      "productImage": "/media/maya-red-cardigan-product.jpg",
-      "colour": "bright red",
-      "product": "short-sleeved collared cardigan"
-    },
-    {
-      "postId": "demo-post-garden-party",
-      "garmentId": "demo-garment-yellow-printed-dress",
-      "postImage": "/media/studio-zoya-garden-party.jpg",
-      "productImage": "/media/zoya-yellow-dress.jpg",
-      "colour": "pastel yellow with multicoloured botanical print",
-      "product": "long sleeveless A-line dress"
-    },
-    {
-      "postId": "demo-post-city-layers",
-      "garmentId": "demo-garment-city-black-trousers",
-      "postImage": "/media/studio-maya-city-layers.jpg",
-      "productImage": "/media/maya-black-trousers.jpg",
-      "colour": "black",
-      "product": "wide-leg tailored trousers"
-    },
-    {
-      "postId": "demo-post-denim-day",
-      "garmentId": "demo-garment-denim-white-sneakers",
-      "postImage": "/media/studio-arjun-denim-day.jpg",
-      "productImage": "/media/arjun-white-sneakers.jpg",
-      "colour": "white",
-      "product": "minimal leather sneakers"
-    },
-    {
-      "postId": "demo-post-gallery-night",
-      "garmentId": "demo-garment-gallery-sandals",
-      "postImage": "/media/studio-zoya-gallery-night.jpg",
-      "productImage": "/media/zoya-black-sandals.jpg",
-      "colour": "black",
-      "product": "barely-there heeled sandals"
-    },
-    {
-      "postId": "demo-post-coffee-run",
-      "garmentId": "demo-garment-coffee-brown-boots",
-      "postImage": "/media/studio-kabir-coffee-run.jpg",
-      "productImage": "/media/kabir-brown-boots.jpg",
-      "colour": "dark brown",
-      "product": "leather Chelsea boots"
-    },
-    {
-      "postId": "demo-post-sand-linen",
-      "garmentId": "demo-garment-sand-white-trousers",
-      "postImage": "/media/studio-rehan-sand-linen.jpg",
-      "productImage": "/media/rehan-white-trousers.jpg",
-      "colour": "white",
-      "product": "relaxed linen trousers"
-    },
-    {
-      "postId": "demo-post-sand-linen",
-      "garmentId": "demo-garment-sand-sunglasses",
-      "postImage": "/media/studio-rehan-sand-linen.jpg",
-      "productImage": "/media/rehan-sunglasses.jpg",
-      "colour": "tortoiseshell brown",
-      "product": "square sunglasses"
-    },
-    {
-      "postId": "demo-post-indigo-trucker",
-      "garmentId": "demo-garment-indigo-black-skirt",
-      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
-      "productImage": "/media/zoya-black-skirt.jpg",
-      "colour": "black",
-      "product": "fluid midi skirt"
-    },
-    {
-      "postId": "demo-post-indigo-trucker",
-      "garmentId": "demo-garment-indigo-black-boots",
-      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
-      "productImage": "/media/zoya-black-boots.jpg",
-      "colour": "black",
-      "product": "block-heel ankle boots"
-    },
-    {
-      "postId": "demo-post-olive-cargos",
-      "garmentId": "demo-garment-olive-black-tank",
-      "postImage": "/media/studio-maya-olive-cargos.jpg",
-      "productImage": "/media/maya-black-tank.jpg",
-      "colour": "black",
-      "product": "fitted sleeveless tank"
-    },
-    {
-      "postId": "demo-post-olive-cargos",
-      "garmentId": "demo-garment-olive-shoulder-bag",
-      "postImage": "/media/studio-maya-olive-cargos.jpg",
-      "productImage": "/media/maya-black-shoulder-bag.jpg",
-      "colour": "black",
-      "product": "small shoulder bag"
-    },
-    {
-      "postId": "demo-post-black-sambas",
-      "garmentId": "demo-garment-sambas-cream-polo",
-      "postImage": "/media/studio-arjun-black-sambas.jpg",
-      "productImage": "/media/arjun-cream-polo.jpg",
-      "colour": "cream",
-      "product": "textured knit polo"
-    },
-    {
-      "postId": "demo-post-black-sambas",
-      "garmentId": "demo-garment-sambas-black-trousers",
-      "postImage": "/media/studio-arjun-black-sambas.jpg",
-      "productImage": "/media/arjun-black-trousers.jpg",
-      "colour": "black",
-      "product": "relaxed tailored trousers"
-    },
-    {
-      "postId": "demo-post-black-sambas",
-      "garmentId": "demo-garment-sambas-sunglasses",
-      "postImage": "/media/studio-arjun-black-sambas.jpg",
-      "productImage": "/media/arjun-black-sunglasses.jpg",
-      "colour": "black",
-      "product": "wayfarer sunglasses"
-    },
-    {
-      "postId": "demo-post-lobby-cream-bag",
-      "garmentId": "demo-garment-lobby-brown-blouse",
-      "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
-      "productImage": "/media/zoya-brown-satin-blouse.jpg",
-      "colour": "chocolate brown",
-      "product": "satin blouse"
-    },
-    {
-      "postId": "demo-post-lobby-cream-bag",
-      "garmentId": "demo-garment-lobby-cream-trousers",
-      "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
-      "productImage": "/media/zoya-cream-trousers.jpg",
-      "colour": "cream",
-      "product": "straight tailored trousers"
-    },
-    {
-      "postId": "demo-post-brown-leather",
-      "garmentId": "demo-garment-brown-black-jeans",
-      "postImage": "/media/studio-maya-brown-leather.jpg",
-      "productImage": "/media/maya-black-jeans.jpg",
-      "colour": "washed black",
-      "product": "straight jeans"
-    },
-    {
-      "postId": "demo-post-brown-leather",
-      "garmentId": "demo-garment-brown-black-boots",
-      "postImage": "/media/studio-maya-brown-leather.jpg",
-      "productImage": "/media/maya-black-boots.jpg",
-      "colour": "black",
-      "product": "pointed ankle boots"
-    },
-    {
-      "postId": "demo-post-pink-kicks",
-      "garmentId": "demo-garment-pink-cardigan",
-      "postImage": "/media/studio-zoya-pink-kicks.jpg",
-      "productImage": "/media/zoya-pink-cardigan.jpg",
-      "colour": "bubblegum pink",
-      "product": "cropped cardigan"
-    },
-    {
-      "postId": "demo-post-pink-kicks",
-      "garmentId": "demo-garment-pink-light-jeans",
-      "postImage": "/media/studio-zoya-pink-kicks.jpg",
-      "productImage": "/media/zoya-light-blue-jeans.jpg",
-      "colour": "light blue",
-      "product": "wide-leg jeans"
-    },
-    {
-      "postId": "demo-post-pink-kicks",
-      "garmentId": "demo-garment-pink-shoulder-bag",
-      "postImage": "/media/studio-zoya-pink-kicks.jpg",
-      "productImage": "/media/zoya-pink-shoulder-bag.jpg",
-      "colour": "pink",
-      "product": "mini shoulder bag"
-    },
-    {
-      "postId": "demo-post-book-market",
-      "garmentId": "demo-garment-book-white-shirt",
-      "postImage": "/media/studio-arjun-book-market.jpg",
-      "productImage": "/media/arjun-white-shirt.jpg",
-      "colour": "white",
-      "product": "relaxed cotton shirt"
-    },
-    {
-      "postId": "demo-post-book-market",
-      "garmentId": "demo-garment-book-brown-loafers",
-      "postImage": "/media/studio-arjun-book-market.jpg",
-      "productImage": "/media/arjun-brown-loafers.jpg",
-      "colour": "dark brown",
-      "product": "leather penny loafers"
-    },
-    {
-      "postId": "demo-post-red-cardigan",
-      "garmentId": "demo-garment-red-cream-trousers",
-      "postImage": "/media/studio-maya-red-cardigan.jpg",
-      "productImage": "/media/maya-cream-trousers.jpg",
-      "colour": "cream",
-      "product": "wide-leg tailored trousers"
-    },
-    {
-      "postId": "demo-post-red-cardigan",
-      "garmentId": "demo-garment-red-cream-loafers",
-      "postImage": "/media/studio-maya-red-cardigan.jpg",
-      "productImage": "/media/maya-cream-loafers.jpg",
-      "colour": "cream",
-      "product": "horsebit loafers"
-    },
-    {
-      "postId": "demo-post-red-cardigan",
-      "garmentId": "demo-garment-red-black-bag",
-      "postImage": "/media/studio-maya-red-cardigan.jpg",
-      "productImage": "/media/maya-black-shoulder-bag.jpg",
-      "colour": "black",
-      "product": "curved shoulder bag"
-    },
-    {
-      "postId": "demo-post-garden-party",
-      "garmentId": "demo-garment-garden-tan-sandals",
-      "postImage": "/media/studio-zoya-garden-party.jpg",
-      "productImage": "/media/zoya-tan-sandals.jpg",
-      "colour": "tan",
-      "product": "minimalist heeled sandals"
-    },
-    {
-      "postId": "demo-post-garden-party",
-      "garmentId": "demo-garment-garden-gold-earrings",
-      "postImage": "/media/studio-zoya-garden-party.jpg",
-      "productImage": "/media/zoya-gold-earrings.jpg",
-      "colour": "gold",
-      "product": "filigree drop earrings"
+      "product": "single-breasted blazer",
+      "catalogKey": "maya-black-blazer",
+      "retailerSku": "1290869003",
+      "buyUrl": "https://www2.hm.com/en_in/productpage.1290869003.html"
     },
     {
       "postId": "demo-post-city-layers",
@@ -367,7 +18,109 @@
       "postImage": "/media/studio-maya-city-layers.jpg",
       "productImage": "/media/maya-white-fitted-tee.jpg",
       "colour": "white",
-      "product": "fitted crew-neck T-shirt"
+      "product": "fitted crew-neck T-shirt",
+      "catalogKey": "maya-white-fitted-tee",
+      "retailerSku": "460516501_white",
+      "buyUrl": "https://www.ajio.com/ajio-slim-fit-crew-neck-t-shirt-with-contrast-neckline/p/460516501_white"
+    },
+    {
+      "postId": "demo-post-city-layers",
+      "garmentId": "demo-garment-red-sneakers",
+      "postImage": "/media/studio-maya-city-layers.jpg",
+      "productImage": "/media/maya-red-sneakers.jpg",
+      "colour": "red",
+      "product": "low-top sneakers",
+      "catalogKey": "maya-red-sneakers",
+      "retailerSku": "365277-24",
+      "buyUrl": "https://in.puma.com/in/en/pd/st-runner-v2-sneakers/365277?swatch=24"
+    },
+    {
+      "postId": "demo-post-city-layers",
+      "garmentId": "demo-garment-city-black-trousers",
+      "postImage": "/media/studio-maya-city-layers.jpg",
+      "productImage": "/media/maya-black-trousers.jpg",
+      "colour": "black",
+      "product": "wide-leg tailored trousers",
+      "catalogKey": "maya-black-trousers",
+      "retailerSku": "19410206",
+      "buyUrl": "https://www.myntra.com/bottomwear/h%26m/h%26m-women-black-high-waisted-tailored-trousers/19410206/buy"
+    },
+    {
+      "postId": "demo-post-denim-day",
+      "garmentId": "demo-garment-white-tee",
+      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "productImage": "/media/arjun-white-tee.jpg",
+      "colour": "white",
+      "product": "crew-neck short-sleeve T-shirt",
+      "catalogKey": "arjun-white-tee",
+      "retailerSku": "E422992-000",
+      "buyUrl": "https://www.uniqlo.com/in/en/products/E422992-000/02?colorDisplayCode=30"
+    },
+    {
+      "postId": "demo-post-denim-day",
+      "garmentId": "demo-garment-straight-jeans",
+      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "productImage": "/media/arjun-blue-jeans.jpg",
+      "colour": "medium blue",
+      "product": "straight-fit jeans",
+      "catalogKey": "arjun-blue-jeans",
+      "retailerSku": "mens-505-blue-straight-fit-mid-rise-jeans-005rc0092",
+      "buyUrl": "https://levi.in/collections/men-straight-jeans/products/mens-505-blue-straight-fit-mid-rise-jeans-005rc0092"
+    },
+    {
+      "postId": "demo-post-denim-day",
+      "garmentId": "demo-garment-denim-white-sneakers",
+      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "productImage": "/media/arjun-white-sneakers.jpg",
+      "colour": "white",
+      "product": "minimal leather sneakers",
+      "catalogKey": "arjun-white-sneakers",
+      "retailerSku": "B0CR1M4Z32",
+      "buyUrl": "https://www.amazon.in/Souled-Store-Urban-Blaze-Sneaker/dp/B0CR1M4Z32"
+    },
+    {
+      "postId": "demo-post-gallery-night",
+      "garmentId": "demo-garment-black-dress",
+      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "productImage": "/media/zoya-black-dress.jpg",
+      "colour": "black",
+      "product": "satin midi slip dress",
+      "catalogKey": "zoya-black-dress",
+      "retailerSku": "1235183001",
+      "buyUrl": "https://www2.hm.com/en_in/productpage.1235183001.html"
+    },
+    {
+      "postId": "demo-post-gallery-night",
+      "garmentId": "demo-garment-shoulder-bag",
+      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "productImage": "/media/zoya-tan-bag.jpg",
+      "colour": "tan",
+      "product": "structured flap shoulder bag",
+      "catalogKey": "zoya-tan-bag",
+      "retailerSku": "CK2-20151647_DS.TAN_S-IN",
+      "buyUrl": "https://www.charleskeith.in/in/CK2-20151647_DS.TAN_S-IN.html"
+    },
+    {
+      "postId": "demo-post-gallery-night",
+      "garmentId": "demo-garment-gallery-sandals",
+      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "productImage": "/media/zoya-black-sandals.jpg",
+      "colour": "black",
+      "product": "barely-there heeled sandals",
+      "catalogKey": "zoya-black-sandals",
+      "retailerSku": "35406641",
+      "buyUrl": "https://www.myntra.com/heels/ntfc/ntfc-women-black-open-toe-block-heels/35406641/buy"
+    },
+    {
+      "postId": "demo-post-coffee-run",
+      "garmentId": "demo-garment-camel-coat",
+      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "productImage": "/media/kabir-camel-coat.jpg",
+      "colour": "camel brown",
+      "product": "single-breasted wool overcoat",
+      "catalogKey": "kabir-camel-coat",
+      "retailerSku": "17086720",
+      "buyUrl": "https://shop.mango.com/in/en/p/men/coats/coats/wool-overcoat_17086720?c=09"
     },
     {
       "postId": "demo-post-coffee-run",
@@ -375,7 +128,10 @@
       "postImage": "/media/studio-kabir-coffee-run.jpg",
       "productImage": "/media/kabir-black-knit.jpg",
       "colour": "black",
-      "product": "fine-knit crew-neck sweater"
+      "product": "fine-knit crew-neck sweater",
+      "catalogKey": "kabir-black-knit",
+      "retailerSku": "700634602_black",
+      "buyUrl": "https://www.ajio.com/snitch-men-crew-neck-pullover/p/700634602_black"
     },
     {
       "postId": "demo-post-coffee-run",
@@ -383,7 +139,65 @@
       "postImage": "/media/studio-kabir-coffee-run.jpg",
       "productImage": "/media/kabir-black-trousers.jpg",
       "colour": "black",
-      "product": "tapered tailored trousers"
+      "product": "tapered tailored trousers",
+      "catalogKey": "kabir-black-trousers",
+      "retailerSku": "17957736",
+      "buyUrl": "https://www.myntra.com/trousers/basics/basics-men-black-trousers/17957736/buy"
+    },
+    {
+      "postId": "demo-post-coffee-run",
+      "garmentId": "demo-garment-market-tote",
+      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "productImage": "/media/kabir-brown-tote.jpg",
+      "colour": "dark brown",
+      "product": "structured double-handle tote",
+      "catalogKey": "kabir-brown-tote",
+      "retailerSku": "CK2-31200033_DK.BRW-IN",
+      "buyUrl": "https://www.charleskeith.in/in/CK2-31200033_DK.BRW-IN.html"
+    },
+    {
+      "postId": "demo-post-coffee-run",
+      "garmentId": "demo-garment-coffee-brown-boots",
+      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "productImage": "/media/kabir-brown-boots.jpg",
+      "colour": "dark brown",
+      "product": "leather Chelsea boots",
+      "catalogKey": "kabir-brown-boots",
+      "retailerSku": "36648648",
+      "buyUrl": "https://www.myntra.com/shoes/roadster/roadster-men-brown-leather-chelsea-boots/36648648/buy"
+    },
+    {
+      "postId": "demo-post-sand-linen",
+      "garmentId": "demo-garment-sand-linen-shirt",
+      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "productImage": "/media/rehan-sand-shirt.jpg",
+      "colour": "sand",
+      "product": "regular-fit linen shirt",
+      "catalogKey": "rehan-sand-shirt",
+      "retailerSku": "27085939",
+      "buyUrl": "https://shop.mango.com/in/en/p/men/shirts/linen/regular-fit-100-linen-shirt/27085939/07/00"
+    },
+    {
+      "postId": "demo-post-sand-linen",
+      "garmentId": "demo-garment-sand-white-trousers",
+      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "productImage": "/media/rehan-white-trousers.jpg",
+      "colour": "white",
+      "product": "relaxed linen trousers",
+      "catalogKey": "rehan-white-trousers",
+      "retailerSku": "31889229",
+      "buyUrl": "https://www.myntra.com/trousers/kingdom20of20white/kingdom-of-white-men-relaxed-fit-linen-trousers/31889229/buy"
+    },
+    {
+      "postId": "demo-post-sand-linen",
+      "garmentId": "demo-garment-sand-sunglasses",
+      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "productImage": "/media/rehan-sunglasses.jpg",
+      "colour": "tortoiseshell brown",
+      "product": "square sunglasses",
+      "catalogKey": "rehan-sunglasses",
+      "retailerSku": "30439204",
+      "buyUrl": "https://www.myntra.com/sunglasses/fastrack/fastrack-men-square-sunglasses-with-uv-protected-lens-p357br3v/30439204/buy"
     },
     {
       "postId": "demo-post-sand-linen",
@@ -391,7 +205,21 @@
       "postImage": "/media/studio-rehan-sand-linen.jpg",
       "productImage": "/media/rehan-brown-loafers.jpg",
       "colour": "brown",
-      "product": "leather penny loafers"
+      "product": "leather penny loafers",
+      "catalogKey": "rehan-brown-loafers",
+      "retailerSku": "467025726007",
+      "buyUrl": "https://www.ajio.com/hush-puppies-men-genuine-leather-penny-loafers/p/467025726007"
+    },
+    {
+      "postId": "demo-post-indigo-trucker",
+      "garmentId": "demo-garment-indigo-trucker",
+      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "productImage": "/media/zoya-indigo-jacket.jpg",
+      "colour": "dark indigo blue",
+      "product": "regular-fit denim trucker jacket",
+      "catalogKey": "zoya-indigo-jacket",
+      "retailerSku": "1121152002",
+      "buyUrl": "https://www2.hm.com/en_in/productpage.1121152002.html"
     },
     {
       "postId": "demo-post-indigo-trucker",
@@ -399,7 +227,65 @@
       "postImage": "/media/studio-zoya-indigo-trucker.jpg",
       "productImage": "/media/zoya-grey-tee.jpg",
       "colour": "heather grey",
-      "product": "crew-neck T-shirt"
+      "product": "crew-neck T-shirt",
+      "catalogKey": "zoya-grey-tee",
+      "retailerSku": "10908646",
+      "buyUrl": "https://www.myntra.com/tshirts/next/next-grey-solid-round-neck-t-shirt/10908646/buy"
+    },
+    {
+      "postId": "demo-post-indigo-trucker",
+      "garmentId": "demo-garment-indigo-black-skirt",
+      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "productImage": "/media/zoya-black-skirt.jpg",
+      "colour": "black",
+      "product": "fluid midi skirt",
+      "catalogKey": "zoya-black-skirt",
+      "retailerSku": "8224951",
+      "buyUrl": "https://www.myntra.com/skirts/bitterlime/bitterlime-black-midi-a-line-skirt/8224951/buy"
+    },
+    {
+      "postId": "demo-post-indigo-trucker",
+      "garmentId": "demo-garment-indigo-black-boots",
+      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "productImage": "/media/zoya-black-boots.jpg",
+      "colour": "black",
+      "product": "block-heel ankle boots",
+      "catalogKey": "zoya-black-boots",
+      "retailerSku": "35266328",
+      "buyUrl": "https://www.myntra.com/boots/inc5/inc-5-women-block-heeled-round-toe-ankle-boots/35266328/buy"
+    },
+    {
+      "postId": "demo-post-olive-cargos",
+      "garmentId": "demo-garment-olive-black-tank",
+      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "productImage": "/media/maya-black-tank.jpg",
+      "colour": "black",
+      "product": "fitted sleeveless tank",
+      "catalogKey": "maya-black-tank",
+      "retailerSku": "27045222",
+      "buyUrl": "https://www.myntra.com/tops/cava/cava-black-tank-us-later-top/27045222/buy"
+    },
+    {
+      "postId": "demo-post-olive-cargos",
+      "garmentId": "demo-garment-olive-cargos",
+      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "productImage": "/media/maya-olive-cargo-trousers.jpg",
+      "colour": "olive green",
+      "product": "wide-leg cargo trousers",
+      "catalogKey": "maya-olive-cargo-trousers",
+      "retailerSku": "1351818001",
+      "buyUrl": "https://www2.hm.com/en_in/productpage.1351818001.html"
+    },
+    {
+      "postId": "demo-post-olive-cargos",
+      "garmentId": "demo-garment-olive-shoulder-bag",
+      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "productImage": "/media/maya-black-shoulder-bag.jpg",
+      "colour": "black",
+      "product": "small shoulder bag",
+      "catalogKey": "maya-black-shoulder-bag",
+      "retailerSku": "20894552",
+      "buyUrl": "https://www.myntra.com/handbags/miraggio/miraggio-black-half-moon-shoulder-bag/20894552/buy"
     },
     {
       "postId": "demo-post-olive-cargos",
@@ -407,7 +293,87 @@
       "postImage": "/media/studio-maya-olive-cargos.jpg",
       "productImage": "/media/maya-black-sandals.jpg",
       "colour": "black",
-      "product": "minimal flat sandals"
+      "product": "minimal flat sandals",
+      "catalogKey": "maya-black-sandals",
+      "retailerSku": "32478571",
+      "buyUrl": "https://www.myntra.com/flats/cai/cai-women-black-toe-thong-flats/32478571/buy"
+    },
+    {
+      "postId": "demo-post-black-sambas",
+      "garmentId": "demo-garment-sambas-cream-polo",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-cream-polo.jpg",
+      "colour": "cream",
+      "product": "textured knit polo",
+      "catalogKey": "arjun-cream-polo",
+      "retailerSku": "37028708",
+      "buyUrl": "https://www.myntra.com/tshirts/bepositive/be-positive-cream-self-design-polo-collar-t-shirt/37028708/buy"
+    },
+    {
+      "postId": "demo-post-black-sambas",
+      "garmentId": "demo-garment-sambas-black-trousers",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-black-trousers.jpg",
+      "colour": "black",
+      "product": "relaxed tailored trousers",
+      "catalogKey": "arjun-black-trousers",
+      "retailerSku": "36620272",
+      "buyUrl": "https://www.myntra.com/trousers/showoff/showoff-men-black-relaxed-fit-cotton-regular-trousers/36620272/buy"
+    },
+    {
+      "postId": "demo-post-black-sambas",
+      "garmentId": "demo-garment-black-sambas",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-black-sneakers.jpg",
+      "colour": "black with gum sole",
+      "product": "low-profile terrace sneakers",
+      "catalogKey": "arjun-black-sneakers",
+      "retailerSku": "IE3438",
+      "buyUrl": "https://www.adidas.co.in/samba-og-shoes/IE3438.html"
+    },
+    {
+      "postId": "demo-post-black-sambas",
+      "garmentId": "demo-garment-sambas-sunglasses",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-black-sunglasses.jpg",
+      "colour": "black",
+      "product": "wayfarer sunglasses",
+      "catalogKey": "arjun-black-sunglasses",
+      "retailerSku": "19037770",
+      "buyUrl": "https://www.myntra.com/eyewear/voyage/voyage-unisex-black-lens-%26-black-wayfarer-sunglasses-with-uv-protected-lens/19037770/buy"
+    },
+    {
+      "postId": "demo-post-lobby-cream-bag",
+      "garmentId": "demo-garment-lobby-brown-blouse",
+      "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
+      "productImage": "/media/zoya-brown-satin-blouse.jpg",
+      "colour": "chocolate brown",
+      "product": "satin blouse",
+      "catalogKey": "zoya-brown-satin-blouse",
+      "retailerSku": "15960072",
+      "buyUrl": "https://www.myntra.com/shirts/hm/hm-women-brown-satin-shirt/15960072/buy"
+    },
+    {
+      "postId": "demo-post-lobby-cream-bag",
+      "garmentId": "demo-garment-lobby-cream-trousers",
+      "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
+      "productImage": "/media/zoya-cream-trousers.jpg",
+      "colour": "cream",
+      "product": "straight tailored trousers",
+      "catalogKey": "zoya-cream-trousers",
+      "retailerSku": "36532000",
+      "buyUrl": "https://www.myntra.com/trousers/fablestreet/fablestreet-women-tailored-beige-straight-fit-trousers/36532000/buy"
+    },
+    {
+      "postId": "demo-post-lobby-cream-bag",
+      "garmentId": "demo-garment-cream-shoulder-bag",
+      "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
+      "productImage": "/media/zoya-cream-shoulder-bag.jpg",
+      "colour": "cream",
+      "product": "curved rectangular shoulder bag",
+      "catalogKey": "zoya-cream-shoulder-bag",
+      "retailerSku": "40060269",
+      "buyUrl": "https://www.myntra.com/handbags/charles26keith/charles--keith-bryna-curved-hobo-bag/40060269/buy"
     },
     {
       "postId": "demo-post-lobby-cream-bag",
@@ -415,7 +381,21 @@
       "postImage": "/media/studio-zoya-lobby-cream-bag.jpg",
       "productImage": "/media/zoya-brown-pumps.jpg",
       "colour": "chocolate brown",
-      "product": "pointed pumps"
+      "product": "pointed pumps",
+      "catalogKey": "zoya-brown-pumps",
+      "retailerSku": "124149",
+      "buyUrl": "https://www.myntra.com/heels/nell/nell-women-brown-pumps/124149/buy"
+    },
+    {
+      "postId": "demo-post-brown-leather",
+      "garmentId": "demo-garment-brown-leather-jacket",
+      "postImage": "/media/studio-maya-brown-leather.jpg",
+      "productImage": "/media/maya-brown-jacket.jpg",
+      "colour": "pastel brown",
+      "product": "leather-effect shirt jacket",
+      "catalogKey": "maya-brown-jacket",
+      "retailerSku": "17137696",
+      "buyUrl": "https://shop.mango.com/in/en/p/women/jackets/leather-effect/leather-effect-jacket-with-pockets_17137696"
     },
     {
       "postId": "demo-post-brown-leather",
@@ -423,215 +403,571 @@
       "postImage": "/media/studio-maya-brown-leather.jpg",
       "productImage": "/media/maya-black-top.jpg",
       "colour": "black",
-      "product": "fitted scoop-neck top"
+      "product": "fitted scoop-neck top",
+      "catalogKey": "maya-black-top",
+      "retailerSku": "31685837",
+      "buyUrl": "https://www.myntra.com/tops/stylecast/stylecast-women-scoop-neck-fitted-crop-top/31685837/buy"
+    },
+    {
+      "postId": "demo-post-brown-leather",
+      "garmentId": "demo-garment-brown-black-jeans",
+      "postImage": "/media/studio-maya-brown-leather.jpg",
+      "productImage": "/media/maya-black-jeans.jpg",
+      "colour": "washed black",
+      "product": "straight jeans",
+      "catalogKey": "maya-black-jeans",
+      "retailerSku": "24203430",
+      "buyUrl": "https://www.myntra.com/jeans/sassafrascurve/sassafras-curve-women-black-comfort-straight-fit-high-rise-clean-look-acid-wash-jeans/24203430/buy"
+    },
+    {
+      "postId": "demo-post-brown-leather",
+      "garmentId": "demo-garment-brown-black-boots",
+      "postImage": "/media/studio-maya-brown-leather.jpg",
+      "productImage": "/media/maya-black-boots.jpg",
+      "colour": "black",
+      "product": "pointed ankle boots",
+      "catalogKey": "maya-black-boots",
+      "retailerSku": "36931538",
+      "buyUrl": "https://www.myntra.com/boots/roadster/roadster-women-black-ankle-boots/36931538/buy"
+    },
+    {
+      "postId": "demo-post-pink-kicks",
+      "garmentId": "demo-garment-pink-cardigan",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-pink-cardigan.jpg",
+      "colour": "bubblegum pink",
+      "product": "cropped cardigan",
+      "catalogKey": "zoya-pink-cardigan",
+      "retailerSku": "39331498",
+      "buyUrl": "https://www.myntra.com/sweaters/hm/hm-fine-knit-cardigan/39331498/buy"
+    },
+    {
+      "postId": "demo-post-pink-kicks",
+      "garmentId": "demo-garment-pink-light-jeans",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-light-blue-jeans.jpg",
+      "colour": "light blue",
+      "product": "wide-leg jeans",
+      "catalogKey": "zoya-light-blue-jeans",
+      "retailerSku": "700097546_blue",
+      "buyUrl": "https://www.ajio.com/styli-women-high-rise-wide-leg-jeans-with-cargo-pocket/p/700097546_blue"
+    },
+    {
+      "postId": "demo-post-pink-kicks",
+      "garmentId": "demo-garment-pink-palermos",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-pink-sneakers.jpg",
+      "colour": "white and fluorescent pink",
+      "product": "low-profile terrace sneakers",
+      "catalogKey": "zoya-pink-sneakers",
+      "retailerSku": "402692-09",
+      "buyUrl": "https://in.puma.com/in/en/pd/palermo-leather-sneakers/402692?swatch=09"
+    },
+    {
+      "postId": "demo-post-pink-kicks",
+      "garmentId": "demo-garment-pink-shoulder-bag",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-pink-shoulder-bag.jpg",
+      "colour": "pink",
+      "product": "mini shoulder bag",
+      "catalogKey": "zoya-pink-shoulder-bag",
+      "retailerSku": "23676800",
+      "buyUrl": "https://www.myntra.com/handbags/fastrack/fastrack-women-powder-pink-shoulder-bag/23676800/buy"
+    },
+    {
+      "postId": "demo-post-book-market",
+      "garmentId": "demo-garment-book-white-shirt",
+      "postImage": "/media/studio-arjun-book-market.jpg",
+      "productImage": "/media/arjun-white-shirt.jpg",
+      "colour": "white",
+      "product": "relaxed cotton shirt",
+      "catalogKey": "arjun-white-shirt",
+      "retailerSku": "460289078_white",
+      "buyUrl": "https://www.ajio.com/ajio-men-slim-fit-cotton-shirt-with-curved-hem/p/460289078_white"
+    },
+    {
+      "postId": "demo-post-book-market",
+      "garmentId": "demo-garment-light-blue-501",
+      "postImage": "/media/studio-arjun-book-market.jpg",
+      "productImage": "/media/arjun-light-blue-jeans.jpg",
+      "colour": "light blue",
+      "product": "loose straight jeans",
+      "catalogKey": "arjun-light-blue-jeans",
+      "retailerSku": "1288186012",
+      "buyUrl": "https://www2.hm.com/en_in/productpage.1288186012.html"
+    },
+    {
+      "postId": "demo-post-book-market",
+      "garmentId": "demo-garment-book-brown-loafers",
+      "postImage": "/media/studio-arjun-book-market.jpg",
+      "productImage": "/media/arjun-brown-loafers.jpg",
+      "colour": "dark brown",
+      "product": "leather penny loafers",
+      "catalogKey": "arjun-brown-loafers",
+      "retailerSku": "26242990",
+      "buyUrl": "https://www.myntra.com/formal-shoes/here%26now/herenow-men-coffee-brown-formal-penny-loafers-/26242990/buy"
+    },
+    {
+      "postId": "demo-post-red-cardigan",
+      "garmentId": "demo-garment-red-cardigan",
+      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "productImage": "/media/maya-red-cardigan-product.jpg",
+      "colour": "bright red",
+      "product": "short-sleeved collared cardigan",
+      "catalogKey": "maya-red-cardigan-product",
+      "retailerSku": "1305653001",
+      "buyUrl": "https://www2.hm.com/en_in/productpage.1305653001.html"
+    },
+    {
+      "postId": "demo-post-red-cardigan",
+      "garmentId": "demo-garment-red-cream-trousers",
+      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "productImage": "/media/maya-cream-trousers.jpg",
+      "colour": "cream",
+      "product": "wide-leg tailored trousers",
+      "catalogKey": "maya-cream-trousers",
+      "retailerSku": "40555467",
+      "buyUrl": "https://www.myntra.com/trousers/stylecastxkotty/cream-formal-high-rise-wide-leg-trousers/40555467/buy"
+    },
+    {
+      "postId": "demo-post-red-cardigan",
+      "garmentId": "demo-garment-red-cream-loafers",
+      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "productImage": "/media/maya-cream-loafers.jpg",
+      "colour": "cream",
+      "product": "horsebit loafers",
+      "catalogKey": "maya-cream-loafers",
+      "retailerSku": "12801316",
+      "buyUrl": "https://www.myntra.com/casual-shoes/shoetopia/shoetopia-women-cream-coloured-solid-loafers/12801316/buy"
+    },
+    {
+      "postId": "demo-post-red-cardigan",
+      "garmentId": "demo-garment-red-black-bag",
+      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "productImage": "/media/maya-black-shoulder-bag.jpg",
+      "colour": "black",
+      "product": "small shoulder bag",
+      "catalogKey": "maya-black-shoulder-bag",
+      "retailerSku": "20894552",
+      "buyUrl": "https://www.myntra.com/handbags/miraggio/miraggio-black-half-moon-shoulder-bag/20894552/buy"
+    },
+    {
+      "postId": "demo-post-garden-party",
+      "garmentId": "demo-garment-yellow-printed-dress",
+      "postImage": "/media/studio-zoya-garden-party.jpg",
+      "productImage": "/media/zoya-yellow-dress.jpg",
+      "colour": "pastel yellow with multicoloured botanical print",
+      "product": "long sleeveless A-line dress",
+      "catalogKey": "zoya-yellow-dress",
+      "retailerSku": "37031465",
+      "buyUrl": "https://shop.mango.com/in/en/p/women/dresses-and-jumpsuits/dresses/a-line-printed-dress_37031465"
+    },
+    {
+      "postId": "demo-post-garden-party",
+      "garmentId": "demo-garment-garden-tan-sandals",
+      "postImage": "/media/studio-zoya-garden-party.jpg",
+      "productImage": "/media/zoya-tan-sandals.jpg",
+      "colour": "tan",
+      "product": "minimalist heeled sandals",
+      "catalogKey": "zoya-tan-sandals",
+      "retailerSku": "23060486",
+      "buyUrl": "https://www.myntra.com/heels/metro/metro-open-toe-block-heels/23060486/buy"
+    },
+    {
+      "postId": "demo-post-garden-party",
+      "garmentId": "demo-garment-garden-gold-earrings",
+      "postImage": "/media/studio-zoya-garden-party.jpg",
+      "productImage": "/media/zoya-gold-earrings.jpg",
+      "colour": "gold",
+      "product": "filigree drop earrings",
+      "catalogKey": "zoya-gold-earrings",
+      "retailerSku": "13497228",
+      "buyUrl": "https://www.myntra.com/earrings/justpeachy/justpeachy-gold-plated-filigree-teardrop-shaped-drop-earrings/13497228/buy"
     },
     {
       "postId": "demo-post-monochrome-remix",
       "garmentId": "demo-garment-remix-white-fitted-tee",
-      "postImage": "/media/studio-maya-city-layers.jpg",
+      "postImage": "/media/studio-remix-monochrome.jpg",
       "productImage": "/media/maya-white-fitted-tee.jpg",
       "colour": "white",
-      "product": "slim-fit crew-neck T-shirt"
+      "product": "fitted crew-neck T-shirt",
+      "catalogKey": "maya-white-fitted-tee",
+      "retailerSku": "460516501_white",
+      "buyUrl": "https://www.ajio.com/ajio-slim-fit-crew-neck-t-shirt-with-contrast-neckline/p/460516501_white"
     },
     {
       "postId": "demo-post-monochrome-remix",
       "garmentId": "demo-garment-remix-black-wide-trousers",
-      "postImage": "/media/studio-maya-city-layers.jpg",
+      "postImage": "/media/studio-remix-monochrome.jpg",
       "productImage": "/media/maya-black-trousers.jpg",
       "colour": "black",
-      "product": "straight-fit tailored trousers"
+      "product": "wide-leg tailored trousers",
+      "catalogKey": "maya-black-trousers",
+      "retailerSku": "19410206",
+      "buyUrl": "https://www.myntra.com/bottomwear/h%26m/h%26m-women-black-high-waisted-tailored-trousers/19410206/buy"
+    },
+    {
+      "postId": "demo-post-monochrome-remix",
+      "garmentId": "demo-garment-remix-red-sneakers",
+      "postImage": "/media/studio-remix-monochrome.jpg",
+      "productImage": "/media/maya-red-sneakers.jpg",
+      "colour": "red",
+      "product": "low-top sneakers",
+      "catalogKey": "maya-red-sneakers",
+      "retailerSku": "365277-24",
+      "buyUrl": "https://in.puma.com/in/en/pd/st-runner-v2-sneakers/365277?swatch=24"
     },
     {
       "postId": "demo-post-clean-denim-remix",
       "garmentId": "demo-garment-remix-soft-white-tee",
-      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "postImage": "/media/studio-remix-clean-denim.jpg",
       "productImage": "/media/arjun-white-tee.jpg",
       "colour": "white",
-      "product": "pure-cotton crew-neck T-shirt"
+      "product": "crew-neck short-sleeve T-shirt",
+      "catalogKey": "arjun-white-tee",
+      "retailerSku": "E422992-000",
+      "buyUrl": "https://www.uniqlo.com/in/en/products/E422992-000/02?colorDisplayCode=30"
     },
     {
       "postId": "demo-post-clean-denim-remix",
-      "garmentId": "demo-garment-remix-blue-ankle-jeans",
-      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "garmentId": "demo-garment-remix-blue-straight-jeans",
+      "postImage": "/media/studio-remix-clean-denim.jpg",
       "productImage": "/media/arjun-blue-jeans.jpg",
-      "colour": "blue",
-      "product": "ankle-length jeans"
+      "colour": "medium blue",
+      "product": "straight-fit jeans",
+      "catalogKey": "arjun-blue-jeans",
+      "retailerSku": "mens-505-blue-straight-fit-mid-rise-jeans-005rc0092",
+      "buyUrl": "https://levi.in/collections/men-straight-jeans/products/mens-505-blue-straight-fit-mid-rise-jeans-005rc0092"
     },
     {
       "postId": "demo-post-clean-denim-remix",
-      "garmentId": "demo-garment-remix-metro-white-sneakers",
-      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "garmentId": "demo-garment-remix-white-sneakers",
+      "postImage": "/media/studio-remix-clean-denim.jpg",
       "productImage": "/media/arjun-white-sneakers.jpg",
       "colour": "white",
-      "product": "low-top sneakers"
+      "product": "minimal leather sneakers",
+      "catalogKey": "arjun-white-sneakers",
+      "retailerSku": "B0CR1M4Z32",
+      "buyUrl": "https://www.amazon.in/Souled-Store-Urban-Blaze-Sneaker/dp/B0CR1M4Z32"
     },
     {
       "postId": "demo-post-after-dark-remix",
       "garmentId": "demo-garment-remix-black-satin-dress",
-      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "postImage": "/media/studio-remix-after-dark.jpg",
       "productImage": "/media/zoya-black-dress.jpg",
       "colour": "black",
-      "product": "satin midi dress"
+      "product": "satin midi slip dress",
+      "catalogKey": "zoya-black-dress",
+      "retailerSku": "1235183001",
+      "buyUrl": "https://www2.hm.com/en_in/productpage.1235183001.html"
     },
     {
       "postId": "demo-post-after-dark-remix",
       "garmentId": "demo-garment-remix-black-block-heels",
-      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "postImage": "/media/studio-remix-after-dark.jpg",
       "productImage": "/media/zoya-black-sandals.jpg",
       "colour": "black",
-      "product": "open-toe block heels"
+      "product": "barely-there heeled sandals",
+      "catalogKey": "zoya-black-sandals",
+      "retailerSku": "35406641",
+      "buyUrl": "https://www.myntra.com/heels/ntfc/ntfc-women-black-open-toe-block-heels/35406641/buy"
     },
     {
       "postId": "demo-post-after-dark-remix",
       "garmentId": "demo-garment-remix-tan-shoulder-bag",
-      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "postImage": "/media/studio-remix-after-dark.jpg",
       "productImage": "/media/zoya-tan-bag.jpg",
       "colour": "tan",
-      "product": "structured shoulder bag"
+      "product": "structured flap shoulder bag",
+      "catalogKey": "zoya-tan-bag",
+      "retailerSku": "CK2-20151647_DS.TAN_S-IN",
+      "buyUrl": "https://www.charleskeith.in/in/CK2-20151647_DS.TAN_S-IN.html"
     },
     {
       "postId": "demo-post-tonal-coffee-remix",
       "garmentId": "demo-garment-remix-black-crew-pullover",
-      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "postImage": "/media/studio-remix-tonal-coffee.jpg",
       "productImage": "/media/kabir-black-knit.jpg",
       "colour": "black",
-      "product": "crew-neck knit pullover"
+      "product": "fine-knit crew-neck sweater",
+      "catalogKey": "kabir-black-knit",
+      "retailerSku": "700634602_black",
+      "buyUrl": "https://www.ajio.com/snitch-men-crew-neck-pullover/p/700634602_black"
     },
     {
       "postId": "demo-post-tonal-coffee-remix",
       "garmentId": "demo-garment-remix-men-black-trousers",
-      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "postImage": "/media/studio-remix-tonal-coffee.jpg",
       "productImage": "/media/kabir-black-trousers.jpg",
       "colour": "black",
-      "product": "slim-fit tailored trousers"
+      "product": "tapered tailored trousers",
+      "catalogKey": "kabir-black-trousers",
+      "retailerSku": "17957736",
+      "buyUrl": "https://www.myntra.com/trousers/basics/basics-men-black-trousers/17957736/buy"
+    },
+    {
+      "postId": "demo-post-tonal-coffee-remix",
+      "garmentId": "demo-garment-remix-brown-chelsea-boots",
+      "postImage": "/media/studio-remix-tonal-coffee.jpg",
+      "productImage": "/media/kabir-brown-boots.jpg",
+      "colour": "dark brown",
+      "product": "leather Chelsea boots",
+      "catalogKey": "kabir-brown-boots",
+      "retailerSku": "36648648",
+      "buyUrl": "https://www.myntra.com/shoes/roadster/roadster-men-brown-leather-chelsea-boots/36648648/buy"
     },
     {
       "postId": "demo-post-resort-neutral-remix",
-      "garmentId": "demo-garment-remix-sand-regular-shirt",
-      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "garmentId": "demo-garment-remix-sand-linen-shirt",
+      "postImage": "/media/studio-remix-resort-neutral.jpg",
       "productImage": "/media/rehan-sand-shirt.jpg",
       "colour": "sand",
-      "product": "regular-fit shirt"
+      "product": "regular-fit linen shirt",
+      "catalogKey": "rehan-sand-shirt",
+      "retailerSku": "27085939",
+      "buyUrl": "https://shop.mango.com/in/en/p/men/shirts/linen/regular-fit-100-linen-shirt/27085939/07/00"
     },
     {
       "postId": "demo-post-resort-neutral-remix",
       "garmentId": "demo-garment-remix-white-linen-trousers",
-      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "postImage": "/media/studio-remix-resort-neutral.jpg",
       "productImage": "/media/rehan-white-trousers.jpg",
       "colour": "white",
-      "product": "relaxed-fit linen trousers"
+      "product": "relaxed linen trousers",
+      "catalogKey": "rehan-white-trousers",
+      "retailerSku": "31889229",
+      "buyUrl": "https://www.myntra.com/trousers/kingdom20of20white/kingdom-of-white-men-relaxed-fit-linen-trousers/31889229/buy"
     },
     {
       "postId": "demo-post-resort-neutral-remix",
       "garmentId": "demo-garment-remix-square-sunglasses",
-      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "postImage": "/media/studio-remix-resort-neutral.jpg",
       "productImage": "/media/rehan-sunglasses.jpg",
-      "colour": "tortoiseshell",
-      "product": "square sunglasses"
+      "colour": "tortoiseshell brown",
+      "product": "square sunglasses",
+      "catalogKey": "rehan-sunglasses",
+      "retailerSku": "30439204",
+      "buyUrl": "https://www.myntra.com/sunglasses/fastrack/fastrack-men-square-sunglasses-with-uv-protected-lens-p357br3v/30439204/buy"
+    },
+    {
+      "postId": "demo-post-resort-neutral-remix",
+      "garmentId": "demo-garment-remix-brown-loafers",
+      "postImage": "/media/studio-remix-resort-neutral.jpg",
+      "productImage": "/media/rehan-brown-loafers.jpg",
+      "colour": "brown",
+      "product": "leather penny loafers",
+      "catalogKey": "rehan-brown-loafers",
+      "retailerSku": "467025726007",
+      "buyUrl": "https://www.ajio.com/hush-puppies-men-genuine-leather-penny-loafers/p/467025726007"
     },
     {
       "postId": "demo-post-indigo-skirt-remix",
       "garmentId": "demo-garment-remix-indigo-denim-jacket",
-      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "postImage": "/media/studio-remix-indigo-skirt.jpg",
       "productImage": "/media/zoya-indigo-jacket.jpg",
-      "colour": "indigo blue",
-      "product": "washed denim jacket"
+      "colour": "dark indigo blue",
+      "product": "regular-fit denim trucker jacket",
+      "catalogKey": "zoya-indigo-jacket",
+      "retailerSku": "1121152002",
+      "buyUrl": "https://www2.hm.com/en_in/productpage.1121152002.html"
+    },
+    {
+      "postId": "demo-post-indigo-skirt-remix",
+      "garmentId": "demo-garment-remix-grey-tee",
+      "postImage": "/media/studio-remix-indigo-skirt.jpg",
+      "productImage": "/media/zoya-grey-tee.jpg",
+      "colour": "heather grey",
+      "product": "crew-neck T-shirt",
+      "catalogKey": "zoya-grey-tee",
+      "retailerSku": "10908646",
+      "buyUrl": "https://www.myntra.com/tshirts/next/next-grey-solid-round-neck-t-shirt/10908646/buy"
     },
     {
       "postId": "demo-post-indigo-skirt-remix",
       "garmentId": "demo-garment-remix-black-midi-skirt",
-      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "postImage": "/media/studio-remix-indigo-skirt.jpg",
       "productImage": "/media/zoya-black-skirt.jpg",
       "colour": "black",
-      "product": "A-line midi skirt"
+      "product": "fluid midi skirt",
+      "catalogKey": "zoya-black-skirt",
+      "retailerSku": "8224951",
+      "buyUrl": "https://www.myntra.com/skirts/bitterlime/bitterlime-black-midi-a-line-skirt/8224951/buy"
+    },
+    {
+      "postId": "demo-post-indigo-skirt-remix",
+      "garmentId": "demo-garment-remix-black-ankle-boots",
+      "postImage": "/media/studio-remix-indigo-skirt.jpg",
+      "productImage": "/media/zoya-black-boots.jpg",
+      "colour": "black",
+      "product": "block-heel ankle boots",
+      "catalogKey": "zoya-black-boots",
+      "retailerSku": "35266328",
+      "buyUrl": "https://www.myntra.com/boots/inc5/inc-5-women-block-heeled-round-toe-ankle-boots/35266328/buy"
     },
     {
       "postId": "demo-post-utility-night-remix",
       "garmentId": "demo-garment-remix-black-tank",
-      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "postImage": "/media/studio-remix-utility-night.jpg",
       "productImage": "/media/maya-black-tank.jpg",
       "colour": "black",
-      "product": "fitted tank top"
+      "product": "fitted sleeveless tank",
+      "catalogKey": "maya-black-tank",
+      "retailerSku": "27045222",
+      "buyUrl": "https://www.myntra.com/tops/cava/cava-black-tank-us-later-top/27045222/buy"
     },
     {
       "postId": "demo-post-utility-night-remix",
       "garmentId": "demo-garment-remix-olive-cargo-trousers",
-      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "postImage": "/media/studio-remix-utility-night.jpg",
       "productImage": "/media/maya-olive-cargo-trousers.jpg",
-      "colour": "olive",
-      "product": "cotton cargo trousers"
+      "colour": "olive green",
+      "product": "wide-leg cargo trousers",
+      "catalogKey": "maya-olive-cargo-trousers",
+      "retailerSku": "1351818001",
+      "buyUrl": "https://www2.hm.com/en_in/productpage.1351818001.html"
     },
     {
       "postId": "demo-post-utility-night-remix",
-      "garmentId": "demo-garment-remix-black-bucket-bag",
-      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "garmentId": "demo-garment-remix-black-shoulder-bag",
+      "postImage": "/media/studio-remix-utility-night.jpg",
       "productImage": "/media/maya-black-shoulder-bag.jpg",
       "colour": "black",
-      "product": "bucket shoulder bag"
+      "product": "small shoulder bag",
+      "catalogKey": "maya-black-shoulder-bag",
+      "retailerSku": "20894552",
+      "buyUrl": "https://www.myntra.com/handbags/miraggio/miraggio-black-half-moon-shoulder-bag/20894552/buy"
+    },
+    {
+      "postId": "demo-post-utility-night-remix",
+      "garmentId": "demo-garment-remix-black-flat-sandals",
+      "postImage": "/media/studio-remix-utility-night.jpg",
+      "productImage": "/media/maya-black-sandals.jpg",
+      "colour": "black",
+      "product": "minimal flat sandals",
+      "catalogKey": "maya-black-sandals",
+      "retailerSku": "32478571",
+      "buyUrl": "https://www.myntra.com/flats/cai/cai-women-black-toe-thong-flats/32478571/buy"
     },
     {
       "postId": "demo-post-polo-after-hours-remix",
       "garmentId": "demo-garment-remix-cream-knit-polo",
-      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "postImage": "/media/studio-remix-polo-after-hours.jpg",
       "productImage": "/media/arjun-cream-polo.jpg",
       "colour": "cream",
-      "product": "piquet-cotton polo T-shirt"
+      "product": "textured knit polo",
+      "catalogKey": "arjun-cream-polo",
+      "retailerSku": "37028708",
+      "buyUrl": "https://www.myntra.com/tshirts/bepositive/be-positive-cream-self-design-polo-collar-t-shirt/37028708/buy"
     },
     {
       "postId": "demo-post-polo-after-hours-remix",
       "garmentId": "demo-garment-remix-relaxed-black-trousers",
-      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "postImage": "/media/studio-remix-polo-after-hours.jpg",
       "productImage": "/media/arjun-black-trousers.jpg",
       "colour": "black",
-      "product": "relaxed-fit trousers"
+      "product": "relaxed tailored trousers",
+      "catalogKey": "arjun-black-trousers",
+      "retailerSku": "36620272",
+      "buyUrl": "https://www.myntra.com/trousers/showoff/showoff-men-black-relaxed-fit-cotton-regular-trousers/36620272/buy"
     },
     {
       "postId": "demo-post-polo-after-hours-remix",
-      "garmentId": "demo-garment-remix-antony-black-sneakers",
-      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "garmentId": "demo-garment-remix-black-gum-sneakers",
+      "postImage": "/media/studio-remix-polo-after-hours.jpg",
       "productImage": "/media/arjun-black-sneakers.jpg",
-      "colour": "black",
-      "product": "low-top sneakers"
+      "colour": "black with gum sole",
+      "product": "low-profile terrace sneakers",
+      "catalogKey": "arjun-black-sneakers",
+      "retailerSku": "IE3438",
+      "buyUrl": "https://www.adidas.co.in/samba-og-shoes/IE3438.html"
     },
     {
       "postId": "demo-post-blush-denim-remix",
       "garmentId": "demo-garment-remix-pink-cardigan",
-      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "postImage": "/media/studio-remix-blush-denim.jpg",
       "productImage": "/media/zoya-pink-cardigan.jpg",
-      "colour": "pink",
-      "product": "cropped cardigan"
+      "colour": "bubblegum pink",
+      "product": "cropped cardigan",
+      "catalogKey": "zoya-pink-cardigan",
+      "retailerSku": "39331498",
+      "buyUrl": "https://www.myntra.com/sweaters/hm/hm-fine-knit-cardigan/39331498/buy"
     },
     {
       "postId": "demo-post-blush-denim-remix",
       "garmentId": "demo-garment-remix-light-blue-wide-jeans",
-      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "postImage": "/media/studio-remix-blush-denim.jpg",
       "productImage": "/media/zoya-light-blue-jeans.jpg",
       "colour": "light blue",
-      "product": "wide-leg high-rise jeans"
+      "product": "wide-leg jeans",
+      "catalogKey": "zoya-light-blue-jeans",
+      "retailerSku": "700097546_blue",
+      "buyUrl": "https://www.ajio.com/styli-women-high-rise-wide-leg-jeans-with-cargo-pocket/p/700097546_blue"
     },
     {
       "postId": "demo-post-blush-denim-remix",
-      "garmentId": "demo-garment-remix-pink-textured-bag",
-      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "garmentId": "demo-garment-remix-pink-shoulder-bag",
+      "postImage": "/media/studio-remix-blush-denim.jpg",
       "productImage": "/media/zoya-pink-shoulder-bag.jpg",
       "colour": "pink",
-      "product": "textured shoulder bag"
+      "product": "mini shoulder bag",
+      "catalogKey": "zoya-pink-shoulder-bag",
+      "retailerSku": "23676800",
+      "buyUrl": "https://www.myntra.com/handbags/fastrack/fastrack-women-powder-pink-shoulder-bag/23676800/buy"
+    },
+    {
+      "postId": "demo-post-blush-denim-remix",
+      "garmentId": "demo-garment-remix-pink-sneakers",
+      "postImage": "/media/studio-remix-blush-denim.jpg",
+      "productImage": "/media/zoya-pink-sneakers.jpg",
+      "colour": "white and fluorescent pink",
+      "product": "low-profile terrace sneakers",
+      "catalogKey": "zoya-pink-sneakers",
+      "retailerSku": "402692-09",
+      "buyUrl": "https://in.puma.com/in/en/pd/palermo-leather-sneakers/402692?swatch=09"
     },
     {
       "postId": "demo-post-red-cream-remix",
       "garmentId": "demo-garment-remix-red-cardigan",
-      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "postImage": "/media/studio-remix-red-cream.jpg",
       "productImage": "/media/maya-red-cardigan-product.jpg",
-      "colour": "red",
-      "product": "short-sleeved cardigan"
+      "colour": "bright red",
+      "product": "short-sleeved collared cardigan",
+      "catalogKey": "maya-red-cardigan-product",
+      "retailerSku": "1305653001",
+      "buyUrl": "https://www2.hm.com/en_in/productpage.1305653001.html"
     },
     {
       "postId": "demo-post-red-cream-remix",
       "garmentId": "demo-garment-remix-cream-wide-trousers",
-      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "postImage": "/media/studio-remix-red-cream.jpg",
       "productImage": "/media/maya-cream-trousers.jpg",
       "colour": "cream",
-      "product": "wide-leg trousers"
+      "product": "wide-leg tailored trousers",
+      "catalogKey": "maya-cream-trousers",
+      "retailerSku": "40555467",
+      "buyUrl": "https://www.myntra.com/trousers/stylecastxkotty/cream-formal-high-rise-wide-leg-trousers/40555467/buy"
+    },
+    {
+      "postId": "demo-post-red-cream-remix",
+      "garmentId": "demo-garment-remix-cream-loafers",
+      "postImage": "/media/studio-remix-red-cream.jpg",
+      "productImage": "/media/maya-cream-loafers.jpg",
+      "colour": "cream",
+      "product": "horsebit loafers",
+      "catalogKey": "maya-cream-loafers",
+      "retailerSku": "12801316",
+      "buyUrl": "https://www.myntra.com/casual-shoes/shoetopia/shoetopia-women-cream-coloured-solid-loafers/12801316/buy"
+    },
+    {
+      "postId": "demo-post-red-cream-remix",
+      "garmentId": "demo-garment-remix-black-curved-bag",
+      "postImage": "/media/studio-remix-red-cream.jpg",
+      "productImage": "/media/maya-black-shoulder-bag.jpg",
+      "colour": "black",
+      "product": "small shoulder bag",
+      "catalogKey": "maya-black-shoulder-bag",
+      "retailerSku": "20894552",
+      "buyUrl": "https://www.myntra.com/handbags/miraggio/miraggio-black-half-moon-shoulder-bag/20894552/buy"
     }
   ]
 }

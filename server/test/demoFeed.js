@@ -21,10 +21,10 @@ try {
   assert.equal(posts.length, 24);
   assert.equal(
     posts.reduce((total, post) => total + post.garments.length, 0),
-    79,
+    88,
   );
 
-  assert.equal(visualMatches.matches.length, 79);
+  assert.equal(visualMatches.matches.length, 88);
   const matchesByGarment = new Map(
     visualMatches.matches.map((match) => [match.garmentId, match]),
   );
@@ -43,6 +43,9 @@ try {
     'www.flipkart.com',
   ]);
   const retailerCounts = new Map();
+  const productsByCatalogKey = new Map();
+  const catalogKeysByBuyUrl = new Map();
+  assert.equal(new Set(posts.map((post) => post.imageUrl)).size, posts.length);
   for (const post of posts) {
     assert.match(post.imageUrl, /^\/media\/[a-z0-9-]+\.jpg$/);
     const postImage = await readMedia(post.imageUrl.replace('/media/', ''));
@@ -55,8 +58,13 @@ try {
       assert.equal(visualMatch.postId, post.id);
       assert.equal(visualMatch.postImage, post.imageUrl);
       assert.equal(visualMatch.productImage, garment.imageUrl);
+      assert.equal(visualMatch.catalogKey, garment.catalogKey);
+      assert.equal(visualMatch.retailerSku, garment.retailerSku);
+      assert.equal(visualMatch.buyUrl, garment.buyUrl);
       assert.ok(visualMatch.colour);
       assert.ok(visualMatch.product);
+      assert.ok(garment.catalogKey);
+      assert.ok(garment.retailerSku);
       assert.ok(Array.isArray(garment.productImageUrls));
       assert.deepEqual(
         garment.productImageUrls,
@@ -79,6 +87,40 @@ try {
         (retailerCounts.get(productUrl.host) || 0) + 1,
       );
 
+      const identity = JSON.stringify({
+        title: garment.title,
+        brand: garment.brand,
+        price: garment.price,
+        imageUrl: garment.imageUrl,
+        productImageUrls: garment.productImageUrls,
+        buyUrl: garment.buyUrl,
+        retailerSku: garment.retailerSku,
+        category: garment.category,
+      });
+      const existingIdentity = productsByCatalogKey.get(garment.catalogKey);
+      if (existingIdentity) {
+        assert.equal(
+          identity,
+          existingIdentity,
+          `${garment.catalogKey} must always open the same retailer SKU`,
+        );
+      } else {
+        productsByCatalogKey.set(garment.catalogKey, identity);
+      }
+      const existingKey = catalogKeysByBuyUrl.get(garment.buyUrl);
+      if (existingKey) {
+        assert.equal(
+          garment.catalogKey,
+          existingKey,
+          `${garment.buyUrl} cannot represent two mock products`,
+        );
+      } else {
+        catalogKeysByBuyUrl.set(garment.buyUrl, garment.catalogKey);
+      }
+
+      assert.equal(productUrl.pathname.includes('/search'), false);
+      assert.equal(productUrl.pathname.includes('/search-results'), false);
+
       if (productUrl.host === 'www.amazon.in') {
         assert.match(productUrl.pathname, /\/dp\/[A-Z0-9]{10}$/);
       }
@@ -87,6 +129,27 @@ try {
       }
       if (productUrl.host === 'www.myntra.com') {
         assert.match(productUrl.pathname, /\/\d+\/buy$/);
+      }
+      if (productUrl.host === 'www2.hm.com') {
+        assert.match(productUrl.pathname, /\/productpage\.\d+\.html$/);
+      }
+      if (productUrl.host === 'in.puma.com') {
+        assert.match(productUrl.pathname, /\/pd\/.+\/\d+$/);
+      }
+      if (productUrl.host === 'www.uniqlo.com') {
+        assert.match(productUrl.pathname, /\/products\/E\d+-\d+\/\d+$/);
+      }
+      if (productUrl.host === 'levi.in') {
+        assert.match(productUrl.pathname, /\/products\/[a-z0-9-]+$/);
+      }
+      if (productUrl.host === 'www.charleskeith.in') {
+        assert.match(productUrl.pathname, /\/CK.+\.html$/);
+      }
+      if (productUrl.host === 'shop.mango.com') {
+        assert.match(productUrl.pathname, /(?:_|\/)\d{8}(?:\/|$)/);
+      }
+      if (productUrl.host === 'www.adidas.co.in') {
+        assert.match(productUrl.pathname, /\/[A-Z0-9]+\.html$/i);
       }
       if (
         ['www.amazon.in', 'www.ajio.com', 'www.myntra.com'].includes(
@@ -99,8 +162,10 @@ try {
       }
     }
   }
-  assert.equal(matchesByGarment.size, 79);
-  assert.ok(retailerCounts.get('www.amazon.in') >= 5);
+  assert.equal(matchesByGarment.size, 88);
+  assert.equal(productsByCatalogKey.size, 52);
+  assert.equal(catalogKeysByBuyUrl.size, 52);
+  assert.ok(retailerCounts.get('www.amazon.in') >= 1);
   assert.ok(retailerCounts.get('www.ajio.com') >= 8);
   assert.ok(retailerCounts.get('www.myntra.com') >= 10);
 
@@ -123,10 +188,10 @@ try {
 
   const remixPosts = posts.filter((post) => post.id.endsWith('-remix'));
   assert.equal(remixPosts.length, 10);
-  const remixUrls = remixPosts.flatMap((post) =>
-    post.garments.map((garment) => garment.buyUrl),
+  assert.equal(
+    new Set(remixPosts.map((post) => post.imageUrl)).size,
+    remixPosts.length,
   );
-  assert.equal(new Set(remixUrls).size, remixUrls.length);
   assert.ok(
     remixPosts.some(
       (post) =>
@@ -155,7 +220,7 @@ try {
   assert.ok(seededImage.bytes.length > 100_000);
 
   const persisted = JSON.parse(await readFile(process.env.DATA_FILE, 'utf8'));
-  assert.equal(persisted.demoFeedVersion, 9);
+  assert.equal(persisted.demoFeedVersion, 10);
   assert.equal(persisted.posts.length, 24);
 
   await store.loadStore();
@@ -189,7 +254,7 @@ try {
     2,
     Date.parse('2026-08-17T00:00:00.000Z'),
   );
-  assert.equal(migration.version, 9);
+  assert.equal(migration.version, 10);
   assert.equal(migrationDb.posts.size, 24);
   const migratedPost = migrationDb.posts.get('demo-post-city-layers');
   assert.deepEqual(migratedPost.likeUserIds, ['existing-viewer']);

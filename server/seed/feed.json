@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 10,
   "users": [
     {
       "id": "demo-user-maya",
@@ -41,7 +41,11 @@
       "caption": "Soft tailoring for a very unstructured Saturday. The red trainers won the vote.",
       "imageUrl": "/media/studio-maya-city-layers.jpg",
       "ageMinutes": 38,
-      "likeUserIds": ["demo-user-arjun", "demo-user-zoya", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-arjun",
+        "demo-user-zoya",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-black-jacket",
@@ -53,19 +57,29 @@
           "buyUrl": "https://www2.hm.com/en_in/productpage.1290869003.html",
           "category": "upper_body",
           "x": 0.53,
-          "y": 0.34
+          "y": 0.34,
+          "catalogKey": "maya-black-blazer",
+          "retailerSku": "1290869003",
+          "productImageUrls": [
+            "/media/maya-black-blazer.jpg"
+          ]
         },
         {
           "id": "demo-garment-city-white-tee",
-          "title": "White fitted crew-neck T-shirt",
-          "brand": "H&M",
-          "price": null,
+          "title": "White slim-fit crew-neck T-shirt",
+          "brand": "AJIO",
+          "price": "₹499",
           "imageUrl": "/media/maya-white-fitted-tee.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www2.hm.com/en_in/search-results.html?q=women%20white%20fitted%20crew%20neck%20t-shirt",
+          "buyUrl": "https://www.ajio.com/ajio-slim-fit-crew-neck-t-shirt-with-contrast-neckline/p/460516501_white",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.4
+          "y": 0.4,
+          "catalogKey": "maya-white-fitted-tee",
+          "retailerSku": "460516501_white",
+          "productImageUrls": [
+            "/media/maya-white-fitted-tee.jpg"
+          ]
         },
         {
           "id": "demo-garment-red-sneakers",
@@ -77,19 +91,29 @@
           "buyUrl": "https://in.puma.com/in/en/pd/st-runner-v2-sneakers/365277?swatch=24",
           "category": "shoes",
           "x": 0.55,
-          "y": 0.9
+          "y": 0.9,
+          "catalogKey": "maya-red-sneakers",
+          "retailerSku": "365277-24",
+          "productImageUrls": [
+            "/media/maya-red-sneakers.jpg"
+          ]
         },
         {
           "id": "demo-garment-city-black-trousers",
-          "title": "Black wide-leg tailored trousers",
-          "brand": "AJIO",
-          "price": null,
+          "title": "Black high-waisted wide-leg tailored trousers",
+          "brand": "H&M",
+          "price": "₹1,399",
           "imageUrl": "/media/maya-black-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/ajio-flat-front-high-rise-trousers/p/460286863_grey",
+          "buyUrl": "https://www.myntra.com/bottomwear/h%26m/h%26m-women-black-high-waisted-tailored-trousers/19410206/buy",
           "category": "lower_body",
           "x": 0.52,
-          "y": 0.64
+          "y": 0.64,
+          "catalogKey": "maya-black-trousers",
+          "retailerSku": "19410206",
+          "productImageUrls": [
+            "/media/maya-black-trousers.jpg"
+          ]
         }
       ],
       "comments": [
@@ -113,7 +137,10 @@
       "caption": "One good tee, broken-in denim, and nowhere urgent to be.",
       "imageUrl": "/media/studio-arjun-denim-day.jpg",
       "ageMinutes": 190,
-      "likeUserIds": ["demo-user-maya", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-white-tee",
@@ -125,7 +152,12 @@
           "buyUrl": "https://www.uniqlo.com/in/en/products/E422992-000/02?colorDisplayCode=30",
           "category": "upper_body",
           "x": 0.53,
-          "y": 0.29
+          "y": 0.29,
+          "catalogKey": "arjun-white-tee",
+          "retailerSku": "E422992-000",
+          "productImageUrls": [
+            "/media/arjun-white-tee.jpg"
+          ]
         },
         {
           "id": "demo-garment-straight-jeans",
@@ -137,7 +169,12 @@
           "buyUrl": "https://levi.in/collections/men-straight-jeans/products/mens-505-blue-straight-fit-mid-rise-jeans-005rc0092",
           "category": "lower_body",
           "x": 0.53,
-          "y": 0.61
+          "y": 0.61,
+          "catalogKey": "arjun-blue-jeans",
+          "retailerSku": "mens-505-blue-straight-fit-mid-rise-jeans-005rc0092",
+          "productImageUrls": [
+            "/media/arjun-blue-jeans.jpg"
+          ]
         },
         {
           "id": "demo-garment-denim-white-sneakers",
@@ -149,7 +186,12 @@
           "buyUrl": "https://www.amazon.in/Souled-Store-Urban-Blaze-Sneaker/dp/B0CR1M4Z32",
           "category": "shoes",
           "x": 0.52,
-          "y": 0.9
+          "y": 0.9,
+          "catalogKey": "arjun-white-sneakers",
+          "retailerSku": "B0CR1M4Z32",
+          "productImageUrls": [
+            "/media/arjun-white-sneakers.jpg"
+          ]
         }
       ],
       "comments": [
@@ -167,7 +209,11 @@
       "caption": "Gallery opening uniform: a clean line, one great bag, zero fuss.",
       "imageUrl": "/media/studio-zoya-gallery-night.jpg",
       "ageMinutes": 510,
-      "likeUserIds": ["demo-user-maya", "demo-user-arjun", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-arjun",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-black-dress",
@@ -179,31 +225,46 @@
           "buyUrl": "https://www2.hm.com/en_in/productpage.1235183001.html",
           "category": "full_body",
           "x": 0.49,
-          "y": 0.43
+          "y": 0.43,
+          "catalogKey": "zoya-black-dress",
+          "retailerSku": "1235183001",
+          "productImageUrls": [
+            "/media/zoya-black-dress.jpg"
+          ]
         },
         {
           "id": "demo-garment-shoulder-bag",
-          "title": "Acelynn tan shoulder bag",
+          "title": "Mini Haylen tan shoulder bag",
           "brand": "Charles & Keith",
-          "price": "₹8,800",
+          "price": "₹9,499",
           "imageUrl": "/media/zoya-tan-bag.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.charleskeith.in/in/CK2-20701632_DS.TAN-IN.html",
+          "buyUrl": "https://www.charleskeith.in/in/CK2-20151647_DS.TAN_S-IN.html",
           "category": "accessory",
           "x": 0.65,
-          "y": 0.41
+          "y": 0.41,
+          "catalogKey": "zoya-tan-bag",
+          "retailerSku": "CK2-20151647_DS.TAN_S-IN",
+          "productImageUrls": [
+            "/media/zoya-tan-bag.jpg"
+          ]
         },
         {
           "id": "demo-garment-gallery-sandals",
-          "title": "Black barely-there heeled sandals",
-          "brand": "Myntra",
-          "price": null,
+          "title": "Black open-toe block heels",
+          "brand": "NTFC",
+          "price": "₹924",
           "imageUrl": "/media/zoya-black-sandals.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/heels/metro/metro-women-black-solid-block-heeled-pumps/12007394/buy",
+          "buyUrl": "https://www.myntra.com/heels/ntfc/ntfc-women-black-open-toe-block-heels/35406641/buy",
           "category": "shoes",
           "x": 0.49,
-          "y": 0.9
+          "y": 0.9,
+          "catalogKey": "zoya-black-sandals",
+          "retailerSku": "35406641",
+          "productImageUrls": [
+            "/media/zoya-black-sandals.jpg"
+          ]
         }
       ],
       "comments": [
@@ -221,7 +282,10 @@
       "caption": "A light coat fixes almost every last-minute outfit decision.",
       "imageUrl": "/media/studio-kabir-coffee-run.jpg",
       "ageMinutes": 1320,
-      "likeUserIds": ["demo-user-maya", "demo-user-zoya"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-zoya"
+      ],
       "garments": [
         {
           "id": "demo-garment-camel-coat",
@@ -233,31 +297,46 @@
           "buyUrl": "https://shop.mango.com/in/en/p/men/coats/coats/wool-overcoat_17086720?c=09",
           "category": "upper_body",
           "x": 0.52,
-          "y": 0.37
+          "y": 0.37,
+          "catalogKey": "kabir-camel-coat",
+          "retailerSku": "17086720",
+          "productImageUrls": [
+            "/media/kabir-camel-coat.jpg"
+          ]
         },
         {
           "id": "demo-garment-coffee-black-knit",
-          "title": "Black fine-knit crew-neck sweater",
-          "brand": "H&M",
-          "price": null,
+          "title": "Black crew-neck knit pullover",
+          "brand": "SNITCH",
+          "price": "₹999",
           "imageUrl": "/media/kabir-black-knit.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www2.hm.com/en_in/search-results.html?q=men%20black%20fine%20knit%20sweater",
+          "buyUrl": "https://www.ajio.com/snitch-men-crew-neck-pullover/p/700634602_black",
           "category": "upper_body",
           "x": 0.51,
-          "y": 0.43
+          "y": 0.43,
+          "catalogKey": "kabir-black-knit",
+          "retailerSku": "700634602_black",
+          "productImageUrls": [
+            "/media/kabir-black-knit.jpg"
+          ]
         },
         {
           "id": "demo-garment-coffee-black-trousers",
-          "title": "Black tapered tailored trousers",
-          "brand": "AJIO",
-          "price": null,
+          "title": "Men black slim-fit tailored trousers",
+          "brand": "BASICS",
+          "price": "₹1,259",
           "imageUrl": "/media/kabir-black-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/ajio-checked-slim-fit-flat-front-tapered-trousers/p/460453067_navy",
+          "buyUrl": "https://www.myntra.com/trousers/basics/basics-men-black-trousers/17957736/buy",
           "category": "lower_body",
           "x": 0.54,
-          "y": 0.65
+          "y": 0.65,
+          "catalogKey": "kabir-black-trousers",
+          "retailerSku": "17957736",
+          "productImageUrls": [
+            "/media/kabir-black-trousers.jpg"
+          ]
         },
         {
           "id": "demo-garment-market-tote",
@@ -269,19 +348,29 @@
           "buyUrl": "https://www.charleskeith.in/in/CK2-31200033_DK.BRW-IN.html",
           "category": "accessory",
           "x": 0.33,
-          "y": 0.68
+          "y": 0.68,
+          "catalogKey": "kabir-brown-tote",
+          "retailerSku": "CK2-31200033_DK.BRW-IN",
+          "productImageUrls": [
+            "/media/kabir-brown-tote.jpg"
+          ]
         },
         {
           "id": "demo-garment-coffee-brown-boots",
-          "title": "Dark-brown leather Chelsea boots",
-          "brand": "Flipkart",
-          "price": null,
+          "title": "Men dark-brown leather Chelsea boots",
+          "brand": "Roadster",
+          "price": "₹1,267",
           "imageUrl": "/media/kabir-brown-boots.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.flipkart.com/search?q=men%20dark%20brown%20leather%20chelsea%20boots",
+          "buyUrl": "https://www.myntra.com/shoes/roadster/roadster-men-brown-leather-chelsea-boots/36648648/buy",
           "category": "shoes",
           "x": 0.52,
-          "y": 0.89
+          "y": 0.89,
+          "catalogKey": "kabir-brown-boots",
+          "retailerSku": "36648648",
+          "productImageUrls": [
+            "/media/kabir-brown-boots.jpg"
+          ]
         }
       ],
       "comments": []
@@ -292,7 +381,11 @@
       "caption": "Linen, late light, and absolutely nowhere to rush to.",
       "imageUrl": "/media/studio-rehan-sand-linen.jpg",
       "ageMinutes": 16,
-      "likeUserIds": ["demo-user-maya", "demo-user-arjun", "demo-user-zoya"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-arjun",
+        "demo-user-zoya"
+      ],
       "garments": [
         {
           "id": "demo-garment-sand-linen-shirt",
@@ -304,43 +397,63 @@
           "buyUrl": "https://shop.mango.com/in/en/p/men/shirts/linen/regular-fit-100-linen-shirt/27085939/07/00",
           "category": "upper_body",
           "x": 0.49,
-          "y": 0.35
+          "y": 0.35,
+          "catalogKey": "rehan-sand-shirt",
+          "retailerSku": "27085939",
+          "productImageUrls": [
+            "/media/rehan-sand-shirt.jpg"
+          ]
         },
         {
           "id": "demo-garment-sand-white-trousers",
-          "title": "White relaxed linen trousers",
-          "brand": "AJIO",
-          "price": null,
+          "title": "White relaxed-fit linen trousers",
+          "brand": "Kingdom of White",
+          "price": "₹1,199",
           "imageUrl": "/media/rehan-white-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/ajio-checked-slim-fit-flat-front-tapered-trousers/p/460453067_navy",
+          "buyUrl": "https://www.myntra.com/trousers/kingdom20of20white/kingdom-of-white-men-relaxed-fit-linen-trousers/31889229/buy",
           "category": "lower_body",
           "x": 0.52,
-          "y": 0.65
+          "y": 0.65,
+          "catalogKey": "rehan-white-trousers",
+          "retailerSku": "31889229",
+          "productImageUrls": [
+            "/media/rehan-white-trousers.jpg"
+          ]
         },
         {
           "id": "demo-garment-sand-sunglasses",
-          "title": "Tortoiseshell square sunglasses",
-          "brand": "Amazon Fashion",
-          "price": null,
+          "title": "Brown square UV-protected sunglasses",
+          "brand": "Fastrack",
+          "price": "₹855",
           "imageUrl": "/media/rehan-sunglasses.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/CREEK-Blocking-anti-glare-Eyeglasses-Protection/dp/B09DW4DLZS",
+          "buyUrl": "https://www.myntra.com/sunglasses/fastrack/fastrack-men-square-sunglasses-with-uv-protected-lens-p357br3v/30439204/buy",
           "category": "accessory",
           "x": 0.49,
-          "y": 0.13
+          "y": 0.13,
+          "catalogKey": "rehan-sunglasses",
+          "retailerSku": "30439204",
+          "productImageUrls": [
+            "/media/rehan-sunglasses.jpg"
+          ]
         },
         {
           "id": "demo-garment-sand-brown-loafers",
-          "title": "Brown leather penny loafers",
-          "brand": "Myntra",
-          "price": null,
+          "title": "Brown genuine-leather penny loafers",
+          "brand": "Hush Puppies",
+          "price": "₹2,799",
           "imageUrl": "/media/rehan-brown-loafers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/casual-shoes/alberto-moreno/alberto-moreno-men-brown-casual-loafers-/14184726/buy",
+          "buyUrl": "https://www.ajio.com/hush-puppies-men-genuine-leather-penny-loafers/p/467025726007",
           "category": "shoes",
           "x": 0.52,
-          "y": 0.9
+          "y": 0.9,
+          "catalogKey": "rehan-brown-loafers",
+          "retailerSku": "467025726007",
+          "productImageUrls": [
+            "/media/rehan-brown-loafers.jpg"
+          ]
         }
       ],
       "comments": [
@@ -358,7 +471,10 @@
       "caption": "Rainy platform, reliable denim, good boots.",
       "imageUrl": "/media/studio-zoya-indigo-trucker.jpg",
       "ageMinutes": 74,
-      "likeUserIds": ["demo-user-maya", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-indigo-trucker",
@@ -370,43 +486,63 @@
           "buyUrl": "https://www2.hm.com/en_in/productpage.1121152002.html",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.34
+          "y": 0.34,
+          "catalogKey": "zoya-indigo-jacket",
+          "retailerSku": "1121152002",
+          "productImageUrls": [
+            "/media/zoya-indigo-jacket.jpg"
+          ]
         },
         {
           "id": "demo-garment-indigo-grey-tee",
-          "title": "Heather-grey crew-neck T-shirt",
-          "brand": "H&M",
-          "price": null,
+          "title": "Grey solid round-neck T-shirt",
+          "brand": "NEXT",
+          "price": "₹449",
           "imageUrl": "/media/zoya-grey-tee.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www2.hm.com/en_in/search-results.html?q=women%20grey%20crew%20neck%20t-shirt",
+          "buyUrl": "https://www.myntra.com/tshirts/next/next-grey-solid-round-neck-t-shirt/10908646/buy",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.41
+          "y": 0.41,
+          "catalogKey": "zoya-grey-tee",
+          "retailerSku": "10908646",
+          "productImageUrls": [
+            "/media/zoya-grey-tee.jpg"
+          ]
         },
         {
           "id": "demo-garment-indigo-black-skirt",
-          "title": "Black fluid midi skirt",
-          "brand": "Myntra",
-          "price": null,
+          "title": "Black fluid A-line midi skirt",
+          "brand": "Bitterlime",
+          "price": "₹799",
           "imageUrl": "/media/zoya-black-skirt.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/skirts/sassafras/sassafras-black-midi-wrap-skirt/10604550/buy",
+          "buyUrl": "https://www.myntra.com/skirts/bitterlime/bitterlime-black-midi-a-line-skirt/8224951/buy",
           "category": "lower_body",
           "x": 0.5,
-          "y": 0.62
+          "y": 0.62,
+          "catalogKey": "zoya-black-skirt",
+          "retailerSku": "8224951",
+          "productImageUrls": [
+            "/media/zoya-black-skirt.jpg"
+          ]
         },
         {
           "id": "demo-garment-indigo-black-boots",
-          "title": "Black block-heel ankle boots",
-          "brand": "Flipkart",
-          "price": null,
+          "title": "Women black round-toe block-heel ankle boots",
+          "brand": "Inc 5",
+          "price": "₹5,990",
           "imageUrl": "/media/zoya-black-boots.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.flipkart.com/search?q=women%20black%20block%20heel%20ankle%20boots",
+          "buyUrl": "https://www.myntra.com/boots/inc5/inc-5-women-block-heeled-round-toe-ankle-boots/35266328/buy",
           "category": "shoes",
           "x": 0.52,
-          "y": 0.88
+          "y": 0.88,
+          "catalogKey": "zoya-black-boots",
+          "retailerSku": "35266328",
+          "productImageUrls": [
+            "/media/zoya-black-boots.jpg"
+          ]
         }
       ],
       "comments": []
@@ -417,19 +553,28 @@
       "caption": "Utility trousers, but make the whole day feel lighter.",
       "imageUrl": "/media/studio-maya-olive-cargos.jpg",
       "ageMinutes": 145,
-      "likeUserIds": ["demo-user-arjun", "demo-user-zoya", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-arjun",
+        "demo-user-zoya",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-olive-black-tank",
-          "title": "Black fitted sleeveless tank",
-          "brand": "AJIO",
-          "price": null,
+          "title": "Black fitted tank top",
+          "brand": "CAVA",
+          "price": "₹599",
           "imageUrl": "/media/maya-black-tank.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/ajio-top-with-tied-sleeve-hems/p/460216517002",
+          "buyUrl": "https://www.myntra.com/tops/cava/cava-black-tank-us-later-top/27045222/buy",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.32
+          "y": 0.32,
+          "catalogKey": "maya-black-tank",
+          "retailerSku": "27045222",
+          "productImageUrls": [
+            "/media/maya-black-tank.jpg"
+          ]
         },
         {
           "id": "demo-garment-olive-cargos",
@@ -441,19 +586,29 @@
           "buyUrl": "https://www2.hm.com/en_in/productpage.1351818001.html",
           "category": "lower_body",
           "x": 0.5,
-          "y": 0.63
+          "y": 0.63,
+          "catalogKey": "maya-olive-cargo-trousers",
+          "retailerSku": "1351818001",
+          "productImageUrls": [
+            "/media/maya-olive-cargo-trousers.jpg"
+          ]
         },
         {
           "id": "demo-garment-olive-shoulder-bag",
-          "title": "Small black shoulder bag",
-          "brand": "Myntra",
-          "price": null,
+          "title": "Cindy black curved shoulder bag",
+          "brand": "MIRAGGIO",
+          "price": "₹2,549",
           "imageUrl": "/media/maya-black-shoulder-bag.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/handbags/van-heusen-woman/van-heusen-woman-abstract-structured-shoulder-bag/35649930/buy",
+          "buyUrl": "https://www.myntra.com/handbags/miraggio/miraggio-black-half-moon-shoulder-bag/20894552/buy",
           "category": "accessory",
           "x": 0.34,
-          "y": 0.39
+          "y": 0.39,
+          "catalogKey": "maya-black-shoulder-bag",
+          "retailerSku": "20894552",
+          "productImageUrls": [
+            "/media/maya-black-shoulder-bag.jpg"
+          ]
         },
         {
           "id": "demo-garment-olive-black-sandals",
@@ -465,7 +620,12 @@
           "buyUrl": "https://www.myntra.com/flats/cai/cai-women-black-toe-thong-flats/32478571/buy",
           "category": "shoes",
           "x": 0.52,
-          "y": 0.9
+          "y": 0.9,
+          "catalogKey": "maya-black-sandals",
+          "retailerSku": "32478571",
+          "productImageUrls": [
+            "/media/maya-black-sandals.jpg"
+          ]
         }
       ],
       "comments": [
@@ -483,31 +643,44 @@
       "caption": "Built the whole fit from the gum sole up.",
       "imageUrl": "/media/studio-arjun-black-sambas.jpg",
       "ageMinutes": 275,
-      "likeUserIds": ["demo-user-maya", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-sambas-cream-polo",
-          "title": "Cream textured knit polo",
-          "brand": "Myntra",
-          "price": null,
+          "title": "Cream self-design textured polo T-shirt",
+          "brand": "BE POSITIVE",
+          "price": "₹854",
           "imageUrl": "/media/arjun-cream-polo.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/tshirts/roadster/roadster-men-cream-coloured-pure-cotton-solid-polo-collar-t-shirt/18404710/buy",
+          "buyUrl": "https://www.myntra.com/tshirts/bepositive/be-positive-cream-self-design-polo-collar-t-shirt/37028708/buy",
           "category": "upper_body",
           "x": 0.52,
-          "y": 0.33
+          "y": 0.33,
+          "catalogKey": "arjun-cream-polo",
+          "retailerSku": "37028708",
+          "productImageUrls": [
+            "/media/arjun-cream-polo.jpg"
+          ]
         },
         {
           "id": "demo-garment-sambas-black-trousers",
-          "title": "Black relaxed tailored trousers",
-          "brand": "AJIO",
-          "price": null,
+          "title": "Men black relaxed-fit cotton trousers",
+          "brand": "SHOWOFFFF",
+          "price": "₹1,019",
           "imageUrl": "/media/arjun-black-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/ajio-checked-slim-fit-flat-front-tapered-trousers/p/460453067_navy",
+          "buyUrl": "https://www.myntra.com/trousers/showoff/showoff-men-black-relaxed-fit-cotton-regular-trousers/36620272/buy",
           "category": "lower_body",
           "x": 0.51,
-          "y": 0.63
+          "y": 0.63,
+          "catalogKey": "arjun-black-trousers",
+          "retailerSku": "36620272",
+          "productImageUrls": [
+            "/media/arjun-black-trousers.jpg"
+          ]
         },
         {
           "id": "demo-garment-black-sambas",
@@ -519,19 +692,29 @@
           "buyUrl": "https://www.adidas.co.in/samba-og-shoes/IE3438.html",
           "category": "shoes",
           "x": 0.5,
-          "y": 0.9
+          "y": 0.9,
+          "catalogKey": "arjun-black-sneakers",
+          "retailerSku": "IE3438",
+          "productImageUrls": [
+            "/media/arjun-black-sneakers.jpg"
+          ]
         },
         {
           "id": "demo-garment-sambas-sunglasses",
-          "title": "Black wayfarer sunglasses",
-          "brand": "Amazon Fashion",
-          "price": null,
+          "title": "Black wayfarer UV-protected sunglasses",
+          "brand": "Voyage",
+          "price": "₹809",
           "imageUrl": "/media/arjun-black-sunglasses.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/CREEK-Blocking-anti-glare-Eyeglasses-Protection/dp/B09DW4DLZS",
+          "buyUrl": "https://www.myntra.com/eyewear/voyage/voyage-unisex-black-lens-%26-black-wayfarer-sunglasses-with-uv-protected-lens/19037770/buy",
           "category": "accessory",
           "x": 0.5,
-          "y": 0.14
+          "y": 0.14,
+          "catalogKey": "arjun-black-sunglasses",
+          "retailerSku": "19037770",
+          "productImageUrls": [
+            "/media/arjun-black-sunglasses.jpg"
+          ]
         }
       ],
       "comments": []
@@ -542,7 +725,11 @@
       "caption": "Chocolate and cream is quietly becoming my favourite combination.",
       "imageUrl": "/media/studio-zoya-lobby-cream-bag.jpg",
       "ageMinutes": 420,
-      "likeUserIds": ["demo-user-maya", "demo-user-arjun", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-arjun",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-lobby-brown-blouse",
@@ -554,31 +741,46 @@
           "buyUrl": "https://www.myntra.com/shirts/hm/hm-women-brown-satin-shirt/15960072/buy",
           "category": "upper_body",
           "x": 0.52,
-          "y": 0.34
+          "y": 0.34,
+          "catalogKey": "zoya-brown-satin-blouse",
+          "retailerSku": "15960072",
+          "productImageUrls": [
+            "/media/zoya-brown-satin-blouse.jpg"
+          ]
         },
         {
           "id": "demo-garment-lobby-cream-trousers",
-          "title": "Cream straight tailored trousers",
-          "brand": "AJIO",
-          "price": null,
+          "title": "Beige tailored straight-fit trousers",
+          "brand": "FABLE STREET",
+          "price": "₹1,856",
           "imageUrl": "/media/zoya-cream-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/ajio-flat-front-high-rise-trousers/p/460286863_grey",
+          "buyUrl": "https://www.myntra.com/trousers/fablestreet/fablestreet-women-tailored-beige-straight-fit-trousers/36532000/buy",
           "category": "lower_body",
           "x": 0.54,
-          "y": 0.64
+          "y": 0.64,
+          "catalogKey": "zoya-cream-trousers",
+          "retailerSku": "36532000",
+          "productImageUrls": [
+            "/media/zoya-cream-trousers.jpg"
+          ]
         },
         {
           "id": "demo-garment-cream-shoulder-bag",
-          "title": "Augustine cream shoulder bag",
-          "brand": "Charles & Keith",
-          "price": "₹6,300",
+          "title": "Bryna cream curved hobo bag",
+          "brand": "CHARLES & KEITH",
+          "price": "₹7,499",
           "imageUrl": "/media/zoya-cream-shoulder-bag.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.charleskeith.in/in/CK2-20782683_CREAM-IN.html",
+          "buyUrl": "https://www.myntra.com/handbags/charles26keith/charles--keith-bryna-curved-hobo-bag/40060269/buy",
           "category": "accessory",
           "x": 0.36,
-          "y": 0.58
+          "y": 0.58,
+          "catalogKey": "zoya-cream-shoulder-bag",
+          "retailerSku": "40060269",
+          "productImageUrls": [
+            "/media/zoya-cream-shoulder-bag.jpg"
+          ]
         },
         {
           "id": "demo-garment-lobby-brown-pumps",
@@ -590,7 +792,12 @@
           "buyUrl": "https://www.myntra.com/heels/nell/nell-women-brown-pumps/124149/buy",
           "category": "shoes",
           "x": 0.54,
-          "y": 0.9
+          "y": 0.9,
+          "catalogKey": "zoya-brown-pumps",
+          "retailerSku": "124149",
+          "productImageUrls": [
+            "/media/zoya-brown-pumps.jpg"
+          ]
         }
       ],
       "comments": []
@@ -601,7 +808,10 @@
       "caption": "A soft brown layer for the first hint of cooler weather.",
       "imageUrl": "/media/studio-maya-brown-leather.jpg",
       "ageMinutes": 720,
-      "likeUserIds": ["demo-user-zoya", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-zoya",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-brown-leather-jacket",
@@ -613,31 +823,46 @@
           "buyUrl": "https://shop.mango.com/in/en/p/women/jackets/leather-effect/leather-effect-jacket-with-pockets_17137696",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.34
+          "y": 0.34,
+          "catalogKey": "maya-brown-jacket",
+          "retailerSku": "17137696",
+          "productImageUrls": [
+            "/media/maya-brown-jacket.jpg"
+          ]
         },
         {
           "id": "demo-garment-brown-black-top",
-          "title": "Black fitted scoop-neck top",
-          "brand": "AJIO",
-          "price": null,
+          "title": "Black sleeveless scoop-neck fitted top",
+          "brand": "StyleCast",
+          "price": "₹1,199",
           "imageUrl": "/media/maya-black-top.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/ajio-top-with-tied-sleeve-hems/p/460216517002",
+          "buyUrl": "https://www.myntra.com/tops/stylecast/stylecast-women-scoop-neck-fitted-crop-top/31685837/buy",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.41
+          "y": 0.41,
+          "catalogKey": "maya-black-top",
+          "retailerSku": "31685837",
+          "productImageUrls": [
+            "/media/maya-black-top.jpg"
+          ]
         },
         {
           "id": "demo-garment-brown-black-jeans",
-          "title": "Washed-black straight jeans",
-          "brand": "Flipkart",
-          "price": null,
+          "title": "Washed-black straight-fit high-rise jeans",
+          "brand": "SASSAFRAS Curve",
+          "price": "₹1,149",
           "imageUrl": "/media/maya-black-jeans.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.flipkart.com/search?q=women%20washed%20black%20straight%20jeans",
+          "buyUrl": "https://www.myntra.com/jeans/sassafrascurve/sassafras-curve-women-black-comfort-straight-fit-high-rise-clean-look-acid-wash-jeans/24203430/buy",
           "category": "lower_body",
           "x": 0.52,
-          "y": 0.63
+          "y": 0.63,
+          "catalogKey": "maya-black-jeans",
+          "retailerSku": "24203430",
+          "productImageUrls": [
+            "/media/maya-black-jeans.jpg"
+          ]
         },
         {
           "id": "demo-garment-brown-black-boots",
@@ -649,7 +874,12 @@
           "buyUrl": "https://www.myntra.com/boots/roadster/roadster-women-black-ankle-boots/36931538/buy",
           "category": "shoes",
           "x": 0.52,
-          "y": 0.89
+          "y": 0.89,
+          "catalogKey": "maya-black-boots",
+          "retailerSku": "36931538",
+          "productImageUrls": [
+            "/media/maya-black-boots.jpg"
+          ]
         }
       ],
       "comments": [
@@ -667,7 +897,11 @@
       "caption": "A little fluorescent pink goes a surprisingly long way.",
       "imageUrl": "/media/studio-zoya-pink-kicks.jpg",
       "ageMinutes": 930,
-      "likeUserIds": ["demo-user-maya", "demo-user-arjun", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-arjun",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-pink-cardigan",
@@ -679,7 +913,12 @@
           "buyUrl": "https://www.myntra.com/sweaters/hm/hm-fine-knit-cardigan/39331498/buy",
           "category": "upper_body",
           "x": 0.51,
-          "y": 0.33
+          "y": 0.33,
+          "catalogKey": "zoya-pink-cardigan",
+          "retailerSku": "39331498",
+          "productImageUrls": [
+            "/media/zoya-pink-cardigan.jpg"
+          ]
         },
         {
           "id": "demo-garment-pink-light-jeans",
@@ -691,7 +930,12 @@
           "buyUrl": "https://www.ajio.com/styli-women-high-rise-wide-leg-jeans-with-cargo-pocket/p/700097546_blue",
           "category": "lower_body",
           "x": 0.52,
-          "y": 0.63
+          "y": 0.63,
+          "catalogKey": "zoya-light-blue-jeans",
+          "retailerSku": "700097546_blue",
+          "productImageUrls": [
+            "/media/zoya-light-blue-jeans.jpg"
+          ]
         },
         {
           "id": "demo-garment-pink-palermos",
@@ -703,7 +947,12 @@
           "buyUrl": "https://in.puma.com/in/en/pd/palermo-leather-sneakers/402692?swatch=09",
           "category": "shoes",
           "x": 0.49,
-          "y": 0.9
+          "y": 0.9,
+          "catalogKey": "zoya-pink-sneakers",
+          "retailerSku": "402692-09",
+          "productImageUrls": [
+            "/media/zoya-pink-sneakers.jpg"
+          ]
         },
         {
           "id": "demo-garment-pink-shoulder-bag",
@@ -715,7 +964,12 @@
           "buyUrl": "https://www.myntra.com/handbags/fastrack/fastrack-women-powder-pink-shoulder-bag/23676800/buy",
           "category": "accessory",
           "x": 0.34,
-          "y": 0.38
+          "y": 0.38,
+          "catalogKey": "zoya-pink-shoulder-bag",
+          "retailerSku": "23676800",
+          "productImageUrls": [
+            "/media/zoya-pink-shoulder-bag.jpg"
+          ]
         }
       ],
       "comments": []
@@ -726,7 +980,10 @@
       "caption": "Found three paperbacks and the jeans I will wear all year.",
       "imageUrl": "/media/studio-arjun-book-market.jpg",
       "ageMinutes": 1560,
-      "likeUserIds": ["demo-user-maya", "demo-user-zoya"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-zoya"
+      ],
       "garments": [
         {
           "id": "demo-garment-book-white-shirt",
@@ -738,7 +995,12 @@
           "buyUrl": "https://www.ajio.com/ajio-men-slim-fit-cotton-shirt-with-curved-hem/p/460289078_white",
           "category": "upper_body",
           "x": 0.51,
-          "y": 0.33
+          "y": 0.33,
+          "catalogKey": "arjun-white-shirt",
+          "retailerSku": "460289078_white",
+          "productImageUrls": [
+            "/media/arjun-white-shirt.jpg"
+          ]
         },
         {
           "id": "demo-garment-light-blue-501",
@@ -750,19 +1012,29 @@
           "buyUrl": "https://www2.hm.com/en_in/productpage.1288186012.html",
           "category": "lower_body",
           "x": 0.5,
-          "y": 0.63
+          "y": 0.63,
+          "catalogKey": "arjun-light-blue-jeans",
+          "retailerSku": "1288186012",
+          "productImageUrls": [
+            "/media/arjun-light-blue-jeans.jpg"
+          ]
         },
         {
           "id": "demo-garment-book-brown-loafers",
-          "title": "Dark-brown leather penny loafers",
-          "brand": "Myntra",
-          "price": null,
+          "title": "Coffee-brown formal penny loafers",
+          "brand": "HERE&NOW",
+          "price": "₹648",
           "imageUrl": "/media/arjun-brown-loafers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/casual-shoes/alberto-moreno/alberto-moreno-men-brown-casual-loafers-/14184726/buy",
+          "buyUrl": "https://www.myntra.com/formal-shoes/here%26now/herenow-men-coffee-brown-formal-penny-loafers-/26242990/buy",
           "category": "shoes",
           "x": 0.5,
-          "y": 0.89
+          "y": 0.89,
+          "catalogKey": "arjun-brown-loafers",
+          "retailerSku": "26242990",
+          "productImageUrls": [
+            "/media/arjun-brown-loafers.jpg"
+          ]
         }
       ],
       "comments": []
@@ -773,7 +1045,10 @@
       "caption": "Coffee first, colour immediately after.",
       "imageUrl": "/media/studio-maya-red-cardigan.jpg",
       "ageMinutes": 2280,
-      "likeUserIds": ["demo-user-arjun", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-arjun",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-red-cardigan",
@@ -785,19 +1060,29 @@
           "buyUrl": "https://www2.hm.com/en_in/productpage.1305653001.html",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.33
+          "y": 0.33,
+          "catalogKey": "maya-red-cardigan-product",
+          "retailerSku": "1305653001",
+          "productImageUrls": [
+            "/media/maya-red-cardigan-product.jpg"
+          ]
         },
         {
           "id": "demo-garment-red-cream-trousers",
-          "title": "Cream wide-leg tailored trousers",
-          "brand": "AJIO",
-          "price": null,
+          "title": "Cream formal high-rise wide-leg trousers",
+          "brand": "StyleCast X Kotty",
+          "price": "₹540",
           "imageUrl": "/media/maya-cream-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/ajio-flat-front-high-rise-trousers/p/460286863_grey",
+          "buyUrl": "https://www.myntra.com/trousers/stylecastxkotty/cream-formal-high-rise-wide-leg-trousers/40555467/buy",
           "category": "lower_body",
           "x": 0.54,
-          "y": 0.64
+          "y": 0.64,
+          "catalogKey": "maya-cream-trousers",
+          "retailerSku": "40555467",
+          "productImageUrls": [
+            "/media/maya-cream-trousers.jpg"
+          ]
         },
         {
           "id": "demo-garment-red-cream-loafers",
@@ -809,19 +1094,29 @@
           "buyUrl": "https://www.myntra.com/casual-shoes/shoetopia/shoetopia-women-cream-coloured-solid-loafers/12801316/buy",
           "category": "shoes",
           "x": 0.52,
-          "y": 0.9
+          "y": 0.9,
+          "catalogKey": "maya-cream-loafers",
+          "retailerSku": "12801316",
+          "productImageUrls": [
+            "/media/maya-cream-loafers.jpg"
+          ]
         },
         {
           "id": "demo-garment-red-black-bag",
-          "title": "Black curved shoulder bag",
-          "brand": "Amazon Fashion",
-          "price": null,
+          "title": "Cindy black curved shoulder bag",
+          "brand": "MIRAGGIO",
+          "price": "₹2,549",
           "imageUrl": "/media/maya-black-shoulder-bag.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/EXOTIC-Womens-Punched-Sling-Black/dp/B09T73C8V8",
+          "buyUrl": "https://www.myntra.com/handbags/miraggio/miraggio-black-half-moon-shoulder-bag/20894552/buy",
           "category": "accessory",
           "x": 0.37,
-          "y": 0.47
+          "y": 0.47,
+          "catalogKey": "maya-black-shoulder-bag",
+          "retailerSku": "20894552",
+          "productImageUrls": [
+            "/media/maya-black-shoulder-bag.jpg"
+          ]
         }
       ],
       "comments": [
@@ -839,7 +1134,11 @@
       "caption": "Golden hour understood the assignment.",
       "imageUrl": "/media/studio-zoya-garden-party.jpg",
       "ageMinutes": 3120,
-      "likeUserIds": ["demo-user-maya", "demo-user-arjun", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-arjun",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-yellow-printed-dress",
@@ -851,31 +1150,46 @@
           "buyUrl": "https://shop.mango.com/in/en/p/women/dresses-and-jumpsuits/dresses/a-line-printed-dress_37031465",
           "category": "full_body",
           "x": 0.5,
-          "y": 0.5
+          "y": 0.5,
+          "catalogKey": "zoya-yellow-dress",
+          "retailerSku": "37031465",
+          "productImageUrls": [
+            "/media/zoya-yellow-dress.jpg"
+          ]
         },
         {
           "id": "demo-garment-garden-tan-sandals",
-          "title": "Tan minimalist heeled sandals",
-          "brand": "Myntra",
-          "price": null,
+          "title": "Tan open-toe comfort block heels",
+          "brand": "Metro",
+          "price": "₹1,293",
           "imageUrl": "/media/zoya-tan-sandals.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/heels/guess/guess-women-tan-solid-slip-on-leather-wedge-sandals/36593969/buy",
+          "buyUrl": "https://www.myntra.com/heels/metro/metro-open-toe-block-heels/23060486/buy",
           "category": "shoes",
           "x": 0.5,
-          "y": 0.9
+          "y": 0.9,
+          "catalogKey": "zoya-tan-sandals",
+          "retailerSku": "23060486",
+          "productImageUrls": [
+            "/media/zoya-tan-sandals.jpg"
+          ]
         },
         {
           "id": "demo-garment-garden-gold-earrings",
-          "title": "Gold filigree drop earrings",
-          "brand": "Amazon Fashion",
-          "price": null,
+          "title": "Gold-plated filigree teardrop drop earrings",
+          "brand": "justpeachy",
+          "price": "₹1,405",
           "imageUrl": "/media/zoya-gold-earrings.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/Zaveri-Pearls-Contemporary-Earrings-Women-ZPFK15140/dp/B0BJFCHR4W",
+          "buyUrl": "https://www.myntra.com/earrings/justpeachy/justpeachy-gold-plated-filigree-teardrop-shaped-drop-earrings/13497228/buy",
           "category": "accessory",
           "x": 0.52,
-          "y": 0.14
+          "y": 0.14,
+          "catalogKey": "zoya-gold-earrings",
+          "retailerSku": "13497228",
+          "productImageUrls": [
+            "/media/zoya-gold-earrings.jpg"
+          ]
         }
       ],
       "comments": []
@@ -884,33 +1198,63 @@
       "id": "demo-post-monochrome-remix",
       "userId": "demo-user-maya",
       "caption": "Monochrome, with room to breathe.",
-      "imageUrl": "/media/studio-maya-city-layers.jpg",
+      "imageUrl": "/media/studio-remix-monochrome.jpg",
       "ageMinutes": 35,
-      "likeUserIds": ["demo-user-zoya", "demo-user-kabir"],
+      "likeUserIds": [
+        "demo-user-zoya",
+        "demo-user-kabir"
+      ],
       "garments": [
         {
           "id": "demo-garment-remix-white-fitted-tee",
           "title": "White slim-fit crew-neck T-shirt",
           "brand": "AJIO",
-          "price": null,
+          "price": "₹499",
           "imageUrl": "/media/maya-white-fitted-tee.jpg",
           "originalImageUrl": null,
           "buyUrl": "https://www.ajio.com/ajio-slim-fit-crew-neck-t-shirt-with-contrast-neckline/p/460516501_white",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.4
+          "y": 0.3,
+          "catalogKey": "maya-white-fitted-tee",
+          "retailerSku": "460516501_white",
+          "productImageUrls": [
+            "/media/maya-white-fitted-tee.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-black-wide-trousers",
-          "title": "Black straight-fit tailored trousers",
-          "brand": "PowerSutra",
-          "price": null,
+          "title": "Black high-waisted wide-leg tailored trousers",
+          "brand": "H&M",
+          "price": "₹1,399",
           "imageUrl": "/media/maya-black-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/trousers/powersutra/powersutra-women-black-straight-fit-trousers/20655694/buy",
+          "buyUrl": "https://www.myntra.com/bottomwear/h%26m/h%26m-women-black-high-waisted-tailored-trousers/19410206/buy",
           "category": "lower_body",
           "x": 0.52,
-          "y": 0.64
+          "y": 0.58,
+          "catalogKey": "maya-black-trousers",
+          "retailerSku": "19410206",
+          "productImageUrls": [
+            "/media/maya-black-trousers.jpg"
+          ]
+        },
+        {
+          "id": "demo-garment-remix-red-sneakers",
+          "title": "ST Runner V2 red sneakers",
+          "brand": "PUMA",
+          "price": null,
+          "imageUrl": "/media/maya-red-sneakers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://in.puma.com/in/en/pd/st-runner-v2-sneakers/365277?swatch=24",
+          "category": "shoes",
+          "x": 0.5,
+          "y": 0.91,
+          "catalogKey": "maya-red-sneakers",
+          "retailerSku": "365277-24",
+          "productImageUrls": [
+            "/media/maya-red-sneakers.jpg"
+          ]
         }
       ],
       "comments": []
@@ -919,45 +1263,64 @@
       "id": "demo-post-clean-denim-remix",
       "userId": "demo-user-arjun",
       "caption": "A clean denim uniform for slow weekends.",
-      "imageUrl": "/media/studio-arjun-denim-day.jpg",
+      "imageUrl": "/media/studio-remix-clean-denim.jpg",
       "ageMinutes": 110,
-      "likeUserIds": ["demo-user-maya", "demo-user-kabir", "demo-user-zoya"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-kabir",
+        "demo-user-zoya"
+      ],
       "garments": [
         {
           "id": "demo-garment-remix-soft-white-tee",
-          "title": "Soft white pure-cotton T-shirt",
-          "brand": "Levi's",
-          "price": null,
+          "title": "Crew Neck Short Sleeve T-Shirt",
+          "brand": "Uniqlo U",
+          "price": "₹990",
           "imageUrl": "/media/arjun-white-tee.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/lounge-tshirts/levis/levis-men-soft-pure-cotton-round-neck-half-sleeve-tshirt/12027436/buy",
+          "buyUrl": "https://www.uniqlo.com/in/en/products/E422992-000/02?colorDisplayCode=30",
           "category": "upper_body",
-          "x": 0.53,
-          "y": 0.29
+          "x": 0.5,
+          "y": 0.3,
+          "catalogKey": "arjun-white-tee",
+          "retailerSku": "E422992-000",
+          "productImageUrls": [
+            "/media/arjun-white-tee.jpg"
+          ]
         },
         {
-          "id": "demo-garment-remix-blue-ankle-jeans",
-          "title": "Blue ankle-length skinny-fit jeans",
-          "brand": "AJIO",
-          "price": null,
+          "id": "demo-garment-remix-blue-straight-jeans",
+          "title": "Men's 505 Blue Straight Fit Jeans",
+          "brand": "Levi's",
+          "price": "₹2,204",
           "imageUrl": "/media/arjun-blue-jeans.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/ajio-ankle-length-supper-skinny-fit-jeans/p/460347290001",
+          "buyUrl": "https://levi.in/collections/men-straight-jeans/products/mens-505-blue-straight-fit-mid-rise-jeans-005rc0092",
           "category": "lower_body",
-          "x": 0.53,
-          "y": 0.61
+          "x": 0.5,
+          "y": 0.59,
+          "catalogKey": "arjun-blue-jeans",
+          "retailerSku": "mens-505-blue-straight-fit-mid-rise-jeans-005rc0092",
+          "productImageUrls": [
+            "/media/arjun-blue-jeans.jpg"
+          ]
         },
         {
-          "id": "demo-garment-remix-metro-white-sneakers",
-          "title": "Minimal white sneakers",
-          "brand": "Metro",
+          "id": "demo-garment-remix-white-sneakers",
+          "title": "Minimal white leather sneakers",
+          "brand": "Amazon Fashion",
           "price": null,
           "imageUrl": "/media/arjun-white-sneakers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/casual-shoes/metro/metro-men-white-sneakers/14302430/buy",
+          "buyUrl": "https://www.amazon.in/Souled-Store-Urban-Blaze-Sneaker/dp/B0CR1M4Z32",
           "category": "shoes",
-          "x": 0.52,
-          "y": 0.9
+          "x": 0.5,
+          "y": 0.91,
+          "catalogKey": "arjun-white-sneakers",
+          "retailerSku": "B0CR1M4Z32",
+          "productImageUrls": [
+            "/media/arjun-white-sneakers.jpg"
+          ]
         }
       ],
       "comments": []
@@ -966,45 +1329,63 @@
       "id": "demo-post-after-dark-remix",
       "userId": "demo-user-zoya",
       "caption": "After-dark satin with one warm accent.",
-      "imageUrl": "/media/studio-zoya-gallery-night.jpg",
+      "imageUrl": "/media/studio-remix-after-dark.jpg",
       "ageMinutes": 260,
-      "likeUserIds": ["demo-user-maya", "demo-user-arjun"],
+      "likeUserIds": [
+        "demo-user-maya",
+        "demo-user-arjun"
+      ],
       "garments": [
         {
           "id": "demo-garment-remix-black-satin-dress",
-          "title": "Black satin midi dress",
-          "brand": "Label Regalia",
-          "price": null,
+          "title": "Black satin slip dress",
+          "brand": "H&M",
+          "price": "₹1,799",
           "imageUrl": "/media/zoya-black-dress.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/dresses/labelregalia/label-regalia-black-satin-midi-dress/21149516/buy",
+          "buyUrl": "https://www2.hm.com/en_in/productpage.1235183001.html",
           "category": "full_body",
-          "x": 0.49,
-          "y": 0.43
+          "x": 0.47,
+          "y": 0.47,
+          "catalogKey": "zoya-black-dress",
+          "retailerSku": "1235183001",
+          "productImageUrls": [
+            "/media/zoya-black-dress.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-black-block-heels",
           "title": "Black open-toe block heels",
           "brand": "NTFC",
-          "price": null,
+          "price": "₹924",
           "imageUrl": "/media/zoya-black-sandals.jpg",
           "originalImageUrl": null,
           "buyUrl": "https://www.myntra.com/heels/ntfc/ntfc-women-black-open-toe-block-heels/35406641/buy",
           "category": "shoes",
-          "x": 0.49,
-          "y": 0.9
+          "x": 0.5,
+          "y": 0.91,
+          "catalogKey": "zoya-black-sandals",
+          "retailerSku": "35406641",
+          "productImageUrls": [
+            "/media/zoya-black-sandals.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-tan-shoulder-bag",
-          "title": "Tan structured shoulder bag",
-          "brand": "Van Heusen Woman",
-          "price": null,
+          "title": "Mini Haylen tan shoulder bag",
+          "brand": "Charles & Keith",
+          "price": "₹9,499",
           "imageUrl": "/media/zoya-tan-bag.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/Van-Heusen-Womens-Western-Black/dp/B0FHW45B58",
+          "buyUrl": "https://www.charleskeith.in/in/CK2-20151647_DS.TAN_S-IN.html",
           "category": "accessory",
-          "x": 0.65,
-          "y": 0.41
+          "x": 0.67,
+          "y": 0.34,
+          "catalogKey": "zoya-tan-bag",
+          "retailerSku": "CK2-20151647_DS.TAN_S-IN",
+          "productImageUrls": [
+            "/media/zoya-tan-bag.jpg"
+          ]
         }
       ],
       "comments": []
@@ -1013,33 +1394,63 @@
       "id": "demo-post-tonal-coffee-remix",
       "userId": "demo-user-kabir",
       "caption": "Tonal black, made soft for the coffee run.",
-      "imageUrl": "/media/studio-kabir-coffee-run.jpg",
+      "imageUrl": "/media/studio-remix-tonal-coffee.jpg",
       "ageMinutes": 430,
-      "likeUserIds": ["demo-user-arjun", "demo-user-maya"],
+      "likeUserIds": [
+        "demo-user-arjun",
+        "demo-user-maya"
+      ],
       "garments": [
         {
           "id": "demo-garment-remix-black-crew-pullover",
           "title": "Black crew-neck knit pullover",
           "brand": "SNITCH",
-          "price": null,
+          "price": "₹999",
           "imageUrl": "/media/kabir-black-knit.jpg",
           "originalImageUrl": null,
           "buyUrl": "https://www.ajio.com/snitch-men-crew-neck-pullover/p/700634602_black",
           "category": "upper_body",
-          "x": 0.51,
-          "y": 0.43
+          "x": 0.5,
+          "y": 0.31,
+          "catalogKey": "kabir-black-knit",
+          "retailerSku": "700634602_black",
+          "productImageUrls": [
+            "/media/kabir-black-knit.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-men-black-trousers",
-          "title": "Black slim-fit tailored trousers",
+          "title": "Men black slim-fit tailored trousers",
           "brand": "BASICS",
-          "price": null,
+          "price": "₹1,259",
           "imageUrl": "/media/kabir-black-trousers.jpg",
           "originalImageUrl": null,
           "buyUrl": "https://www.myntra.com/trousers/basics/basics-men-black-trousers/17957736/buy",
           "category": "lower_body",
-          "x": 0.54,
-          "y": 0.65
+          "x": 0.5,
+          "y": 0.6,
+          "catalogKey": "kabir-black-trousers",
+          "retailerSku": "17957736",
+          "productImageUrls": [
+            "/media/kabir-black-trousers.jpg"
+          ]
+        },
+        {
+          "id": "demo-garment-remix-brown-chelsea-boots",
+          "title": "Men dark-brown leather Chelsea boots",
+          "brand": "Roadster",
+          "price": "₹1,267",
+          "imageUrl": "/media/kabir-brown-boots.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/shoes/roadster/roadster-men-brown-leather-chelsea-boots/36648648/buy",
+          "category": "shoes",
+          "x": 0.5,
+          "y": 0.9,
+          "catalogKey": "kabir-brown-boots",
+          "retailerSku": "36648648",
+          "productImageUrls": [
+            "/media/kabir-brown-boots.jpg"
+          ]
         }
       ],
       "comments": []
@@ -1048,45 +1459,81 @@
       "id": "demo-post-resort-neutral-remix",
       "userId": "demo-user-kabir",
       "caption": "Resort neutrals and a little shade.",
-      "imageUrl": "/media/studio-rehan-sand-linen.jpg",
+      "imageUrl": "/media/studio-remix-resort-neutral.jpg",
       "ageMinutes": 720,
-      "likeUserIds": ["demo-user-zoya", "demo-user-arjun", "demo-user-maya"],
+      "likeUserIds": [
+        "demo-user-zoya",
+        "demo-user-arjun",
+        "demo-user-maya"
+      ],
       "garments": [
         {
-          "id": "demo-garment-remix-sand-regular-shirt",
-          "title": "Sand regular-fit cotton shirt",
-          "brand": "DEELMO",
-          "price": null,
+          "id": "demo-garment-remix-sand-linen-shirt",
+          "title": "Regular-fit sand linen shirt",
+          "brand": "Mango Man",
+          "price": "₹4,952",
           "imageUrl": "/media/rehan-sand-shirt.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/deelmo-men-regular-fit-shirt/p/702020193_white",
+          "buyUrl": "https://shop.mango.com/in/en/p/men/shirts/linen/regular-fit-100-linen-shirt/27085939/07/00",
           "category": "upper_body",
-          "x": 0.49,
-          "y": 0.35
+          "x": 0.5,
+          "y": 0.31,
+          "catalogKey": "rehan-sand-shirt",
+          "retailerSku": "27085939",
+          "productImageUrls": [
+            "/media/rehan-sand-shirt.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-white-linen-trousers",
           "title": "White relaxed-fit linen trousers",
           "brand": "Kingdom of White",
-          "price": null,
+          "price": "₹1,199",
           "imageUrl": "/media/rehan-white-trousers.jpg",
           "originalImageUrl": null,
           "buyUrl": "https://www.myntra.com/trousers/kingdom20of20white/kingdom-of-white-men-relaxed-fit-linen-trousers/31889229/buy",
           "category": "lower_body",
-          "x": 0.52,
-          "y": 0.65
+          "x": 0.5,
+          "y": 0.6,
+          "catalogKey": "rehan-white-trousers",
+          "retailerSku": "31889229",
+          "productImageUrls": [
+            "/media/rehan-white-trousers.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-square-sunglasses",
-          "title": "Square UV-protected sunglasses",
-          "brand": "IMAGE",
-          "price": null,
+          "title": "Brown square UV-protected sunglasses",
+          "brand": "Fastrack",
+          "price": "₹855",
           "imageUrl": "/media/rehan-sunglasses.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/sunglasses/image/image-men-square-sunglasses-with-uv-protected-lens-ims783c2sg/32425412/buy",
+          "buyUrl": "https://www.myntra.com/sunglasses/fastrack/fastrack-men-square-sunglasses-with-uv-protected-lens-p357br3v/30439204/buy",
           "category": "accessory",
-          "x": 0.49,
-          "y": 0.13
+          "x": 0.5,
+          "y": 0.17,
+          "catalogKey": "rehan-sunglasses",
+          "retailerSku": "30439204",
+          "productImageUrls": [
+            "/media/rehan-sunglasses.jpg"
+          ]
+        },
+        {
+          "id": "demo-garment-remix-brown-loafers",
+          "title": "Brown genuine-leather penny loafers",
+          "brand": "Hush Puppies",
+          "price": "₹2,799",
+          "imageUrl": "/media/rehan-brown-loafers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.ajio.com/hush-puppies-men-genuine-leather-penny-loafers/p/467025726007",
+          "category": "shoes",
+          "x": 0.5,
+          "y": 0.91,
+          "catalogKey": "rehan-brown-loafers",
+          "retailerSku": "467025726007",
+          "productImageUrls": [
+            "/media/rehan-brown-loafers.jpg"
+          ]
         }
       ],
       "comments": []
@@ -1095,33 +1542,80 @@
       "id": "demo-post-indigo-skirt-remix",
       "userId": "demo-user-zoya",
       "caption": "Indigo up top, fluid black below.",
-      "imageUrl": "/media/studio-zoya-indigo-trucker.jpg",
+      "imageUrl": "/media/studio-remix-indigo-skirt.jpg",
       "ageMinutes": 990,
-      "likeUserIds": ["demo-user-kabir", "demo-user-maya"],
+      "likeUserIds": [
+        "demo-user-kabir",
+        "demo-user-maya"
+      ],
       "garments": [
         {
           "id": "demo-garment-remix-indigo-denim-jacket",
-          "title": "Blue washed denim jacket",
-          "brand": "Roadster",
-          "price": null,
+          "title": "Regular Fit dark-blue denim jacket",
+          "brand": "H&M",
+          "price": "₹1,199",
           "imageUrl": "/media/zoya-indigo-jacket.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/jackets/roadster/roadster-women-blue-denim-denim-jacket/36699689/buy",
+          "buyUrl": "https://www2.hm.com/en_in/productpage.1121152002.html",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.34
+          "y": 0.31,
+          "catalogKey": "zoya-indigo-jacket",
+          "retailerSku": "1121152002",
+          "productImageUrls": [
+            "/media/zoya-indigo-jacket.jpg"
+          ]
+        },
+        {
+          "id": "demo-garment-remix-grey-tee",
+          "title": "Grey solid round-neck T-shirt",
+          "brand": "NEXT",
+          "price": "₹449",
+          "imageUrl": "/media/zoya-grey-tee.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/tshirts/next/next-grey-solid-round-neck-t-shirt/10908646/buy",
+          "category": "upper_body",
+          "x": 0.5,
+          "y": 0.31,
+          "catalogKey": "zoya-grey-tee",
+          "retailerSku": "10908646",
+          "productImageUrls": [
+            "/media/zoya-grey-tee.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-black-midi-skirt",
           "title": "Black fluid A-line midi skirt",
           "brand": "Bitterlime",
-          "price": null,
+          "price": "₹799",
           "imageUrl": "/media/zoya-black-skirt.jpg",
           "originalImageUrl": null,
           "buyUrl": "https://www.myntra.com/skirts/bitterlime/bitterlime-black-midi-a-line-skirt/8224951/buy",
           "category": "lower_body",
           "x": 0.5,
-          "y": 0.62
+          "y": 0.6,
+          "catalogKey": "zoya-black-skirt",
+          "retailerSku": "8224951",
+          "productImageUrls": [
+            "/media/zoya-black-skirt.jpg"
+          ]
+        },
+        {
+          "id": "demo-garment-remix-black-ankle-boots",
+          "title": "Women black round-toe block-heel ankle boots",
+          "brand": "Inc 5",
+          "price": "₹5,990",
+          "imageUrl": "/media/zoya-black-boots.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/boots/inc5/inc-5-women-block-heeled-round-toe-ankle-boots/35266328/buy",
+          "category": "shoes",
+          "x": 0.5,
+          "y": 0.91,
+          "catalogKey": "zoya-black-boots",
+          "retailerSku": "35266328",
+          "productImageUrls": [
+            "/media/zoya-black-boots.jpg"
+          ]
         }
       ],
       "comments": []
@@ -1130,45 +1624,80 @@
       "id": "demo-post-utility-night-remix",
       "userId": "demo-user-maya",
       "caption": "Utility shapes for an unplanned night out.",
-      "imageUrl": "/media/studio-maya-olive-cargos.jpg",
+      "imageUrl": "/media/studio-remix-utility-night.jpg",
       "ageMinutes": 1450,
-      "likeUserIds": ["demo-user-arjun", "demo-user-zoya"],
+      "likeUserIds": [
+        "demo-user-arjun",
+        "demo-user-zoya"
+      ],
       "garments": [
         {
           "id": "demo-garment-remix-black-tank",
           "title": "Black fitted tank top",
           "brand": "CAVA",
-          "price": null,
+          "price": "₹599",
           "imageUrl": "/media/maya-black-tank.jpg",
           "originalImageUrl": null,
           "buyUrl": "https://www.myntra.com/tops/cava/cava-black-tank-us-later-top/27045222/buy",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.32
+          "y": 0.3,
+          "catalogKey": "maya-black-tank",
+          "retailerSku": "27045222",
+          "productImageUrls": [
+            "/media/maya-black-tank.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-olive-cargo-trousers",
-          "title": "Olive cotton cargo trousers",
-          "brand": "HERE&NOW",
-          "price": null,
+          "title": "Olive linen-blend cargo trousers",
+          "brand": "H&M",
+          "price": "₹2,799",
           "imageUrl": "/media/maya-olive-cargo-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/trousers/here26now/herenow-women-olive-cotton-cargos-trousers/36668255/buy",
+          "buyUrl": "https://www2.hm.com/en_in/productpage.1351818001.html",
           "category": "lower_body",
           "x": 0.5,
-          "y": 0.63
+          "y": 0.6,
+          "catalogKey": "maya-olive-cargo-trousers",
+          "retailerSku": "1351818001",
+          "productImageUrls": [
+            "/media/maya-olive-cargo-trousers.jpg"
+          ]
         },
         {
-          "id": "demo-garment-remix-black-bucket-bag",
-          "title": "Black bucket shoulder bag",
-          "brand": "Accessorize London",
-          "price": null,
+          "id": "demo-garment-remix-black-shoulder-bag",
+          "title": "Cindy black curved shoulder bag",
+          "brand": "MIRAGGIO",
+          "price": "₹2,549",
           "imageUrl": "/media/maya-black-shoulder-bag.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/dp/B0DMWGY54X",
+          "buyUrl": "https://www.myntra.com/handbags/miraggio/miraggio-black-half-moon-shoulder-bag/20894552/buy",
           "category": "accessory",
           "x": 0.34,
-          "y": 0.39
+          "y": 0.34,
+          "catalogKey": "maya-black-shoulder-bag",
+          "retailerSku": "20894552",
+          "productImageUrls": [
+            "/media/maya-black-shoulder-bag.jpg"
+          ]
+        },
+        {
+          "id": "demo-garment-remix-black-flat-sandals",
+          "title": "Black minimal flat sandals",
+          "brand": "Myntra",
+          "price": null,
+          "imageUrl": "/media/maya-black-sandals.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/flats/cai/cai-women-black-toe-thong-flats/32478571/buy",
+          "category": "shoes",
+          "x": 0.5,
+          "y": 0.91,
+          "catalogKey": "maya-black-sandals",
+          "retailerSku": "32478571",
+          "productImageUrls": [
+            "/media/maya-black-sandals.jpg"
+          ]
         }
       ],
       "comments": []
@@ -1177,45 +1706,64 @@
       "id": "demo-post-polo-after-hours-remix",
       "userId": "demo-user-arjun",
       "caption": "Cream, black, and a low-key gum sole.",
-      "imageUrl": "/media/studio-arjun-black-sambas.jpg",
+      "imageUrl": "/media/studio-remix-polo-after-hours.jpg",
       "ageMinutes": 1880,
-      "likeUserIds": ["demo-user-kabir", "demo-user-maya", "demo-user-zoya"],
+      "likeUserIds": [
+        "demo-user-kabir",
+        "demo-user-maya",
+        "demo-user-zoya"
+      ],
       "garments": [
         {
           "id": "demo-garment-remix-cream-knit-polo",
-          "title": "Cream piquet-cotton polo T-shirt",
-          "brand": "Antony Morato",
-          "price": null,
+          "title": "Cream self-design textured polo T-shirt",
+          "brand": "BE POSITIVE",
+          "price": "₹854",
           "imageUrl": "/media/arjun-cream-polo.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/tshirts/antonymorato/antony-morato-men-cotton-cream-piquet-cotton-polo-t-shirt/39386523/buy",
+          "buyUrl": "https://www.myntra.com/tshirts/bepositive/be-positive-cream-self-design-polo-collar-t-shirt/37028708/buy",
           "category": "upper_body",
-          "x": 0.52,
-          "y": 0.33
+          "x": 0.5,
+          "y": 0.31,
+          "catalogKey": "arjun-cream-polo",
+          "retailerSku": "37028708",
+          "productImageUrls": [
+            "/media/arjun-cream-polo.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-relaxed-black-trousers",
-          "title": "Black relaxed-fit cotton trousers",
+          "title": "Men black relaxed-fit cotton trousers",
           "brand": "SHOWOFFFF",
-          "price": null,
+          "price": "₹1,019",
           "imageUrl": "/media/arjun-black-trousers.jpg",
           "originalImageUrl": null,
           "buyUrl": "https://www.myntra.com/trousers/showoff/showoff-men-black-relaxed-fit-cotton-regular-trousers/36620272/buy",
           "category": "lower_body",
-          "x": 0.51,
-          "y": 0.63
+          "x": 0.5,
+          "y": 0.6,
+          "catalogKey": "arjun-black-trousers",
+          "retailerSku": "36620272",
+          "productImageUrls": [
+            "/media/arjun-black-trousers.jpg"
+          ]
         },
         {
-          "id": "demo-garment-remix-antony-black-sneakers",
-          "title": "Black low-top sneakers",
-          "brand": "Antony Morato",
-          "price": null,
+          "id": "demo-garment-remix-black-gum-sneakers",
+          "title": "Samba OG black gum-sole shoes",
+          "brand": "adidas",
+          "price": "₹10,999",
           "imageUrl": "/media/arjun-black-sneakers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/casual-shoes/antony-morato/antony-morato-men-black-sneakers/1475765/buy",
+          "buyUrl": "https://www.adidas.co.in/samba-og-shoes/IE3438.html",
           "category": "shoes",
           "x": 0.5,
-          "y": 0.9
+          "y": 0.91,
+          "catalogKey": "arjun-black-sneakers",
+          "retailerSku": "IE3438",
+          "productImageUrls": [
+            "/media/arjun-black-sneakers.jpg"
+          ]
         }
       ],
       "comments": []
@@ -1224,45 +1772,80 @@
       "id": "demo-post-blush-denim-remix",
       "userId": "demo-user-zoya",
       "caption": "Blush pink breaking up the blue.",
-      "imageUrl": "/media/studio-zoya-pink-kicks.jpg",
+      "imageUrl": "/media/studio-remix-blush-denim.jpg",
       "ageMinutes": 2460,
-      "likeUserIds": ["demo-user-arjun", "demo-user-maya"],
+      "likeUserIds": [
+        "demo-user-arjun",
+        "demo-user-maya"
+      ],
       "garments": [
         {
           "id": "demo-garment-remix-pink-cardigan",
-          "title": "Pink cropped cardigan",
-          "brand": "Tokyo Talkies",
+          "title": "Bubblegum-pink cropped cardigan",
+          "brand": "Myntra",
           "price": null,
           "imageUrl": "/media/zoya-pink-cardigan.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/sweaters/tokyotalkies/tokyo-talkies-women-pink-cardigan/20483332/buy",
+          "buyUrl": "https://www.myntra.com/sweaters/hm/hm-fine-knit-cardigan/39331498/buy",
           "category": "upper_body",
-          "x": 0.51,
-          "y": 0.33
+          "x": 0.5,
+          "y": 0.31,
+          "catalogKey": "zoya-pink-cardigan",
+          "retailerSku": "39331498",
+          "productImageUrls": [
+            "/media/zoya-pink-cardigan.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-light-blue-wide-jeans",
-          "title": "Light-blue wide-leg high-rise jeans",
-          "brand": "all about you",
+          "title": "Light-blue wide-leg jeans",
+          "brand": "AJIO",
           "price": null,
           "imageUrl": "/media/zoya-light-blue-jeans.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/jeans/allaboutyou/all-about-you-women-blue-wide-leg-high-rise-jeans/22678854/buy",
+          "buyUrl": "https://www.ajio.com/styli-women-high-rise-wide-leg-jeans-with-cargo-pocket/p/700097546_blue",
           "category": "lower_body",
-          "x": 0.52,
-          "y": 0.63
+          "x": 0.5,
+          "y": 0.6,
+          "catalogKey": "zoya-light-blue-jeans",
+          "retailerSku": "700097546_blue",
+          "productImageUrls": [
+            "/media/zoya-light-blue-jeans.jpg"
+          ]
         },
         {
-          "id": "demo-garment-remix-pink-textured-bag",
-          "title": "Pink textured shoulder bag",
-          "brand": "Allen Solly",
+          "id": "demo-garment-remix-pink-shoulder-bag",
+          "title": "Mini pink shoulder bag",
+          "brand": "Myntra",
           "price": null,
           "imageUrl": "/media/zoya-pink-shoulder-bag.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/handbags/allensolly/allen-solly-textured-shoulder-bag/25623546/buy",
+          "buyUrl": "https://www.myntra.com/handbags/fastrack/fastrack-women-powder-pink-shoulder-bag/23676800/buy",
           "category": "accessory",
           "x": 0.34,
-          "y": 0.38
+          "y": 0.32,
+          "catalogKey": "zoya-pink-shoulder-bag",
+          "retailerSku": "23676800",
+          "productImageUrls": [
+            "/media/zoya-pink-shoulder-bag.jpg"
+          ]
+        },
+        {
+          "id": "demo-garment-remix-pink-sneakers",
+          "title": "Palermo white and fluorescent-pink sneakers",
+          "brand": "PUMA",
+          "price": "₹6,999",
+          "imageUrl": "/media/zoya-pink-sneakers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://in.puma.com/in/en/pd/palermo-leather-sneakers/402692?swatch=09",
+          "category": "shoes",
+          "x": 0.5,
+          "y": 0.91,
+          "catalogKey": "zoya-pink-sneakers",
+          "retailerSku": "402692-09",
+          "productImageUrls": [
+            "/media/zoya-pink-sneakers.jpg"
+          ]
         }
       ],
       "comments": []
@@ -1271,33 +1854,81 @@
       "id": "demo-post-red-cream-remix",
       "userId": "demo-user-maya",
       "caption": "One red layer, everything else quiet.",
-      "imageUrl": "/media/studio-maya-red-cardigan.jpg",
+      "imageUrl": "/media/studio-remix-red-cream.jpg",
       "ageMinutes": 3600,
-      "likeUserIds": ["demo-user-zoya", "demo-user-kabir", "demo-user-arjun"],
+      "likeUserIds": [
+        "demo-user-zoya",
+        "demo-user-kabir",
+        "demo-user-arjun"
+      ],
       "garments": [
         {
           "id": "demo-garment-remix-red-cardigan",
-          "title": "Red short-sleeved cardigan",
-          "brand": "Monte Carlo",
-          "price": null,
+          "title": "Red short-sleeved collared cardigan",
+          "brand": "H&M",
+          "price": "₹899",
           "imageUrl": "/media/maya-red-cardigan-product.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/sweaters/montecarlo/monte-carlo-women-red-cardigan/19057742/buy",
+          "buyUrl": "https://www2.hm.com/en_in/productpage.1305653001.html",
           "category": "upper_body",
           "x": 0.5,
-          "y": 0.33
+          "y": 0.31,
+          "catalogKey": "maya-red-cardigan-product",
+          "retailerSku": "1305653001",
+          "productImageUrls": [
+            "/media/maya-red-cardigan-product.jpg"
+          ]
         },
         {
           "id": "demo-garment-remix-cream-wide-trousers",
-          "title": "Cream wide-leg trousers",
-          "brand": "W",
-          "price": null,
+          "title": "Cream formal high-rise wide-leg trousers",
+          "brand": "StyleCast X Kotty",
+          "price": "₹540",
           "imageUrl": "/media/maya-cream-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/trousers/w/w-women-cream-coloured-slim-fit-solid-regular-trousers/11430858/buy",
+          "buyUrl": "https://www.myntra.com/trousers/stylecastxkotty/cream-formal-high-rise-wide-leg-trousers/40555467/buy",
           "category": "lower_body",
-          "x": 0.54,
-          "y": 0.64
+          "x": 0.5,
+          "y": 0.6,
+          "catalogKey": "maya-cream-trousers",
+          "retailerSku": "40555467",
+          "productImageUrls": [
+            "/media/maya-cream-trousers.jpg"
+          ]
+        },
+        {
+          "id": "demo-garment-remix-cream-loafers",
+          "title": "Cream horsebit loafers",
+          "brand": "Myntra",
+          "price": null,
+          "imageUrl": "/media/maya-cream-loafers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/casual-shoes/shoetopia/shoetopia-women-cream-coloured-solid-loafers/12801316/buy",
+          "category": "shoes",
+          "x": 0.5,
+          "y": 0.91,
+          "catalogKey": "maya-cream-loafers",
+          "retailerSku": "12801316",
+          "productImageUrls": [
+            "/media/maya-cream-loafers.jpg"
+          ]
+        },
+        {
+          "id": "demo-garment-remix-black-curved-bag",
+          "title": "Cindy black curved shoulder bag",
+          "brand": "MIRAGGIO",
+          "price": "₹2,549",
+          "imageUrl": "/media/maya-black-shoulder-bag.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/handbags/miraggio/miraggio-black-half-moon-shoulder-bag/20894552/buy",
+          "category": "accessory",
+          "x": 0.34,
+          "y": 0.34,
+          "catalogKey": "maya-black-shoulder-bag",
+          "retailerSku": "20894552",
+          "productImageUrls": [
+            "/media/maya-black-shoulder-bag.jpg"
+          ]
         }
       ],
       "comments": []
