@@ -1283,6 +1283,29 @@ void main() {
     expect(find.text('Okay, this is so you.'), findsOneWidget);
     expect(find.byKey(const Key('try-on-result-summary')), findsOneWidget);
     expect(find.textContaining('pose and background kept'), findsOneWidget);
+    expect(find.text('PINCH TO ZOOM'), findsOneWidget);
+    final zoomViewer = tester.widget<InteractiveViewer>(
+      find.byKey(const Key('try-on-zoom-viewer')),
+    );
+    expect(zoomViewer.scaleEnabled, isTrue);
+    expect(zoomViewer.maxScale, 4);
+
+    await tester.tap(find.byKey(const Key('try-on-zoom-viewer')));
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.tap(find.byKey(const Key('try-on-zoom-viewer')));
+    await tester.pumpAndSettle();
+    expect(
+      zoomViewer.transformationController!.value.getMaxScaleOnAxis(),
+      greaterThan(1),
+    );
+    expect(find.text('RESET VIEW'), findsOneWidget);
+
+    await tester.tap(find.text('RESET VIEW'));
+    await tester.pumpAndSettle();
+    expect(
+      zoomViewer.transformationController!.value.getMaxScaleOnAxis(),
+      closeTo(1, 0.001),
+    );
 
     await tester.ensureVisible(find.byKey(const Key('save-try-on-fit-button')));
     await tester.tap(find.byKey(const Key('save-try-on-fit-button')));

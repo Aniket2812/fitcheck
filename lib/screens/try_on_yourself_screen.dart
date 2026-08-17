@@ -44,6 +44,7 @@ class TryOnYourselfScreen extends StatefulWidget {
 }
 
 class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
+  final TransformationController _zoomController = TransformationController();
   List<ModelPhoto> _photos = const [];
   ModelPhoto? _selected;
   PostTryOnResult? _result;
@@ -54,12 +55,46 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
   bool _saving = false;
   bool _saved = false;
   bool _showOriginal = false;
+  bool _isZoomed = false;
+  Offset? _doubleTapPosition;
   String? _saveError;
 
   @override
   void initState() {
     super.initState();
+    _zoomController.addListener(_trackZoom);
     _loadPhotos();
+  }
+
+  @override
+  void dispose() {
+    _zoomController
+      ..removeListener(_trackZoom)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _trackZoom() {
+    final zoomed = _zoomController.value.getMaxScaleOnAxis() > 1.02;
+    if (mounted && zoomed != _isZoomed) setState(() => _isZoomed = zoomed);
+  }
+
+  void _resetZoom() {
+    _zoomController.value = Matrix4.identity();
+    _doubleTapPosition = null;
+  }
+
+  void _toggleZoom() {
+    if (_result == null) return;
+    if (_isZoomed) {
+      _resetZoom();
+      return;
+    }
+    final focus = _doubleTapPosition ?? const Offset(160, 200);
+    _zoomController.value = Matrix4.identity()
+      ..translateByDouble(focus.dx, focus.dy, 0, 1)
+      ..scaleByDouble(2.2, 2.2, 1, 1)
+      ..translateByDouble(-focus.dx, -focus.dy, 0, 1);
   }
 
   Future<void> _loadPhotos() async {
@@ -138,6 +173,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
       });
       final photo = await widget.uploadModelPhoto(picked);
       if (!mounted) return;
+      _resetZoom();
       setState(() {
         _photos = [photo, ..._photos.where((item) => item.id != photo.id)];
         _selected = photo;
@@ -176,6 +212,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
       );
       return;
     }
+    _resetZoom();
     setState(() {
       _generating = true;
       _result = null;
@@ -289,30 +326,51 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 220),
-                          child: Image.network(
-                            key: ValueKey(
-                              _showOriginal
-                                  ? 'original'
-                                  : _result?.imageUrl ?? 'selected',
-                            ),
-                            _showOriginal
-                                ? _selected?.imageUrl ?? widget.post.imageUrl
-                                : _result?.imageUrl ??
-                                      _selected?.imageUrl ??
-                                      widget.post.imageUrl,
-                            fit: BoxFit.cover,
-                            cacheWidth:
-                                (MediaQuery.sizeOf(context).width *
-                                        MediaQuery.devicePixelRatioOf(context))
-                                    .round()
-                                    .clamp(480, 1600),
-                            filterQuality: FilterQuality.medium,
-                            gaplessPlayback: true,
-                            errorBuilder: (_, _, _) => const ColoredBox(
-                              color: AppColors.sunken,
-                              child: Icon(Icons.person_outline, size: 52),
+                        InteractiveViewer(
+                          key: const Key('try-on-zoom-viewer'),
+                          transformationController: _zoomController,
+                          minScale: 1,
+                          maxScale: 4,
+                          panEnabled: _result != null && !_generating,
+                          scaleEnabled: _result != null && !_generating,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onDoubleTapDown: _result == null
+                                ? null
+                                : (details) => _doubleTapPosition =
+                                      details.localPosition,
+                            onDoubleTap: _result == null ? null : _toggleZoom,
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 220),
+                              child: SizedBox.expand(
+                                key: ValueKey(
+                                  _showOriginal
+                                      ? 'original'
+                                      : _result?.imageUrl ?? 'selected',
+                                ),
+                                child: Image.network(
+                                  _showOriginal
+                                      ? _selected?.imageUrl ??
+                                            widget.post.imageUrl
+                                      : _result?.imageUrl ??
+                                            _selected?.imageUrl ??
+                                            widget.post.imageUrl,
+                                  fit: BoxFit.cover,
+                                  cacheWidth:
+                                      (MediaQuery.sizeOf(context).width *
+                                              MediaQuery.devicePixelRatioOf(
+                                                context,
+                                              ))
+                                          .round()
+                                          .clamp(480, 1600),
+                                  filterQuality: FilterQuality.medium,
+                                  gaplessPlayback: true,
+                                  errorBuilder: (_, _, _) => const ColoredBox(
+                                    color: AppColors.sunken,
+                                    child: Icon(Icons.person_outline, size: 52),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -323,6 +381,15 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                             points: widget.post.garments
                                 .map((garment) => Offset(garment.x, garment.y))
                                 .toList(growable: false),
+                          ),
+                        if (_result != null && !_generating)
+                          Positioned(
+                            right: 12,
+                            top: 12,
+                            child: _ZoomHint(
+                              zoomed: _isZoomed,
+                              onReset: _resetZoom,
+                            ),
                           ),
                         if (_result != null && !_generating)
                           Positioned(
@@ -435,13 +502,16 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                         key: Key('try-on-photo-${photo.id}'),
                         onTap: _generating || _saving
                             ? null
-                            : () => setState(() {
-                                _selected = photo;
-                                _result = null;
-                                _saved = false;
-                                _saveError = null;
-                                _showOriginal = false;
-                              }),
+                            : () {
+                                _resetZoom();
+                                setState(() {
+                                  _selected = photo;
+                                  _result = null;
+                                  _saved = false;
+                                  _saveError = null;
+                                  _showOriginal = false;
+                                });
+                              },
                         child: Container(
                           width: 70,
                           padding: const EdgeInsets.all(3),
@@ -499,6 +569,51 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
               ],
             ],
           ),
+  );
+}
+
+class _ZoomHint extends StatelessWidget {
+  const _ZoomHint({required this.zoomed, required this.onReset});
+
+  final bool zoomed;
+  final VoidCallback onReset;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: zoomed,
+    label: zoomed ? 'Reset outfit zoom' : 'Pinch or double tap to zoom',
+    child: Material(
+      key: const Key('try-on-zoom-hint'),
+      color: AppColors.textPrimary.withValues(alpha: 0.82),
+      borderRadius: BorderRadius.circular(AppRadii.pill),
+      child: InkWell(
+        onTap: zoomed ? onReset : null,
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                zoomed ? Icons.center_focus_strong : Icons.zoom_in_rounded,
+                size: 14,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                zoomed ? 'RESET VIEW' : 'PINCH TO ZOOM',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
   );
 }
 
