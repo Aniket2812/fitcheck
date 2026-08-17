@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "users": [
     {
       "id": "demo-user-maya",
@@ -876,6 +876,428 @@
           "category": "accessory",
           "x": 0.52,
           "y": 0.14
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-monochrome-remix",
+      "userId": "demo-user-maya",
+      "caption": "Monochrome, with room to breathe.",
+      "imageUrl": "/media/studio-maya-city-layers.jpg",
+      "ageMinutes": 35,
+      "likeUserIds": ["demo-user-zoya", "demo-user-kabir"],
+      "garments": [
+        {
+          "id": "demo-garment-remix-white-fitted-tee",
+          "title": "White slim-fit crew-neck T-shirt",
+          "brand": "AJIO",
+          "price": null,
+          "imageUrl": "/media/maya-white-fitted-tee.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.ajio.com/ajio-slim-fit-crew-neck-t-shirt-with-contrast-neckline/p/460516501_white",
+          "category": "upper_body",
+          "x": 0.5,
+          "y": 0.4
+        },
+        {
+          "id": "demo-garment-remix-black-wide-trousers",
+          "title": "Black straight-fit tailored trousers",
+          "brand": "PowerSutra",
+          "price": null,
+          "imageUrl": "/media/maya-black-trousers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/trousers/powersutra/powersutra-women-black-straight-fit-trousers/20655694/buy",
+          "category": "lower_body",
+          "x": 0.52,
+          "y": 0.64
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-clean-denim-remix",
+      "userId": "demo-user-arjun",
+      "caption": "A clean denim uniform for slow weekends.",
+      "imageUrl": "/media/studio-arjun-denim-day.jpg",
+      "ageMinutes": 110,
+      "likeUserIds": ["demo-user-maya", "demo-user-kabir", "demo-user-zoya"],
+      "garments": [
+        {
+          "id": "demo-garment-remix-soft-white-tee",
+          "title": "Soft white pure-cotton T-shirt",
+          "brand": "Levi's",
+          "price": null,
+          "imageUrl": "/media/arjun-white-tee.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/lounge-tshirts/levis/levis-men-soft-pure-cotton-round-neck-half-sleeve-tshirt/12027436/buy",
+          "category": "upper_body",
+          "x": 0.53,
+          "y": 0.29
+        },
+        {
+          "id": "demo-garment-remix-blue-ankle-jeans",
+          "title": "Blue ankle-length skinny-fit jeans",
+          "brand": "AJIO",
+          "price": null,
+          "imageUrl": "/media/arjun-blue-jeans.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.ajio.com/ajio-ankle-length-supper-skinny-fit-jeans/p/460347290001",
+          "category": "lower_body",
+          "x": 0.53,
+          "y": 0.61
+        },
+        {
+          "id": "demo-garment-remix-metro-white-sneakers",
+          "title": "Minimal white sneakers",
+          "brand": "Metro",
+          "price": null,
+          "imageUrl": "/media/arjun-white-sneakers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/casual-shoes/metro/metro-men-white-sneakers/14302430/buy",
+          "category": "shoes",
+          "x": 0.52,
+          "y": 0.9
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-after-dark-remix",
+      "userId": "demo-user-zoya",
+      "caption": "After-dark satin with one warm accent.",
+      "imageUrl": "/media/studio-zoya-gallery-night.jpg",
+      "ageMinutes": 260,
+      "likeUserIds": ["demo-user-maya", "demo-user-arjun"],
+      "garments": [
+        {
+          "id": "demo-garment-remix-black-satin-dress",
+          "title": "Black satin midi dress",
+          "brand": "Label Regalia",
+          "price": null,
+          "imageUrl": "/media/zoya-black-dress.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/dresses/labelregalia/label-regalia-black-satin-midi-dress/21149516/buy",
+          "category": "full_body",
+          "x": 0.49,
+          "y": 0.43
+        },
+        {
+          "id": "demo-garment-remix-black-block-heels",
+          "title": "Black open-toe block heels",
+          "brand": "NTFC",
+          "price": null,
+          "imageUrl": "/media/zoya-black-sandals.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/heels/ntfc/ntfc-women-black-open-toe-block-heels/35406641/buy",
+          "category": "shoes",
+          "x": 0.49,
+          "y": 0.9
+        },
+        {
+          "id": "demo-garment-remix-tan-shoulder-bag",
+          "title": "Tan structured shoulder bag",
+          "brand": "Van Heusen Woman",
+          "price": null,
+          "imageUrl": "/media/zoya-tan-bag.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.amazon.in/Van-Heusen-Womens-Western-Black/dp/B0FHW45B58",
+          "category": "accessory",
+          "x": 0.65,
+          "y": 0.41
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-tonal-coffee-remix",
+      "userId": "demo-user-kabir",
+      "caption": "Tonal black, made soft for the coffee run.",
+      "imageUrl": "/media/studio-kabir-coffee-run.jpg",
+      "ageMinutes": 430,
+      "likeUserIds": ["demo-user-arjun", "demo-user-maya"],
+      "garments": [
+        {
+          "id": "demo-garment-remix-black-crew-pullover",
+          "title": "Black crew-neck knit pullover",
+          "brand": "SNITCH",
+          "price": null,
+          "imageUrl": "/media/kabir-black-knit.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.ajio.com/snitch-men-crew-neck-pullover/p/700634602_black",
+          "category": "upper_body",
+          "x": 0.51,
+          "y": 0.43
+        },
+        {
+          "id": "demo-garment-remix-men-black-trousers",
+          "title": "Black slim-fit tailored trousers",
+          "brand": "BASICS",
+          "price": null,
+          "imageUrl": "/media/kabir-black-trousers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/trousers/basics/basics-men-black-trousers/17957736/buy",
+          "category": "lower_body",
+          "x": 0.54,
+          "y": 0.65
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-resort-neutral-remix",
+      "userId": "demo-user-kabir",
+      "caption": "Resort neutrals and a little shade.",
+      "imageUrl": "/media/studio-rehan-sand-linen.jpg",
+      "ageMinutes": 720,
+      "likeUserIds": ["demo-user-zoya", "demo-user-arjun", "demo-user-maya"],
+      "garments": [
+        {
+          "id": "demo-garment-remix-sand-regular-shirt",
+          "title": "Sand regular-fit cotton shirt",
+          "brand": "DEELMO",
+          "price": null,
+          "imageUrl": "/media/rehan-sand-shirt.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.ajio.com/deelmo-men-regular-fit-shirt/p/702020193_white",
+          "category": "upper_body",
+          "x": 0.49,
+          "y": 0.35
+        },
+        {
+          "id": "demo-garment-remix-white-linen-trousers",
+          "title": "White relaxed-fit linen trousers",
+          "brand": "Kingdom of White",
+          "price": null,
+          "imageUrl": "/media/rehan-white-trousers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/trousers/kingdom20of20white/kingdom-of-white-men-relaxed-fit-linen-trousers/31889229/buy",
+          "category": "lower_body",
+          "x": 0.52,
+          "y": 0.65
+        },
+        {
+          "id": "demo-garment-remix-square-sunglasses",
+          "title": "Square UV-protected sunglasses",
+          "brand": "IMAGE",
+          "price": null,
+          "imageUrl": "/media/rehan-sunglasses.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/sunglasses/image/image-men-square-sunglasses-with-uv-protected-lens-ims783c2sg/32425412/buy",
+          "category": "accessory",
+          "x": 0.49,
+          "y": 0.13
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-indigo-skirt-remix",
+      "userId": "demo-user-zoya",
+      "caption": "Indigo up top, fluid black below.",
+      "imageUrl": "/media/studio-zoya-indigo-trucker.jpg",
+      "ageMinutes": 990,
+      "likeUserIds": ["demo-user-kabir", "demo-user-maya"],
+      "garments": [
+        {
+          "id": "demo-garment-remix-indigo-denim-jacket",
+          "title": "Blue washed denim jacket",
+          "brand": "Roadster",
+          "price": null,
+          "imageUrl": "/media/zoya-indigo-jacket.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/jackets/roadster/roadster-women-blue-denim-denim-jacket/36699689/buy",
+          "category": "upper_body",
+          "x": 0.5,
+          "y": 0.34
+        },
+        {
+          "id": "demo-garment-remix-black-midi-skirt",
+          "title": "Black fluid A-line midi skirt",
+          "brand": "Bitterlime",
+          "price": null,
+          "imageUrl": "/media/zoya-black-skirt.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/skirts/bitterlime/bitterlime-black-midi-a-line-skirt/8224951/buy",
+          "category": "lower_body",
+          "x": 0.5,
+          "y": 0.62
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-utility-night-remix",
+      "userId": "demo-user-maya",
+      "caption": "Utility shapes for an unplanned night out.",
+      "imageUrl": "/media/studio-maya-olive-cargos.jpg",
+      "ageMinutes": 1450,
+      "likeUserIds": ["demo-user-arjun", "demo-user-zoya"],
+      "garments": [
+        {
+          "id": "demo-garment-remix-black-tank",
+          "title": "Black fitted tank top",
+          "brand": "CAVA",
+          "price": null,
+          "imageUrl": "/media/maya-black-tank.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/tops/cava/cava-black-tank-us-later-top/27045222/buy",
+          "category": "upper_body",
+          "x": 0.5,
+          "y": 0.32
+        },
+        {
+          "id": "demo-garment-remix-olive-cargo-trousers",
+          "title": "Olive cotton cargo trousers",
+          "brand": "HERE&NOW",
+          "price": null,
+          "imageUrl": "/media/maya-olive-cargo-trousers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/trousers/here26now/herenow-women-olive-cotton-cargos-trousers/36668255/buy",
+          "category": "lower_body",
+          "x": 0.5,
+          "y": 0.63
+        },
+        {
+          "id": "demo-garment-remix-black-bucket-bag",
+          "title": "Black bucket shoulder bag",
+          "brand": "Accessorize London",
+          "price": null,
+          "imageUrl": "/media/maya-black-shoulder-bag.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.amazon.in/dp/B0DMWGY54X",
+          "category": "accessory",
+          "x": 0.34,
+          "y": 0.39
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-polo-after-hours-remix",
+      "userId": "demo-user-arjun",
+      "caption": "Cream, black, and a low-key gum sole.",
+      "imageUrl": "/media/studio-arjun-black-sambas.jpg",
+      "ageMinutes": 1880,
+      "likeUserIds": ["demo-user-kabir", "demo-user-maya", "demo-user-zoya"],
+      "garments": [
+        {
+          "id": "demo-garment-remix-cream-knit-polo",
+          "title": "Cream piquet-cotton polo T-shirt",
+          "brand": "Antony Morato",
+          "price": null,
+          "imageUrl": "/media/arjun-cream-polo.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/tshirts/antonymorato/antony-morato-men-cotton-cream-piquet-cotton-polo-t-shirt/39386523/buy",
+          "category": "upper_body",
+          "x": 0.52,
+          "y": 0.33
+        },
+        {
+          "id": "demo-garment-remix-relaxed-black-trousers",
+          "title": "Black relaxed-fit cotton trousers",
+          "brand": "SHOWOFFFF",
+          "price": null,
+          "imageUrl": "/media/arjun-black-trousers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/trousers/showoff/showoff-men-black-relaxed-fit-cotton-regular-trousers/36620272/buy",
+          "category": "lower_body",
+          "x": 0.51,
+          "y": 0.63
+        },
+        {
+          "id": "demo-garment-remix-antony-black-sneakers",
+          "title": "Black low-top sneakers",
+          "brand": "Antony Morato",
+          "price": null,
+          "imageUrl": "/media/arjun-black-sneakers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/casual-shoes/antony-morato/antony-morato-men-black-sneakers/1475765/buy",
+          "category": "shoes",
+          "x": 0.5,
+          "y": 0.9
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-blush-denim-remix",
+      "userId": "demo-user-zoya",
+      "caption": "Blush pink breaking up the blue.",
+      "imageUrl": "/media/studio-zoya-pink-kicks.jpg",
+      "ageMinutes": 2460,
+      "likeUserIds": ["demo-user-arjun", "demo-user-maya"],
+      "garments": [
+        {
+          "id": "demo-garment-remix-pink-cardigan",
+          "title": "Pink cropped cardigan",
+          "brand": "Tokyo Talkies",
+          "price": null,
+          "imageUrl": "/media/zoya-pink-cardigan.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/sweaters/tokyotalkies/tokyo-talkies-women-pink-cardigan/20483332/buy",
+          "category": "upper_body",
+          "x": 0.51,
+          "y": 0.33
+        },
+        {
+          "id": "demo-garment-remix-light-blue-wide-jeans",
+          "title": "Light-blue wide-leg high-rise jeans",
+          "brand": "all about you",
+          "price": null,
+          "imageUrl": "/media/zoya-light-blue-jeans.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/jeans/allaboutyou/all-about-you-women-blue-wide-leg-high-rise-jeans/22678854/buy",
+          "category": "lower_body",
+          "x": 0.52,
+          "y": 0.63
+        },
+        {
+          "id": "demo-garment-remix-pink-textured-bag",
+          "title": "Pink textured shoulder bag",
+          "brand": "Allen Solly",
+          "price": null,
+          "imageUrl": "/media/zoya-pink-shoulder-bag.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/handbags/allensolly/allen-solly-textured-shoulder-bag/25623546/buy",
+          "category": "accessory",
+          "x": 0.34,
+          "y": 0.38
+        }
+      ],
+      "comments": []
+    },
+    {
+      "id": "demo-post-red-cream-remix",
+      "userId": "demo-user-maya",
+      "caption": "One red layer, everything else quiet.",
+      "imageUrl": "/media/studio-maya-red-cardigan.jpg",
+      "ageMinutes": 3600,
+      "likeUserIds": ["demo-user-zoya", "demo-user-kabir", "demo-user-arjun"],
+      "garments": [
+        {
+          "id": "demo-garment-remix-red-cardigan",
+          "title": "Red short-sleeved cardigan",
+          "brand": "Monte Carlo",
+          "price": null,
+          "imageUrl": "/media/maya-red-cardigan-product.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/sweaters/montecarlo/monte-carlo-women-red-cardigan/19057742/buy",
+          "category": "upper_body",
+          "x": 0.5,
+          "y": 0.33
+        },
+        {
+          "id": "demo-garment-remix-cream-wide-trousers",
+          "title": "Cream wide-leg trousers",
+          "brand": "W",
+          "price": null,
+          "imageUrl": "/media/maya-cream-trousers.jpg",
+          "originalImageUrl": null,
+          "buyUrl": "https://www.myntra.com/trousers/w/w-women-cream-coloured-slim-fit-solid-regular-trousers/11430858/buy",
+          "category": "lower_body",
+          "x": 0.54,
+          "y": 0.64
         }
       ],
       "comments": []

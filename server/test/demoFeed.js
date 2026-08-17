@@ -18,13 +18,13 @@ const visualMatches = JSON.parse(
 try {
   await store.loadStore();
   const posts = store.listPosts();
-  assert.equal(posts.length, 14);
+  assert.equal(posts.length, 24);
   assert.equal(
     posts.reduce((total, post) => total + post.garments.length, 0),
-    53,
+    79,
   );
 
-  assert.equal(visualMatches.matches.length, 53);
+  assert.equal(visualMatches.matches.length, 79);
   const matchesByGarment = new Map(
     visualMatches.matches.map((match) => [match.garmentId, match]),
   );
@@ -93,7 +93,7 @@ try {
       }
     }
   }
-  assert.equal(matchesByGarment.size, 53);
+  assert.equal(matchesByGarment.size, 79);
   assert.ok(retailerCounts.get('www.amazon.in') >= 5);
   assert.ok(retailerCounts.get('www.ajio.com') >= 8);
   assert.ok(retailerCounts.get('www.myntra.com') >= 10);
@@ -105,7 +105,33 @@ try {
   );
   assert.ok(accessoryCounts.some((count) => count === 0));
   assert.ok(accessoryCounts.some((count) => count > 0));
-  assert.ok(posts.every((post) => post.garments.length >= 3));
+  assert.ok(posts.every((post) => post.garments.length >= 2));
+  assert.ok(
+    posts.every(
+      (post) =>
+        new Set(post.garments.map((garment) => garment.buyUrl)).size ===
+        post.garments.length,
+    ),
+    'Every mock post should link each piece to a different product',
+  );
+
+  const remixPosts = posts.filter((post) => post.id.endsWith('-remix'));
+  assert.equal(remixPosts.length, 10);
+  const remixUrls = remixPosts.flatMap((post) =>
+    post.garments.map((garment) => garment.buyUrl),
+  );
+  assert.equal(new Set(remixUrls).size, remixUrls.length);
+  assert.ok(
+    remixPosts.some(
+      (post) =>
+        !post.garments.some((garment) => garment.category === 'accessory'),
+    ),
+  );
+  assert.ok(
+    remixPosts.some((post) =>
+      post.garments.some((garment) => garment.category === 'accessory'),
+    ),
+  );
 
   const cityLayers = posts.find((post) => post.id === 'demo-post-city-layers');
   assert.ok(cityLayers);
@@ -123,11 +149,11 @@ try {
   assert.ok(seededImage.bytes.length > 100_000);
 
   const persisted = JSON.parse(await readFile(process.env.DATA_FILE, 'utf8'));
-  assert.equal(persisted.demoFeedVersion, 6);
-  assert.equal(persisted.posts.length, 14);
+  assert.equal(persisted.demoFeedVersion, 7);
+  assert.equal(persisted.posts.length, 24);
 
   await store.loadStore();
-  assert.equal(store.listPosts().length, 14);
+  assert.equal(store.listPosts().length, 24);
 
   const preservedCreatedAt = '2026-01-01T00:00:00.000Z';
   const migrationDb = {
@@ -157,8 +183,8 @@ try {
     2,
     Date.parse('2026-08-17T00:00:00.000Z'),
   );
-  assert.equal(migration.version, 6);
-  assert.equal(migrationDb.posts.size, 14);
+  assert.equal(migration.version, 7);
+  assert.equal(migrationDb.posts.size, 24);
   const migratedPost = migrationDb.posts.get('demo-post-city-layers');
   assert.deepEqual(migratedPost.likeUserIds, ['existing-viewer']);
   assert.equal(migratedPost.comments[0].text, 'Keep me');

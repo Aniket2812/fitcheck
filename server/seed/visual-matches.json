@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "matches": [
     {
       "postId": "demo-post-city-layers",
@@ -424,6 +424,214 @@
       "productImage": "/media/maya-black-top.jpg",
       "colour": "black",
       "product": "fitted scoop-neck top"
+    },
+    {
+      "postId": "demo-post-monochrome-remix",
+      "garmentId": "demo-garment-remix-white-fitted-tee",
+      "postImage": "/media/studio-maya-city-layers.jpg",
+      "productImage": "/media/maya-white-fitted-tee.jpg",
+      "colour": "white",
+      "product": "slim-fit crew-neck T-shirt"
+    },
+    {
+      "postId": "demo-post-monochrome-remix",
+      "garmentId": "demo-garment-remix-black-wide-trousers",
+      "postImage": "/media/studio-maya-city-layers.jpg",
+      "productImage": "/media/maya-black-trousers.jpg",
+      "colour": "black",
+      "product": "straight-fit tailored trousers"
+    },
+    {
+      "postId": "demo-post-clean-denim-remix",
+      "garmentId": "demo-garment-remix-soft-white-tee",
+      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "productImage": "/media/arjun-white-tee.jpg",
+      "colour": "white",
+      "product": "pure-cotton crew-neck T-shirt"
+    },
+    {
+      "postId": "demo-post-clean-denim-remix",
+      "garmentId": "demo-garment-remix-blue-ankle-jeans",
+      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "productImage": "/media/arjun-blue-jeans.jpg",
+      "colour": "blue",
+      "product": "ankle-length jeans"
+    },
+    {
+      "postId": "demo-post-clean-denim-remix",
+      "garmentId": "demo-garment-remix-metro-white-sneakers",
+      "postImage": "/media/studio-arjun-denim-day.jpg",
+      "productImage": "/media/arjun-white-sneakers.jpg",
+      "colour": "white",
+      "product": "low-top sneakers"
+    },
+    {
+      "postId": "demo-post-after-dark-remix",
+      "garmentId": "demo-garment-remix-black-satin-dress",
+      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "productImage": "/media/zoya-black-dress.jpg",
+      "colour": "black",
+      "product": "satin midi dress"
+    },
+    {
+      "postId": "demo-post-after-dark-remix",
+      "garmentId": "demo-garment-remix-black-block-heels",
+      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "productImage": "/media/zoya-black-sandals.jpg",
+      "colour": "black",
+      "product": "open-toe block heels"
+    },
+    {
+      "postId": "demo-post-after-dark-remix",
+      "garmentId": "demo-garment-remix-tan-shoulder-bag",
+      "postImage": "/media/studio-zoya-gallery-night.jpg",
+      "productImage": "/media/zoya-tan-bag.jpg",
+      "colour": "tan",
+      "product": "structured shoulder bag"
+    },
+    {
+      "postId": "demo-post-tonal-coffee-remix",
+      "garmentId": "demo-garment-remix-black-crew-pullover",
+      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "productImage": "/media/kabir-black-knit.jpg",
+      "colour": "black",
+      "product": "crew-neck knit pullover"
+    },
+    {
+      "postId": "demo-post-tonal-coffee-remix",
+      "garmentId": "demo-garment-remix-men-black-trousers",
+      "postImage": "/media/studio-kabir-coffee-run.jpg",
+      "productImage": "/media/kabir-black-trousers.jpg",
+      "colour": "black",
+      "product": "slim-fit tailored trousers"
+    },
+    {
+      "postId": "demo-post-resort-neutral-remix",
+      "garmentId": "demo-garment-remix-sand-regular-shirt",
+      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "productImage": "/media/rehan-sand-shirt.jpg",
+      "colour": "sand",
+      "product": "regular-fit shirt"
+    },
+    {
+      "postId": "demo-post-resort-neutral-remix",
+      "garmentId": "demo-garment-remix-white-linen-trousers",
+      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "productImage": "/media/rehan-white-trousers.jpg",
+      "colour": "white",
+      "product": "relaxed-fit linen trousers"
+    },
+    {
+      "postId": "demo-post-resort-neutral-remix",
+      "garmentId": "demo-garment-remix-square-sunglasses",
+      "postImage": "/media/studio-rehan-sand-linen.jpg",
+      "productImage": "/media/rehan-sunglasses.jpg",
+      "colour": "tortoiseshell",
+      "product": "square sunglasses"
+    },
+    {
+      "postId": "demo-post-indigo-skirt-remix",
+      "garmentId": "demo-garment-remix-indigo-denim-jacket",
+      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "productImage": "/media/zoya-indigo-jacket.jpg",
+      "colour": "indigo blue",
+      "product": "washed denim jacket"
+    },
+    {
+      "postId": "demo-post-indigo-skirt-remix",
+      "garmentId": "demo-garment-remix-black-midi-skirt",
+      "postImage": "/media/studio-zoya-indigo-trucker.jpg",
+      "productImage": "/media/zoya-black-skirt.jpg",
+      "colour": "black",
+      "product": "A-line midi skirt"
+    },
+    {
+      "postId": "demo-post-utility-night-remix",
+      "garmentId": "demo-garment-remix-black-tank",
+      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "productImage": "/media/maya-black-tank.jpg",
+      "colour": "black",
+      "product": "fitted tank top"
+    },
+    {
+      "postId": "demo-post-utility-night-remix",
+      "garmentId": "demo-garment-remix-olive-cargo-trousers",
+      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "productImage": "/media/maya-olive-cargo-trousers.jpg",
+      "colour": "olive",
+      "product": "cotton cargo trousers"
+    },
+    {
+      "postId": "demo-post-utility-night-remix",
+      "garmentId": "demo-garment-remix-black-bucket-bag",
+      "postImage": "/media/studio-maya-olive-cargos.jpg",
+      "productImage": "/media/maya-black-shoulder-bag.jpg",
+      "colour": "black",
+      "product": "bucket shoulder bag"
+    },
+    {
+      "postId": "demo-post-polo-after-hours-remix",
+      "garmentId": "demo-garment-remix-cream-knit-polo",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-cream-polo.jpg",
+      "colour": "cream",
+      "product": "piquet-cotton polo T-shirt"
+    },
+    {
+      "postId": "demo-post-polo-after-hours-remix",
+      "garmentId": "demo-garment-remix-relaxed-black-trousers",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-black-trousers.jpg",
+      "colour": "black",
+      "product": "relaxed-fit trousers"
+    },
+    {
+      "postId": "demo-post-polo-after-hours-remix",
+      "garmentId": "demo-garment-remix-antony-black-sneakers",
+      "postImage": "/media/studio-arjun-black-sambas.jpg",
+      "productImage": "/media/arjun-black-sneakers.jpg",
+      "colour": "black",
+      "product": "low-top sneakers"
+    },
+    {
+      "postId": "demo-post-blush-denim-remix",
+      "garmentId": "demo-garment-remix-pink-cardigan",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-pink-cardigan.jpg",
+      "colour": "pink",
+      "product": "cropped cardigan"
+    },
+    {
+      "postId": "demo-post-blush-denim-remix",
+      "garmentId": "demo-garment-remix-light-blue-wide-jeans",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-light-blue-jeans.jpg",
+      "colour": "light blue",
+      "product": "wide-leg high-rise jeans"
+    },
+    {
+      "postId": "demo-post-blush-denim-remix",
+      "garmentId": "demo-garment-remix-pink-textured-bag",
+      "postImage": "/media/studio-zoya-pink-kicks.jpg",
+      "productImage": "/media/zoya-pink-shoulder-bag.jpg",
+      "colour": "pink",
+      "product": "textured shoulder bag"
+    },
+    {
+      "postId": "demo-post-red-cream-remix",
+      "garmentId": "demo-garment-remix-red-cardigan",
+      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "productImage": "/media/maya-red-cardigan-product.jpg",
+      "colour": "red",
+      "product": "short-sleeved cardigan"
+    },
+    {
+      "postId": "demo-post-red-cream-remix",
+      "garmentId": "demo-garment-remix-cream-wide-trousers",
+      "postImage": "/media/studio-maya-red-cardigan.jpg",
+      "productImage": "/media/maya-cream-trousers.jpg",
+      "colour": "cream",
+      "product": "wide-leg trousers"
     }
   ]
 }
