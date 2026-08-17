@@ -1,0 +1,6 @@
+.next/
+.playwright-cli/
+node_modules/
+out/
+output/
+npm-debug.log*
