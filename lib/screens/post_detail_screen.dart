@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../components/app_motion.dart';
 import '../components/editorial_photo_frame.dart';
 import '../components/outfit_post_image.dart';
 import '../components/shoppable_pieces.dart';
@@ -71,16 +72,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         Expanded(
           child: ListView(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                child: EditorialPhotoFrame(
-                  key: Key('editorial-frame-${_post.id}'),
-                  aspectRatio: 0.77,
-                  inset: 8,
-                  borderRadius: 16,
-                  photoRadius: 11,
-                  label: 'COMPETE  /  OUTFIT EDIT',
-                  child: OutfitPostImage(post: _post),
+              AppReveal(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                  child: EditorialPhotoFrame(
+                    key: Key('editorial-frame-${_post.id}'),
+                    aspectRatio: 0.77,
+                    inset: 8,
+                    borderRadius: AppRadii.large,
+                    photoRadius: AppRadii.medium,
+                    label: 'COMPETE  /  OUTFIT EDIT',
+                    child: OutfitPostImage(post: _post),
+                  ),
                 ),
               ),
               Padding(
@@ -158,9 +161,43 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   ),
                 ),
               const Divider(height: 1),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 14, 14, 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        color: AppColors.freshSoft,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.forum_outlined, size: 15),
+                    ),
+                    const SizedBox(width: AppSpacing.x2),
+                    const Expanded(
+                      child: Text(
+                        'Conversation',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${_post.comments.length}',
+                      style: const TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               if (_post.comments.isEmpty)
                 const Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.fromLTRB(16, 12, 16, 22),
                   child: Text(
                     'No comments yet. Start the conversation.',
                     textAlign: TextAlign.center,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../components/app_motion.dart';
+import '../components/app_state.dart';
 import '../components/avatar.dart';
 import '../components/editorial_photo_frame.dart';
 import '../models/social_post.dart';
@@ -102,9 +104,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ],
     ),
     body: _loading
-        ? const Center(child: CircularProgressIndicator())
+        ? const _ProfileLoading()
         : _error != null
-        ? _ProfileError(message: _error!, onRetry: _load)
+        ? AppErrorState(message: _error!, onRetry: _load)
         : _ProfileContent(
             profile: _profile!,
             posts: _posts,
@@ -140,85 +142,93 @@ class _ProfileContent extends StatelessWidget {
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-              child: Column(
-                children: [
-                  Avatar(
-                    name: profile.name,
-                    imageUrl: profile.avatarUrl,
-                    size: 76,
-                  ),
-                  const SizedBox(height: AppSpacing.x4),
-                  Text(
-                    profile.name,
-                    key: const Key('profile-name'),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      height: 1.1,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+            child: AppReveal(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: const BoxDecoration(
+                        color: AppColors.freshSoft,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Avatar(
+                        name: profile.name,
+                        imageUrl: profile.avatarUrl,
+                        size: 72,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.x1),
-                  Text(
-                    '@${profile.handle}',
-                    key: const Key('profile-handle'),
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textMuted,
+                    const SizedBox(height: AppSpacing.x4),
+                    Text(
+                      profile.name,
+                      key: const Key('profile-name'),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        height: 1.1,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
-                  ),
-                  if (profile.bio.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.x3),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 430),
-                      child: Text(
-                        profile.bio,
-                        key: const Key('profile-bio'),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          height: 1.35,
-                          color: AppColors.textSecondary,
+                    const SizedBox(height: AppSpacing.x1),
+                    Text(
+                      '@${profile.handle}',
+                      key: const Key('profile-handle'),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                    if (profile.bio.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.x3),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 430),
+                        child: Text(
+                          profile.bio,
+                          key: const Key('profile-bio'),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            height: 1.35,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.x4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 11),
+                      decoration: BoxDecoration(
+                        color: AppColors.sunken,
+                        borderRadius: BorderRadius.circular(AppRadii.large),
+                      ),
+                      child: Row(
+                        children: [
+                          _Stat(value: posts.length, label: 'Outfits'),
+                          const _StatDivider(),
+                          _Stat(value: likes, label: 'Likes'),
+                          const _StatDivider(),
+                          _Stat(value: pieces, label: 'Pieces'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.x3),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        key: const Key('profile-edit-button'),
+                        onPressed: onEdit,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.textPrimary,
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          padding: const EdgeInsets.symmetric(vertical: 9),
+                        ),
+                        child: const Text('Edit profile'),
                       ),
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.x4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 11),
-                    decoration: BoxDecoration(
-                      color: AppColors.raised,
-                      borderRadius: BorderRadius.circular(AppRadii.large),
-                      border: Border.all(color: AppColors.borderDefault),
-                    ),
-                    child: Row(
-                      children: [
-                        _Stat(value: posts.length, label: 'Outfits'),
-                        const _StatDivider(),
-                        _Stat(value: likes, label: 'Likes'),
-                        const _StatDivider(),
-                        _Stat(value: pieces, label: 'Pieces'),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.x3),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      key: const Key('profile-edit-button'),
-                      onPressed: onEdit,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textPrimary,
-                        side: const BorderSide(color: AppColors.borderStrong),
-                        padding: const EdgeInsets.symmetric(vertical: 9),
-                      ),
-                      child: const Text('Edit profile'),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -254,12 +264,16 @@ class _ProfileContent extends StatelessWidget {
                   childAspectRatio: 0.8,
                 ),
                 itemCount: posts.length,
-                itemBuilder: (context, index) => _ProfilePost(
-                  post: posts[index],
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (_) => PostDetailScreen(post: posts[index]),
+                itemBuilder: (context, index) => AppReveal(
+                  key: ValueKey('profile-post-${posts[index].id}'),
+                  delay: Duration(milliseconds: (index * 30).clamp(0, 150)),
+                  child: _ProfilePost(
+                    post: posts[index],
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => PostDetailScreen(post: posts[index]),
+                      ),
                     ),
                   ),
                 ),
@@ -323,6 +337,9 @@ class _ProfilePost extends StatelessWidget {
           Image.network(
             post.imageUrl,
             fit: BoxFit.cover,
+            cacheWidth: 720,
+            filterQuality: FilterQuality.medium,
+            gaplessPlayback: true,
             errorBuilder: (_, _, _) => const ColoredBox(
               color: AppColors.sunken,
               child: Icon(Icons.checkroom, color: AppColors.textMuted),
@@ -356,47 +373,45 @@ class _EmptyProfilePosts extends StatelessWidget {
   const _EmptyProfilePosts();
 
   @override
-  Widget build(BuildContext context) => const Padding(
-    padding: EdgeInsets.fromLTRB(32, 44, 32, 80),
-    child: Column(
-      children: [
-        Icon(Icons.checkroom_outlined, size: 38, color: AppColors.textMuted),
-        SizedBox(height: AppSpacing.x3),
-        Text(
-          'Your outfit story starts here.',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
-        ),
-        SizedBox(height: AppSpacing.x1),
-        Text(
-          'Post your first virtual try-on and it will appear on this grid.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: AppColors.textSecondary, height: 1.4),
-        ),
-      ],
-    ),
+  Widget build(BuildContext context) => const AppEmptyState(
+    icon: Icons.checkroom_outlined,
+    title: 'Your outfit story starts here.',
+    message: 'Post your first virtual try-on and it will appear on this grid.',
   );
 }
 
-class _ProfileError extends StatelessWidget {
-  const _ProfileError({required this.message, required this.onRetry});
-  final String message;
-  final VoidCallback onRetry;
+class _ProfileLoading extends StatelessWidget {
+  const _ProfileLoading();
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(AppSpacing.x8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.cloud_off_outlined, size: 38),
-          const SizedBox(height: AppSpacing.x3),
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: AppSpacing.x4),
-          OutlinedButton(onPressed: onRetry, child: const Text('Retry')),
-        ],
-      ),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+    child: Column(
+      children: [
+        const AppLoadingField(
+          borderRadius: AppRadii.pill,
+          child: SizedBox.square(
+            dimension: 86,
+            child: ColoredBox(color: AppColors.sunken),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.x4),
+        const AppLoadingField(
+          child: SizedBox(
+            width: 160,
+            height: 20,
+            child: ColoredBox(color: AppColors.sunken),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.x4),
+        AppLoadingField(
+          child: SizedBox(
+            width: double.infinity,
+            height: 64,
+            child: ColoredBox(color: AppColors.sunken),
+          ),
+        ),
+      ],
     ),
   );
 }

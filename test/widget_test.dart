@@ -108,6 +108,50 @@ void main() {
     expect(find.text('Retry'), findsOneWidget);
   });
 
+  testWidgets('visited tabs keep their loaded state between switches', (
+    WidgetTester tester,
+  ) async {
+    var feedLoads = 0;
+    var photoLoads = 0;
+    var collectionLoads = 0;
+
+    await tester.pumpWidget(
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: () async {
+          feedLoads += 1;
+          return const [];
+        },
+        fetchModelPhotos: () async {
+          photoLoads += 1;
+          return const [];
+        },
+        fetchCollections: () async {
+          collectionLoads += 1;
+          return const [];
+        },
+        checkYouCamConfigured: youCamOff,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect((feedLoads, photoLoads, collectionLoads), (1, 0, 0));
+
+    await tester.tap(find.byKey(const Key('collections-tab')));
+    await tester.pumpAndSettle();
+    expect((feedLoads, photoLoads, collectionLoads), (1, 0, 1));
+
+    await tester.tap(find.byKey(const Key('photos-tab')));
+    await tester.pumpAndSettle();
+    expect((feedLoads, photoLoads, collectionLoads), (1, 1, 1));
+
+    await tester.tap(find.byKey(const Key('collections-tab')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('feed-tab')));
+    await tester.pumpAndSettle();
+    expect((feedLoads, photoLoads, collectionLoads), (1, 1, 1));
+  });
+
   testWidgets('all home filters stay visible when unselected', (
     WidgetTester tester,
   ) async {

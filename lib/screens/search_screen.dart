@@ -136,34 +136,57 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
           Expanded(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      trimmed.isEmpty ? 'Search Compete' : 'No results',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textPrimary,
+            child: AnimatedScale(
+              scale: trimmed.isEmpty ? 1 : 0.985,
+              duration: AppMotion.standard,
+              curve: AppMotion.curve,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.x8,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 58,
+                        height: 58,
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          color: AppColors.freshSoft,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          trimmed.isEmpty
+                              ? Icons.search_rounded
+                              : Icons.manage_search_rounded,
+                          size: 28,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.x2),
-                    Text(
-                      trimmed.isEmpty
-                          ? 'Find looks by piece, brand, or the person who put them together.'
-                          : 'Nothing matches “$trimmed” yet.',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 13.5,
-                        height: 1.4,
-                        color: AppColors.textSecondary,
+                      const SizedBox(height: AppSpacing.x4),
+                      Text(
+                        trimmed.isEmpty ? 'Search Compete' : 'No results',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: AppSpacing.x2),
+                      Text(
+                        trimmed.isEmpty
+                            ? 'Find looks by piece, brand, or the person who put them together.'
+                            : 'Nothing matches “$trimmed” yet.',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 13.5,
+                          height: 1.4,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

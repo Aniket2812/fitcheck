@@ -673,9 +673,8 @@ class _StudioProgress extends StatelessWidget {
       vertical: AppSpacing.x2,
     ),
     decoration: BoxDecoration(
-      color: AppColors.sunken,
-      borderRadius: BorderRadius.circular(AppRadii.medium),
-      border: Border.all(color: AppColors.borderDefault),
+      color: AppColors.raised,
+      borderRadius: BorderRadius.circular(AppRadii.large),
     ),
     child: Row(
       children: [
@@ -699,13 +698,26 @@ class _ProgressNode extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     mainAxisSize: MainAxisSize.min,
     children: [
-      CircleAvatar(
-        radius: 13,
-        backgroundColor: complete ? AppColors.accent : AppColors.raised,
-        child: Icon(
-          complete ? Icons.check : Icons.circle_outlined,
-          size: 14,
-          color: complete ? AppColors.textOnAccent : AppColors.textMuted,
+      AnimatedContainer(
+        duration: AppMotion.standard,
+        curve: AppMotion.curve,
+        width: 27,
+        height: 27,
+        decoration: BoxDecoration(
+          color: complete ? AppColors.fresh : AppColors.sunken,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: complete ? AppColors.fresh : AppColors.borderStrong,
+          ),
+        ),
+        child: AnimatedSwitcher(
+          duration: AppMotion.quick,
+          child: Icon(
+            complete ? Icons.check_rounded : Icons.circle_outlined,
+            key: ValueKey(complete),
+            size: 14,
+            color: complete ? AppColors.textPrimary : AppColors.textMuted,
+          ),
         ),
       ),
       const SizedBox(height: AppSpacing.x1),
@@ -724,9 +736,8 @@ class _SelectedPieces extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(AppSpacing.x3),
     decoration: BoxDecoration(
-      color: AppColors.raised,
-      borderRadius: BorderRadius.circular(AppRadii.medium),
-      border: Border.all(color: AppColors.borderDefault),
+      color: AppColors.sunken,
+      borderRadius: BorderRadius.circular(AppRadii.large),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -769,13 +780,22 @@ class _StepTitle extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(
-        number,
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 1.5,
-          color: AppColors.textMuted,
+      Container(
+        width: 34,
+        height: 25,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.freshSoft,
+          borderRadius: BorderRadius.circular(AppRadii.pill),
+        ),
+        child: Text(
+          number,
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.2,
+            color: AppColors.textSecondary,
+          ),
         ),
       ),
       const SizedBox(width: AppSpacing.x3),
@@ -785,14 +805,15 @@ class _StepTitle extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: AppSpacing.x1),
             Text(
               subtitle,
               style: const TextStyle(
                 color: AppColors.textSecondary,
-                height: 1.4,
+                fontSize: 13,
+                height: 1.35,
               ),
             ),
           ],
@@ -956,7 +977,11 @@ class _SelectableItem extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                GarmentImage(source: item.imageUrl, semanticLabel: item.title),
+                GarmentImage(
+                  source: item.imageUrl,
+                  semanticLabel: item.title,
+                  cacheWidth: 240,
+                ),
                 if (selected)
                   const Align(
                     alignment: Alignment.topRight,
@@ -1041,6 +1066,9 @@ class _PhotoPicker extends StatelessWidget {
                 child: Image.network(
                   photo.imageUrl,
                   fit: BoxFit.cover,
+                  cacheWidth: 240,
+                  filterQuality: FilterQuality.medium,
+                  gaplessPlayback: true,
                   errorBuilder: (_, _, _) => const ColoredBox(
                     color: AppColors.sunken,
                     child: Icon(Icons.person, color: AppColors.textMuted),
@@ -1100,6 +1128,13 @@ class _OutfitPreview extends StatelessWidget {
                   key: const Key('outfit-preview-image'),
                   imageUrl!,
                   fit: BoxFit.cover,
+                  cacheWidth:
+                      (constraints.maxWidth *
+                              MediaQuery.devicePixelRatioOf(context))
+                          .round()
+                          .clamp(480, 1600),
+                  filterQuality: FilterQuality.medium,
+                  gaplessPlayback: true,
                   errorBuilder: (_, _, _) => const ColoredBox(
                     color: AppColors.sunken,
                     child: Icon(Icons.person, size: 48),

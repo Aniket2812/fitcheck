@@ -37,6 +37,10 @@ class Avatar extends StatelessWidget {
                   width: size,
                   height: size,
                   fit: BoxFit.cover,
+                  cacheWidth: (size * MediaQuery.devicePixelRatioOf(context))
+                      .round(),
+                  filterQuality: FilterQuality.medium,
+                  gaplessPlayback: true,
                   errorBuilder: (_, _, _) =>
                       _Initial(initial: initial, size: size),
                 ),

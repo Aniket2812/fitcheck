@@ -132,6 +132,7 @@ class _ShoppablePiece extends StatelessWidget {
               child: GarmentImage(
                 source: garment.imageUrl,
                 semanticLabel: garment.title,
+                cacheWidth: 160,
               ),
             ),
             const SizedBox(width: AppSpacing.x3),

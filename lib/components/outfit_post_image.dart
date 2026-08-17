@@ -22,75 +22,84 @@ class OutfitPostImage extends StatelessWidget {
     child: ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: LayoutBuilder(
-        builder: (context, constraints) => Stack(
-          fit: StackFit.expand,
-          children: [
-            GestureDetector(
-              onTap: onOpenPost,
-              child: Hero(
-                tag: 'post-${post.id}',
-                child: Image.network(
-                  post.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => const ColoredBox(
-                    color: AppColors.sunken,
-                    child: Center(
-                      child: Icon(Icons.broken_image_outlined, size: 42),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            ...post.garments.map((garment) {
-              const hitSize = 48.0;
-              final left = (garment.x * constraints.maxWidth - hitSize / 2)
-                  .clamp(0.0, constraints.maxWidth - hitSize)
-                  .toDouble();
-              final top = (garment.y * constraints.maxHeight - hitSize / 2)
-                  .clamp(0.0, constraints.maxHeight - hitSize)
-                  .toDouble();
-              return Positioned(
-                left: left,
-                top: top,
-                child: _GarmentHotspot(
-                  key: Key('garment-hotspot-${post.id}-${garment.id}'),
-                  label: garment.title,
-                  heroTag: 'garment-${post.id}-${garment.id}',
-                  onTap: () => showGarmentProductDialog(
-                    context,
-                    postId: post.id,
-                    garment: garment,
-                  ),
-                ),
-              );
-            }),
-            if (post.garments.isNotEmpty)
-              Positioned(
-                right: 12,
-                top: 12,
-                child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                    color: Color(0xCC1E1D1B),
-                    borderRadius: BorderRadius.all(Radius.circular(18)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    child: Text(
-                      '${post.garments.length} shoppable ${post.garments.length == 1 ? 'piece' : 'pieces'}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+        builder: (context, constraints) {
+          final cacheWidth =
+              (constraints.maxWidth * MediaQuery.devicePixelRatioOf(context))
+                  .round()
+                  .clamp(480, 1600);
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              GestureDetector(
+                onTap: onOpenPost,
+                child: Hero(
+                  tag: 'post-${post.id}',
+                  child: Image.network(
+                    post.imageUrl,
+                    fit: BoxFit.cover,
+                    cacheWidth: cacheWidth,
+                    filterQuality: FilterQuality.medium,
+                    gaplessPlayback: true,
+                    errorBuilder: (_, _, _) => const ColoredBox(
+                      color: AppColors.sunken,
+                      child: Center(
+                        child: Icon(Icons.broken_image_outlined, size: 42),
                       ),
                     ),
                   ),
                 ),
               ),
-          ],
-        ),
+              ...post.garments.map((garment) {
+                const hitSize = 48.0;
+                final left = (garment.x * constraints.maxWidth - hitSize / 2)
+                    .clamp(0.0, constraints.maxWidth - hitSize)
+                    .toDouble();
+                final top = (garment.y * constraints.maxHeight - hitSize / 2)
+                    .clamp(0.0, constraints.maxHeight - hitSize)
+                    .toDouble();
+                return Positioned(
+                  left: left,
+                  top: top,
+                  child: _GarmentHotspot(
+                    key: Key('garment-hotspot-${post.id}-${garment.id}'),
+                    label: garment.title,
+                    heroTag: 'garment-${post.id}-${garment.id}',
+                    onTap: () => showGarmentProductDialog(
+                      context,
+                      postId: post.id,
+                      garment: garment,
+                    ),
+                  ),
+                );
+              }),
+              if (post.garments.isNotEmpty)
+                Positioned(
+                  right: 12,
+                  top: 12,
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      color: Color(0xCC1E1D1B),
+                      borderRadius: BorderRadius.all(Radius.circular(18)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      child: Text(
+                        '${post.garments.length} shoppable ${post.garments.length == 1 ? 'piece' : 'pieces'}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     ),
   );

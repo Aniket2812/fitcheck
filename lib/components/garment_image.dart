@@ -6,10 +6,16 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
 class GarmentImage extends StatelessWidget {
-  const GarmentImage({super.key, required this.source, this.semanticLabel});
+  const GarmentImage({
+    super.key,
+    required this.source,
+    this.semanticLabel,
+    this.cacheWidth,
+  });
 
   final String source;
   final String? semanticLabel;
+  final int? cacheWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +35,9 @@ class GarmentImage extends StatelessWidget {
         return Image.memory(
           Uint8List.fromList(bytes),
           fit: BoxFit.contain,
+          cacheWidth: cacheWidth,
+          filterQuality: FilterQuality.medium,
+          gaplessPlayback: true,
           errorBuilder: _errorBuilder,
         );
       } catch (_) {
@@ -39,6 +48,9 @@ class GarmentImage extends StatelessWidget {
     return Image.network(
       source,
       fit: BoxFit.contain,
+      cacheWidth: cacheWidth,
+      filterQuality: FilterQuality.medium,
+      gaplessPlayback: true,
       errorBuilder: _errorBuilder,
     );
   }

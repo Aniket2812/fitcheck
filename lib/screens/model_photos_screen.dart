@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../components/app_motion.dart';
+import '../components/app_page_intro.dart';
+import '../components/app_state.dart';
 import '../components/screen.dart';
 import '../models/model_photo.dart';
 import '../services/model_photo_service.dart';
@@ -174,41 +177,22 @@ class _ModelPhotosScreenState extends State<ModelPhotosScreen> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'My full-body photos',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: AppSpacing.x1),
-                          Text(
-                            'Upload once, then reuse any photo for a virtual try-on.',
-                            style: TextStyle(color: AppColors.textSecondary),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.x3),
-                    FilledButton.icon(
-                      key: const Key('add-model-photo-button'),
-                      onPressed: _uploading ? null : _chooseSource,
-                      icon: _uploading
-                          ? const SizedBox.square(
-                              dimension: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.add_a_photo_outlined, size: 18),
-                      label: const Text('Add'),
-                    ),
-                  ],
+                child: AppPageIntro(
+                  eyebrow: 'Your model library',
+                  title: 'My full-body photos',
+                  subtitle:
+                      'Upload once, then reuse your best poses across every virtual try-on.',
+                  trailing: FilledButton.icon(
+                    key: const Key('add-model-photo-button'),
+                    onPressed: _uploading ? null : _chooseSource,
+                    icon: _uploading
+                        ? const SizedBox.square(
+                            dimension: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.add_a_photo_outlined, size: 18),
+                    label: const Text('Add'),
+                  ),
                 ),
               ),
             ),
@@ -223,9 +207,7 @@ class _ModelPhotosScreenState extends State<ModelPhotosScreen> {
                 ),
               ),
             if (_loading)
-              const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              )
+              const SliverFillRemaining(child: _PhotosLoading())
             else if (_photos.isEmpty)
               const SliverFillRemaining(
                 hasScrollBody: false,
@@ -244,10 +226,14 @@ class _ModelPhotosScreenState extends State<ModelPhotosScreen> {
                   itemCount: _photos.length,
                   itemBuilder: (context, index) {
                     final photo = _photos[index];
-                    return _PhotoCard(
-                      photo: photo,
-                      onPrimary: () => _makePrimary(photo),
-                      onDelete: () => _delete(photo),
+                    return AppReveal(
+                      key: ValueKey('photo-${photo.id}'),
+                      delay: Duration(milliseconds: (index * 35).clamp(0, 175)),
+                      child: _PhotoCard(
+                        photo: photo,
+                        onPrimary: () => _makePrimary(photo),
+                        onDelete: () => _delete(photo),
+                      ),
                     );
                   },
                 ),
@@ -263,27 +249,35 @@ class _EmptyPhotos extends StatelessWidget {
   const _EmptyPhotos();
 
   @override
-  Widget build(BuildContext context) => const Center(
-    child: Padding(
-      padding: EdgeInsets.fromLTRB(32, 0, 32, 92),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.accessibility_new, size: 46, color: AppColors.textMuted),
-          SizedBox(height: AppSpacing.x3),
-          Text(
-            'Add your first full-body photo',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          ),
-          SizedBox(height: AppSpacing.x2),
-          Text(
-            'Use a clear, front-facing photo with your full outfit area visible.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.textSecondary, height: 1.4),
+  Widget build(BuildContext context) => const AppEmptyState(
+    icon: Icons.accessibility_new_rounded,
+    title: 'Add your first full-body photo',
+    message:
+        'Use a clear, front-facing photo with your full outfit area visible.',
+  );
+}
+
+class _PhotosLoading extends StatelessWidget {
+  const _PhotosLoading();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(12, 6, 12, 92),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var index = 0; index < 2; index++) ...[
+          if (index > 0) const SizedBox(width: AppSpacing.x2),
+          const Expanded(
+            child: AspectRatio(
+              aspectRatio: 0.76,
+              child: AppLoadingField(
+                child: ColoredBox(color: AppColors.sunken),
+              ),
+            ),
           ),
         ],
-      ),
+      ],
     ),
   );
 }
@@ -310,6 +304,9 @@ class _PhotoCard extends StatelessWidget {
           child: Image.network(
             photo.imageUrl,
             fit: BoxFit.cover,
+            cacheWidth: 720,
+            filterQuality: FilterQuality.medium,
+            gaplessPlayback: true,
             errorBuilder: (_, _, _) => const Center(
               child: Icon(Icons.person, size: 42, color: AppColors.textMuted),
             ),
@@ -326,13 +323,26 @@ class _PhotoCard extends StatelessWidget {
           ),
         ),
         if (photo.isPrimary)
-          const Positioned(
+          Positioned(
             left: 10,
             top: 10,
-            child: Chip(
-              avatar: Icon(Icons.star, size: 16),
-              label: Text('Default'),
-              visualDensity: VisualDensity.compact,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppColors.fresh,
+                borderRadius: BorderRadius.circular(AppRadii.pill),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.star_rounded, size: 14),
+                  SizedBox(width: 3),
+                  Text(
+                    'Default',
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
             ),
           ),
         Positioned(

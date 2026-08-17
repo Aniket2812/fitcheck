@@ -254,6 +254,13 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                                       _selected?.imageUrl ??
                                       widget.post.imageUrl,
                             fit: BoxFit.cover,
+                            cacheWidth:
+                                (MediaQuery.sizeOf(context).width *
+                                        MediaQuery.devicePixelRatioOf(context))
+                                    .round()
+                                    .clamp(480, 1600),
+                            filterQuality: FilterQuality.medium,
+                            gaplessPlayback: true,
                             errorBuilder: (_, _, _) => const ColoredBox(
                               color: AppColors.sunken,
                               child: Icon(Icons.person_outline, size: 52),
@@ -396,6 +403,9 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                             child: Image.network(
                               photo.imageUrl,
                               fit: BoxFit.cover,
+                              cacheWidth: 220,
+                              filterQuality: FilterQuality.medium,
+                              gaplessPlayback: true,
                               errorBuilder: (_, _, _) => const ColoredBox(
                                 color: AppColors.sunken,
                                 child: Icon(Icons.person_outline),

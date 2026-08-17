@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../components/app_motion.dart';
+import '../components/app_page_intro.dart';
+import '../components/app_state.dart';
 import '../components/garment_image.dart';
 import '../components/screen.dart';
 import '../models/fashion_collection.dart';
@@ -176,14 +179,14 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
     child: RefreshIndicator(
       onRefresh: _load,
       child: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const _CollectionsLoading()
           : _error != null
           ? ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 SizedBox(
                   height: MediaQuery.sizeOf(context).height * 0.65,
-                  child: _CollectionsError(message: _error!, onRetry: _load),
+                  child: AppErrorState(message: _error!, onRetry: _load),
                 ),
               ],
             )
@@ -191,49 +194,33 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
               key: const Key('collections-page'),
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 84),
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Collections',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: AppSpacing.x1),
-                          Text(
-                            'Save pieces by category, then mix them into a complete look.',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              height: 1.3,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.x3),
-                    IconButton.filled(
-                      key: const Key('add-collection-button'),
-                      onPressed: _createCollection,
-                      tooltip: 'New collection',
-                      icon: const Icon(Icons.create_new_folder_outlined),
-                    ),
-                  ],
+                AppPageIntro(
+                  eyebrow: 'Your wardrobe',
+                  title: 'Collections',
+                  subtitle:
+                      'Keep saved pieces organized, then combine them into a complete look.',
+                  trailing: IconButton.filled(
+                    key: const Key('add-collection-button'),
+                    onPressed: _createCollection,
+                    tooltip: 'New collection',
+                    icon: const Icon(Icons.create_new_folder_outlined),
+                  ),
                 ),
-                const SizedBox(height: AppSpacing.x3),
-                ..._collections.map(
-                  (collection) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.x3),
-                    child: _CollectionSection(
-                      collection: collection,
-                      busy: _busyCollectionId == collection.id,
-                      onAdd: () => _addLink(collection),
-                      onRemove: (item) => _remove(collection, item),
+                const SizedBox(height: AppSpacing.x4),
+                ..._collections.asMap().entries.map(
+                  (entry) => AppReveal(
+                    key: ValueKey('collection-${entry.value.id}'),
+                    delay: Duration(
+                      milliseconds: (entry.key * 30).clamp(0, 150),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.x3),
+                      child: _CollectionSection(
+                        collection: entry.value,
+                        busy: _busyCollectionId == entry.value.id,
+                        onAdd: () => _addLink(entry.value),
+                        onRemove: (item) => _remove(entry.value, item),
+                      ),
                     ),
                   ),
                 ),
@@ -267,10 +254,19 @@ class _CollectionSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(12, 8, 6, 5),
+          padding: const EdgeInsets.fromLTRB(12, 9, 6, 6),
           child: Row(
             children: [
-              Icon(_collectionIcon(collection.kind), size: 18),
+              Container(
+                width: 34,
+                height: 34,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.freshSoft,
+                  borderRadius: BorderRadius.circular(AppRadii.small),
+                ),
+                child: Icon(_collectionIcon(collection.kind), size: 17),
+              ),
               const SizedBox(width: AppSpacing.x2),
               Expanded(
                 child: Text(
@@ -354,6 +350,7 @@ class _CollectionItemCard extends StatelessWidget {
                 child: GarmentImage(
                   source: item.imageUrl,
                   semanticLabel: item.title,
+                  cacheWidth: 240,
                 ),
               ),
               Positioned(
@@ -400,20 +397,26 @@ IconData _collectionIcon(String kind) => switch (kind) {
   _ => Icons.folder_outlined,
 };
 
-class _CollectionsError extends StatelessWidget {
-  const _CollectionsError({required this.message, required this.onRetry});
-  final String message;
-  final VoidCallback onRetry;
+class _CollectionsLoading extends StatelessWidget {
+  const _CollectionsLoading();
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(message, textAlign: TextAlign.center),
+  Widget build(BuildContext context) => ListView(
+    padding: const EdgeInsets.fromLTRB(12, 12, 12, 92),
+    children: [
+      const AppLoadingField(
+        child: SizedBox(height: 68, child: ColoredBox(color: AppColors.sunken)),
+      ),
+      const SizedBox(height: AppSpacing.x4),
+      for (var index = 0; index < 3; index++) ...[
+        const AppLoadingField(
+          child: SizedBox(
+            height: 176,
+            child: ColoredBox(color: AppColors.sunken),
+          ),
+        ),
         const SizedBox(height: AppSpacing.x3),
-        OutlinedButton(onPressed: onRetry, child: const Text('Retry')),
       ],
-    ),
+    ],
   );
 }

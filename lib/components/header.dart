@@ -23,32 +23,27 @@ class CompeteHeader extends StatelessWidget {
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          14,
-          AppSpacing.x1,
-          12,
-          AppSpacing.x1,
-        ),
+        padding: const EdgeInsets.fromLTRB(14, AppSpacing.x2, 12, 6),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const CompeteLogo(),
             Row(
               children: [
-                IconButton(
-                  key: const Key('search-button'),
-                  onPressed: onSearch,
-                  tooltip: 'Search',
-                  icon: const Icon(Icons.search, size: 20),
-                  color: AppColors.textPrimary,
-                  style: const ButtonStyle(
-                    fixedSize: WidgetStatePropertyAll(
-                      Size.square(AppSizes.hitTarget),
+                SizedBox.square(
+                  dimension: AppSizes.hitTarget,
+                  child: Material(
+                    key: const Key('search-button'),
+                    color: AppColors.sunken,
+                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                    child: InkWell(
+                      onTap: onSearch,
+                      borderRadius: BorderRadius.circular(AppRadii.pill),
+                      child: const Icon(Icons.search_rounded, size: 20),
                     ),
-                    padding: WidgetStatePropertyAll(EdgeInsets.zero),
-                    overlayColor: WidgetStatePropertyAll(Colors.transparent),
                   ),
                 ),
+                const SizedBox(width: 2),
                 IconButton(
                   key: const Key('profile-button'),
                   onPressed: onProfile,

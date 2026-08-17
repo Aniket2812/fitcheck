@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../components/app_motion.dart';
+import '../components/app_state.dart';
 import '../components/editorial_photo_frame.dart';
 import '../components/screen.dart';
 import '../components/shoppable_pieces.dart';
@@ -678,26 +679,10 @@ class _EmptyState extends StatelessWidget {
   const _EmptyState();
 
   @override
-  Widget build(BuildContext context) => const Center(
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.x8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.people_outline, size: 42),
-          SizedBox(height: AppSpacing.x3),
-          Text(
-            'No outfits yet',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-          ),
-          SizedBox(height: AppSpacing.x2),
-          Text(
-            'Tap + to publish the first fit and tag every shoppable garment.',
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    ),
+  Widget build(BuildContext context) => const AppEmptyState(
+    icon: Icons.people_outline_rounded,
+    title: 'No outfits yet',
+    message: 'Tap + to publish the first fit and tag every shoppable garment.',
   );
 }
 
@@ -707,17 +692,6 @@ class _ErrorState extends StatelessWidget {
   final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(AppSpacing.x8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: AppSpacing.x3),
-          OutlinedButton(onPressed: onRetry, child: const Text('Retry')),
-        ],
-      ),
-    ),
-  );
+  Widget build(BuildContext context) =>
+      AppErrorState(message: message, onRetry: onRetry);
 }
