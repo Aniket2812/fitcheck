@@ -39,7 +39,7 @@ export async function requireUser(c, next) {
 /**
  * POST /api/auth/google  { idToken }
  *
- * Exchanges a Google ID token for a fitterest session. Sign-up and sign-in are
+ * Exchanges a Google ID token for a fitcheck session. Sign-up and sign-in are
  * the same call — there is no separate registration step, because Google has
  * already told us who this is.
  */

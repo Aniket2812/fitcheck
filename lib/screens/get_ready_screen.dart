@@ -170,7 +170,7 @@ class _GetReadyScreenState extends State<GetReadyScreen> {
             ),
             const SizedBox(height: AppSpacing.x1),
             const Text(
-              'Your pose and original background stay untouched here. When you post, we give it the clean Compete studio finish.',
+              'Your pose and original background stay untouched here. When you post, we give it the clean fitcheck studio finish.',
               style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,

@@ -27,7 +27,7 @@ class FeedScreen extends StatefulWidget {
     this.uploadModelPhoto = ModelPhotoService.upload,
     this.generateTryOn = SocialService.createPostTryOn,
     this.saveFit = SavedFitService.save,
-    this.profileName = 'YouCam Creator',
+    this.profileName = 'fitcheck creator',
     this.profileAvatarUrl,
     this.refreshGeneration = 0,
   });

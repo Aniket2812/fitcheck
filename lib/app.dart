@@ -287,7 +287,7 @@ class _CompeteAppState extends State<CompeteApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: _navigatorKey,
-      title: 'compete',
+      title: 'fitcheck',
       debugShowCheckedModeBanner: false,
       theme: buildCompeteTheme(),
       home: Stack(
@@ -300,7 +300,7 @@ class _CompeteAppState extends State<CompeteApp> {
                   onSearch: _openSearch,
                   onProfile: _openProfile,
                   refreshGeneration: _feedVersion,
-                  profileName: _profile?.name ?? 'YouCam Creator',
+                  profileName: _profile?.name ?? 'fitcheck creator',
                   profileAvatarUrl: _profile?.avatarUrl,
                   fetchPosts: widget.fetchPosts ?? SocialService.fetchPosts,
                   fetchModelPhotos:
@@ -315,7 +315,7 @@ class _CompeteAppState extends State<CompeteApp> {
                     ? ModelPhotosScreen(
                         onSearch: _openSearch,
                         onProfile: _openProfile,
-                        profileName: _profile?.name ?? 'YouCam Creator',
+                        profileName: _profile?.name ?? 'fitcheck creator',
                         profileAvatarUrl: _profile?.avatarUrl,
                         fetchPhotos:
                             widget.fetchModelPhotos ??
@@ -329,7 +329,7 @@ class _CompeteAppState extends State<CompeteApp> {
                         onSearch: _openSearch,
                         onProfile: _openProfile,
                         refreshGeneration: _collectionsVersion,
-                        profileName: _profile?.name ?? 'YouCam Creator',
+                        profileName: _profile?.name ?? 'fitcheck creator',
                         profileAvatarUrl: _profile?.avatarUrl,
                         fetchCollections:
                             widget.fetchCollections ??

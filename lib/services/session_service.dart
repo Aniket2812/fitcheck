@@ -43,7 +43,7 @@ abstract final class SessionService {
     const configured = String.fromEnvironment('DEV_ID_TOKEN');
     final idToken = configured.isNotEmpty
         ? configured
-        : 'dev:flutter-$device:creator-$device@compete.local:YouCam Creator';
+        : 'dev:flutter-$device:creator-$device@compete.local:fitcheck creator';
     final response = await http
         .post(
           Uri.parse('${IngestService.apiUrl}/api/auth/google'),

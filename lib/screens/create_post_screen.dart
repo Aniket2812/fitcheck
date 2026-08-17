@@ -897,7 +897,7 @@ class _PublishBackgroundNote extends StatelessWidget {
         SizedBox(width: AppSpacing.x2),
         Expanded(
           child: Text(
-            'This preview and any saved fit keep your original background. Posting applies the Compete studio background without changing your pose.',
+            'This preview and any saved fit keep your original background. Posting applies the fitcheck studio background without changing your pose.',
             style: TextStyle(fontSize: 12, height: 1.35),
           ),
         ),

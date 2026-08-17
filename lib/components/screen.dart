@@ -9,7 +9,7 @@ class CompeteScreen extends StatelessWidget {
     required this.onSearch,
     required this.child,
     required this.onProfile,
-    this.profileName = 'YouCam Creator',
+    this.profileName = 'fitcheck creator',
     this.profileAvatarUrl,
   });
 

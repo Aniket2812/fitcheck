@@ -55,7 +55,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('COMPETE'), findsOneWidget);
+    expect(find.text('fitcheck'), findsOneWidget);
     expect(find.text('Fresh looks incoming'), findsOneWidget);
     expect(
       tester.getSize(find.byKey(const Key('feed-tab'))),
@@ -1127,7 +1127,7 @@ void main() {
         PostGarment(
           id: 'garment-1',
           title: 'Test jacket',
-          brand: 'Compete',
+          brand: 'fitcheck',
           imageUrl:
               'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
           originalImageUrl: 'https://example.com/model-crop.jpg',
@@ -1165,7 +1165,7 @@ void main() {
     await tester.tap(find.bySemanticsLabel('Shop Test jacket'));
     await tester.pumpAndSettle();
     expect(find.text('Test jacket'), findsOneWidget);
-    expect(find.text('Compete · example.com'), findsOneWidget);
+    expect(find.text('fitcheck · example.com'), findsOneWidget);
     expect(find.text('1 retailer product image'), findsOneWidget);
     expect(find.byKey(const Key('product-gallery-page-view')), findsOneWidget);
     expect(find.byKey(const Key('product-gallery-image-0')), findsOneWidget);

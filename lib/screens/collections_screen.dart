@@ -18,7 +18,7 @@ class CollectionsScreen extends StatefulWidget {
     super.key,
     required this.onSearch,
     required this.onProfile,
-    this.profileName = 'YouCam Creator',
+    this.profileName = 'fitcheck creator',
     this.profileAvatarUrl,
     this.fetchCollections = CollectionService.fetchCollections,
     this.createCollection = CollectionService.createCollection,

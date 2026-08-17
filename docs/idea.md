@@ -1,4 +1,4 @@
-# Idea — "Compete": a link-in, try-on-out outfit battle app
+# Idea — "fitcheck": a link-in, try-on-out social fashion app
 
 **Hackathon:** [YouCam API Skin AI & Apparel VTO Hackathon](https://youcam-api.devpost.com/)
 **Deadline:** Aug 17, 2026 @ 11:45am EDT
@@ -9,7 +9,7 @@
 ## The one-liner
 
 You're scrolling anywhere — Instagram, TikTok, Pinterest, a Zara product page. You see a
-piece you like. You hit **Share → Compete**. We pull the garment out of that link, put it on
+piece you like. You hit **Share → fitcheck**. We pull the garment out of that link, put it on
 *your* body with YouCam Apparel VTO, and let you build a full outfit from pieces you've
 collected. Post the outfit. The community votes. The most-liked look becomes **Outfit of
 the Day**.
@@ -40,7 +40,7 @@ Two things make this work as a product rather than a toy:
    see something anywhere
             │
             ▼
-   share link → Compete          ← the hook
+   share link → fitcheck         ← the hook
             │
             ▼
    extract garment from page     ← OG image / product image scrape
@@ -81,7 +81,7 @@ grid of *you* wearing things.
 ### 3. Pair + version
 Pick a top, a bottom, outerwear, and the app composes the full look. Make several versions
 of the same base — swap the jacket, swap the shoes — and hold them side by side. This is
-where the "compete" name earns itself: you compete with yourself first.
+where the fitcheck loop earns its name: check the look on yourself before you commit.
 
 ### 4. Post + vote
 Publish a look to a shared feed. One tap to like. Simple, honest ranking.

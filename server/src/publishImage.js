@@ -17,7 +17,7 @@ function localMediaName(imageUrl) {
  *
  * Preview and draft images never pass through this function. That separation
  * is intentional: they retain the user's original room/background, while the
- * returned image uses Compete's one consistent neutral studio template.
+ * returned image uses fitcheck's one consistent neutral studio template.
  */
 export async function finalizePublishedImage(
   imageUrl,

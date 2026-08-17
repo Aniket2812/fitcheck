@@ -15,7 +15,7 @@ class ModelPhotosScreen extends StatefulWidget {
     super.key,
     required this.onSearch,
     required this.onProfile,
-    this.profileName = 'YouCam Creator',
+    this.profileName = 'fitcheck creator',
     this.profileAvatarUrl,
     this.fetchPhotos = ModelPhotoService.fetchPhotos,
     this.uploadPhoto = ModelPhotoService.upload,

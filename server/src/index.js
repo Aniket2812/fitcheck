@@ -233,7 +233,7 @@ const port = Number(process.env.PORT || 8787);
 await loadStore();
 
 serve({ fetch: app.fetch, port, hostname: '0.0.0.0' }, () => {
-  console.log(`fitterest server on http://0.0.0.0:${port} (provider: ${cutoutProvider.name})`);
+  console.log(`fitcheck server on http://0.0.0.0:${port} (provider: ${cutoutProvider.name})`);
   if (!googleConfigured) {
     console.warn('[auth] no GOOGLE_CLIENT_ID — accepting dev sign-ins only');
   }

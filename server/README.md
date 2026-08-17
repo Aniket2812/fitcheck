@@ -1,4 +1,4 @@
-# fitterest ingestion server
+# fitcheck backend
 
 Hono service that turns a product link into a background-free garment cutout.
 The API key lives here and never ships in the app bundle.

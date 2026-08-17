@@ -144,7 +144,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     inset: 8,
                     borderRadius: AppRadii.large,
                     photoRadius: AppRadii.medium,
-                    label: 'COMPETE  /  OUTFIT EDIT',
+                    label: 'FITCHECK  /  OUTFIT EDIT',
                     child: OutfitPostImage(post: _post),
                   ),
                 ),

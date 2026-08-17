@@ -9,7 +9,7 @@ class CompeteHeader extends StatelessWidget {
     super.key,
     required this.onSearch,
     required this.onProfile,
-    this.profileName = 'YouCam Creator',
+    this.profileName = 'fitcheck creator',
     this.profileAvatarUrl,
   });
 

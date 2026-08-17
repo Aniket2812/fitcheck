@@ -1,4 +1,4 @@
-# YouCam Social
+# fitcheck
 
 Flutter social-shopping app for publishing outfits, tagging garments, opening
 shoppable cutouts, receiving products from other shopping apps, and generating
@@ -36,7 +36,7 @@ flutter run --dart-define=API_URL=http://127.0.0.1:8787
 
 1. Open **My photos** and upload one or more clear full-body photos once.
 2. Share a product from Myntra, Flipkart, Amazon, AJIO, or another shopping app
-   to **Post to Compete**. The app opens the composer and extracts the item.
+   to **Save to fitcheck**. The app opens the composer and extracts the item.
    Pasting a link after tapping the center plus button also works.
 3. Choose which previously saved photo YouCam should dress. The composer never
    opens the camera or gallery; new photos are managed only in **My photos**.

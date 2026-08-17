@@ -5,7 +5,7 @@ import '../theme/app_theme.dart';
 class Avatar extends StatelessWidget {
   const Avatar({
     super.key,
-    this.name = 'YouCam Creator',
+    this.name = 'fitcheck creator',
     this.imageUrl,
     this.size = 32,
   });
