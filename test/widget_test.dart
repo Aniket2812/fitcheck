@@ -450,11 +450,16 @@ void main() {
     await tester.tap(find.byKey(const Key('add-post-button')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('collection-item-top-1')));
+
+    expect(find.byKey(const Key('outfit-preview-empty')), findsOneWidget);
+    expect(find.text('Your complete look will appear here'), findsOneWidget);
+
     await tester.tap(find.byKey(const Key('generate-outfit-button')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(generatedItems, ['top-1']);
+    expect(find.byKey(const Key('outfit-preview-empty')), findsNothing);
     expect(find.text('Regenerate outfit'), findsOneWidget);
   });
 

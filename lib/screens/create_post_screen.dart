@@ -618,7 +618,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     AspectRatio(
                       aspectRatio: 4 / 5,
                       child: _OutfitPreview(
-                        imageUrl: _previewUrl ?? _selectedModelPhoto?.imageUrl,
+                        imageUrl: _previewUrl,
                         garments: _garments,
                         selectedIndex: _selectedGarmentIndex,
                         generating: _generating,
@@ -1084,6 +1084,7 @@ class _OutfitPreview extends StatelessWidget {
             children: [
               if (imageUrl == null)
                 const ColoredBox(
+                  key: Key('outfit-preview-empty'),
                   color: AppColors.sunken,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1096,6 +1097,7 @@ class _OutfitPreview extends StatelessWidget {
                 )
               else
                 Image.network(
+                  key: const Key('outfit-preview-image'),
                   imageUrl!,
                   fit: BoxFit.cover,
                   errorBuilder: (_, _, _) => const ColoredBox(
@@ -1103,7 +1105,7 @@ class _OutfitPreview extends StatelessWidget {
                     child: Icon(Icons.person, size: 48),
                   ),
                 ),
-              if (!generating)
+              if (!generating && imageUrl != null)
                 ...garments.asMap().entries.map(
                   (entry) => Positioned(
                     left: entry.value.x * size.width - 16,
