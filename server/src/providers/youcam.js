@@ -3,6 +3,10 @@ const TASK_PATH = '/s2s/v2.0/task/cloth-v3';
 const FILE_PATH = '/s2s/v2.0/file/cloth-v3';
 const SHOES_TASK_PATH = '/s2s/v2.0/task/shoes';
 const SHOES_FILE_PATH = '/s2s/v2.0/file/shoes';
+const BACKGROUND_TASK_PATH = '/s2s/v2.0/task/bg-replace';
+const BACKGROUND_FILE_PATH = '/s2s/v2.0/file';
+const PUBLISH_BACKGROUND_TEMPLATE =
+  process.env.YOUCAM_PUBLISH_BACKGROUND_TEMPLATE || 'neutral_linen_white';
 const TIMEOUT_MS = Number(process.env.YOUCAM_TIMEOUT_MS || 180_000);
 const POLL_MS = Number(process.env.YOUCAM_POLL_MS || 1_200);
 const MAX_POLL_MS = Number(process.env.YOUCAM_MAX_POLL_MS || 3_000);
@@ -174,7 +178,7 @@ async function upload(buffer, contentType, fileName, filePath = FILE_PATH) {
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-async function downloadCompletedTask(taskPath, taskId) {
+async function downloadCompletedTask(taskPath, taskId, operation = 'try-on') {
   const deadline = Date.now() + TIMEOUT_MS;
   let pollDelay = POLL_MS;
   while (Date.now() < deadline) {
@@ -227,12 +231,51 @@ async function downloadCompletedTask(taskPath, taskId) {
     pollDelay = Math.min(MAX_POLL_MS, Math.round(pollDelay * 1.25));
   }
   throw new YouCamError(
-    'YouCam try-on timed out. Your photo is safe; please try again.',
+    `YouCam ${operation} timed out. Your photo is safe; please try again.`,
     504,
     'youcam_timeout',
     true,
   );
 }
+
+/**
+ * Replaces only the background of a completed try-on before it enters the
+ * public feed. Perfect Corp's dedicated background endpoint isolates the
+ * existing subject, so this does not ask a generative model to redraw the
+ * person or invent a new pose.
+ */
+export async function createPublishedBackground({ buffer, contentType }) {
+  const sourceId = await upload(
+    buffer,
+    contentType,
+    'publish-source.jpg',
+    BACKGROUND_FILE_PATH,
+  );
+  const task = await jsonRequest(BACKGROUND_TASK_PATH, {
+    method: 'POST',
+    body: JSON.stringify({
+      src_file_id: sourceId,
+      type: 'template',
+      template_id: PUBLISH_BACKGROUND_TEMPLATE,
+    }),
+  });
+  const taskId = task.data?.task_id;
+  if (!taskId) {
+    throw new YouCamError(
+      'YouCam did not return a background task id.',
+      502,
+      'missing_task_id',
+      true,
+    );
+  }
+  return downloadCompletedTask(
+    BACKGROUND_TASK_PATH,
+    taskId,
+    'background change',
+  );
+}
+
+export const publishBackgroundTemplate = PUBLISH_BACKGROUND_TEMPLATE;
 
 async function submitClothesTask({
   sourceId,

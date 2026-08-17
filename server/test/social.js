@@ -30,6 +30,9 @@ try {
   const created = await store.createPost(user.id, {
     caption: 'Weekend layers',
     imageUrl: '/media/post-test.jpg',
+    backgroundStyle: 'youcam:neutral_linen_white',
+    posePreserved: true,
+    backgroundTaskId: 'background-task-1',
     garments: [
       {
         title: 'Black jacket',
@@ -55,6 +58,11 @@ try {
   });
   assert.equal(store.listPosts().length, 1);
   assert.equal(store.publicPost(created, user.id).garments.length, 2);
+  assert.equal(
+    store.publicPost(created, user.id).backgroundStyle,
+    'youcam:neutral_linen_white',
+  );
+  assert.equal(store.publicPost(created, user.id).posePreserved, true);
   assert.deepEqual(store.publicPost(created, user.id).garments[0].productImageUrls, [
     '/media/jacket-front.webp',
     '/media/jacket-back.webp',

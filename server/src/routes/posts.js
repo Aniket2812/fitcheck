@@ -1,6 +1,8 @@
 import { Hono } from 'hono';
 
 import { MediaError, saveDataImage, saveUploadedImage } from '../media.js';
+import { finalizePublishedImage } from '../publishImage.js';
+import { YouCamError } from '../providers/youcam.js';
 import {
   addPostComment,
   createPost,
@@ -21,7 +23,11 @@ function viewer(c) {
 }
 
 function errorResponse(c, error) {
-  if (error instanceof PostError || error instanceof MediaError) {
+  if (
+    error instanceof PostError ||
+    error instanceof MediaError ||
+    error instanceof YouCamError
+  ) {
     return c.json({ error: error.message }, error.status);
   }
   throw error;
@@ -83,6 +89,7 @@ posts.post('/', requireUser, async (c) => {
   try {
     const input = await parseCreateRequest(c);
     input.garments = await persistGarmentCutouts(input.garments);
+    Object.assign(input, await finalizePublishedImage(input.imageUrl));
     const post = await createPost(c.get('user').id, input);
     return c.json({ post: publicPost(post, c.get('user').id) }, 201);
   } catch (error) {

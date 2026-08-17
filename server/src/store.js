@@ -449,7 +449,17 @@ function cleanGarment(garment, index) {
   };
 }
 
-export async function createPost(userId, { caption, imageUrl, garments }) {
+export async function createPost(
+  userId,
+  {
+    caption,
+    imageUrl,
+    garments,
+    backgroundStyle = 'original',
+    posePreserved = true,
+    backgroundTaskId = null,
+  },
+) {
   if (!db.users.has(userId)) throw new PostError('No such account.', 404);
   const cleanCaption = String(caption || '').trim();
   if (cleanCaption.length > POST_LIMITS.caption) {
@@ -469,6 +479,9 @@ export async function createPost(userId, { caption, imageUrl, garments }) {
     userId,
     caption: cleanCaption,
     imageUrl: String(imageUrl),
+    backgroundStyle: String(backgroundStyle),
+    posePreserved: posePreserved !== false,
+    backgroundTaskId: backgroundTaskId ? String(backgroundTaskId) : null,
     garments: garments.map(cleanGarment),
     likeUserIds: [],
     comments: [],
@@ -547,6 +560,8 @@ function projectSavedFit(fit) {
     imageUrl: fit.imageUrl,
     garments: fit.garments,
     modelPhotoId: fit.modelPhotoId || null,
+    backgroundStyle: 'original',
+    posePreserved: true,
     createdAt: fit.createdAt,
     updatedAt: fit.updatedAt,
   };
@@ -566,6 +581,10 @@ export function listSavedFits(userId) {
     .filter((fit) => fit.userId === userId)
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
     .map(projectSavedFit);
+}
+
+export function getSavedFit(userId, fitId) {
+  return projectSavedFit(ownSavedFit(userId, fitId));
 }
 
 export async function createSavedFit(
@@ -614,12 +633,25 @@ export async function deleteSavedFit(userId, fitId) {
   await flush();
 }
 
-export async function publishSavedFit(userId, fitId, caption) {
+export async function publishSavedFit(
+  userId,
+  fitId,
+  caption,
+  {
+    imageUrl,
+    backgroundStyle = 'original',
+    posePreserved = true,
+    backgroundTaskId = null,
+  } = {},
+) {
   const fit = ownSavedFit(userId, fitId);
   const post = await createPost(userId, {
     caption: caption == null ? fit.caption : caption,
-    imageUrl: fit.imageUrl,
+    imageUrl: imageUrl || fit.imageUrl,
     garments: fit.garments,
+    backgroundStyle,
+    posePreserved,
+    backgroundTaskId,
   });
   db.savedFits.delete(fitId);
   await flush();
@@ -664,6 +696,8 @@ export function publicPost(post, viewerId = null) {
     id: post.id,
     caption: post.caption,
     imageUrl: post.imageUrl,
+    backgroundStyle: post.backgroundStyle || 'compete:studio',
+    posePreserved: post.posePreserved !== false,
     garments: post.garments || [],
     author: publicProfile(author),
     likeCount: (post.likeUserIds || []).length,

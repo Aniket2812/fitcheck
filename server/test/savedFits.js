@@ -60,14 +60,24 @@ try {
   assert.equal(store.listSavedFits(outsider.id).length, 0);
   assert.equal(saved.garments.length, 2);
   assert.equal(saved.garments[0].productImageUrls.length, 4);
+  assert.equal(saved.backgroundStyle, 'original');
+  assert.equal(saved.posePreserved, true);
 
   await assert.rejects(
     store.publishSavedFit(outsider.id, saved.id),
     (error) => error.status === 404,
   );
 
-  const post = await store.publishSavedFit(owner.id, saved.id, 'Ready now');
+  const post = await store.publishSavedFit(owner.id, saved.id, 'Ready now', {
+    imageUrl: '/media/post-ready-fit.jpg',
+    backgroundStyle: 'youcam:neutral_linen_white',
+    posePreserved: true,
+    backgroundTaskId: 'background-task-1',
+  });
   assert.equal(post.caption, 'Ready now');
+  assert.equal(post.imageUrl, '/media/post-ready-fit.jpg');
+  assert.equal(post.backgroundStyle, 'youcam:neutral_linen_white');
+  assert.equal(post.posePreserved, true);
   assert.equal(post.garments.length, 2);
   assert.equal(store.listSavedFits(owner.id).length, 0);
   assert.equal(store.listPosts().length, 1);
