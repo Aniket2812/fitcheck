@@ -47,8 +47,8 @@ class _DiagonalProcessingOverlayState extends State<DiagonalProcessingOverlay>
         ColoredBox(color: AppColors.textPrimary.withValues(alpha: 0.34)),
         CustomPaint(painter: _DiagonalSweepPainter(_controller.value)),
         for (var index = 0; index < widget.points.length; index++)
-          _PieceProgressDot(
-            key: Key('processing-piece-dot-$index'),
+          _PieceSparkleMarker(
+            key: Key('processing-piece-sparkle-$index'),
             point: widget.points[index],
             progress: _controller.value,
             delay: index / math.max(widget.points.length, 1),
@@ -79,8 +79,8 @@ class _DiagonalProcessingOverlayState extends State<DiagonalProcessingOverlay>
                           letterSpacing: 1.6,
                         ),
                       ),
-                      const SizedBox(width: 5),
-                      _AnimatedEllipsis(progress: _controller.value),
+                      const SizedBox(width: 8),
+                      _AnimatedProgressBars(progress: _controller.value),
                     ],
                   ),
                 ),
@@ -93,8 +93,8 @@ class _DiagonalProcessingOverlayState extends State<DiagonalProcessingOverlay>
   );
 }
 
-class _PieceProgressDot extends StatelessWidget {
-  const _PieceProgressDot({
+class _PieceSparkleMarker extends StatelessWidget {
+  const _PieceSparkleMarker({
     super.key,
     required this.point,
     required this.progress,
@@ -111,35 +111,29 @@ class _PieceProgressDot extends StatelessWidget {
     final pulse = (math.sin(phase) + 1) / 2;
     return Align(
       alignment: Alignment(point.dx * 2 - 1, point.dy * 2 - 1),
-      child: Transform.scale(
-        scale: 0.78 + pulse * 0.28,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.82 + pulse * 0.18),
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: AppColors.textPrimary.withValues(alpha: 0.72),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.white.withValues(alpha: 0.3 + pulse * 0.35),
-                blurRadius: 8 + pulse * 8,
-                spreadRadius: pulse * 2,
-              ),
-            ],
-          ),
-          child: const SizedBox.square(
-            dimension: 14,
-            child: Center(
-              child: SizedBox.square(
-                dimension: 4,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColors.textPrimary,
-                    shape: BoxShape.circle,
+      child: Transform.translate(
+        offset: Offset(0, 2 - pulse * 4),
+        child: Transform.rotate(
+          angle: (pulse - 0.5) * 0.12,
+          child: Transform.scale(
+            scale: 0.84 + pulse * 0.2,
+            child: Opacity(
+              opacity: 0.58 + pulse * 0.42,
+              child: Icon(
+                Icons.auto_awesome_rounded,
+                size: 24,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    color: Colors.black.withValues(alpha: 0.34),
+                    blurRadius: 5,
+                    offset: const Offset(0, 1),
                   ),
-                ),
+                  Shadow(
+                    color: Colors.white.withValues(alpha: 0.65),
+                    blurRadius: 12 + pulse * 8,
+                  ),
+                ],
               ),
             ),
           ),
@@ -149,36 +143,36 @@ class _PieceProgressDot extends StatelessWidget {
   }
 }
 
-class _AnimatedEllipsis extends StatelessWidget {
-  const _AnimatedEllipsis({required this.progress});
+class _AnimatedProgressBars extends StatelessWidget {
+  const _AnimatedProgressBars({required this.progress});
 
   final double progress;
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: 20,
+    width: 18,
+    height: 13,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         for (var index = 0; index < 3; index++)
-          Opacity(
-            key: Key('processing-ellipsis-dot-$index'),
-            opacity: _opacity(index),
-            child: const DecoratedBox(
-              decoration: BoxDecoration(
-                color: AppColors.textPrimary,
-                shape: BoxShape.circle,
-              ),
-              child: SizedBox.square(dimension: 4),
+          Container(
+            key: Key('processing-wave-bar-$index'),
+            width: 3,
+            height: _height(index),
+            decoration: BoxDecoration(
+              color: AppColors.textPrimary,
+              borderRadius: BorderRadius.circular(AppRadii.pill),
             ),
           ),
       ],
     ),
   );
 
-  double _opacity(int index) {
-    final phase = ((progress * 3) - index) % 3;
-    return phase >= 0 && phase < 1 ? 1 : 0.24;
+  double _height(int index) {
+    final phase = (progress + index * 0.18) * math.pi * 2;
+    return 4 + ((math.sin(phase) + 1) / 2) * 8;
   }
 }
 

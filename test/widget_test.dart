@@ -1273,8 +1273,8 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('FITTING EVERY PIECE'), findsOneWidget);
-    expect(find.byKey(const Key('processing-piece-dot-0')), findsOneWidget);
-    expect(find.byKey(const Key('processing-ellipsis-dot-0')), findsOneWidget);
+    expect(find.byKey(const Key('processing-piece-sparkle-0')), findsOneWidget);
+    expect(find.byKey(const Key('processing-wave-bar-0')), findsOneWidget);
     expect(find.text('Fitting every piece…'), findsOneWidget);
 
     result.complete('https://example.com/my-look.jpg');
