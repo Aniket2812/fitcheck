@@ -37,6 +37,7 @@ class CompeteApp extends StatefulWidget {
     this.checkYouCamConfigured,
     this.generateYouCamLook,
     this.generateOutfitLook,
+    this.generatePostTryOn,
     this.fetchProfile,
     this.updateProfile,
     this.fetchCollections,
@@ -54,6 +55,7 @@ class CompeteApp extends StatefulWidget {
   final CheckYouCamConfigured? checkYouCamConfigured;
   final GenerateYouCamLook? generateYouCamLook;
   final GenerateOutfitLook? generateOutfitLook;
+  final GeneratePostTryOn? generatePostTryOn;
   final FetchProfile? fetchProfile;
   final UpdateProfile? updateProfile;
   final FetchCollections? fetchCollections;
@@ -277,9 +279,9 @@ class _CompeteAppState extends State<CompeteApp> {
                         ModelPhotoService.fetchPhotos,
                     uploadModelPhoto:
                         widget.uploadModelPhoto ?? ModelPhotoService.upload,
-                    generateOutfit:
-                        widget.generateOutfitLook ??
-                        SocialService.createOutfitLook,
+                    generateTryOn:
+                        widget.generatePostTryOn ??
+                        SocialService.createPostTryOn,
                   ),
                   AppTab.photos => ModelPhotosScreen(
                     onSearch: () => setState(() => _searchOpen = true),

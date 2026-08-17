@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/model_photo.dart';
+import '../models/post_try_on_result.dart';
 import '../models/social_post.dart';
 import 'ingest_service.dart';
 import 'session_service.dart';
@@ -22,6 +23,11 @@ typedef GenerateOutfitLook =
     Future<String> Function({
       required ModelPhoto modelPhoto,
       required List<PostGarment> garments,
+    });
+typedef GeneratePostTryOn =
+    Future<PostTryOnResult> Function({
+      required ModelPhoto modelPhoto,
+      required SocialPost post,
     });
 
 abstract final class SocialService {
@@ -268,6 +274,40 @@ abstract final class SocialService {
     final data = _json(response);
     _ensureSuccess(response, data);
     return mediaUrl(data['imageUrl'].toString());
+  }
+
+  static Future<PostTryOnResult> createPostTryOn({
+    required ModelPhoto modelPhoto,
+    required SocialPost post,
+  }) async {
+    final session = await SessionService.ensureSession();
+    try {
+      final response = await http
+          .post(
+            Uri.parse('${IngestService.apiUrl}/api/try-on/post'),
+            headers: {
+              'authorization': 'Bearer ${session.token}',
+              'content-type': 'application/json',
+            },
+            body: jsonEncode({
+              'modelPhotoId': modelPhoto.id,
+              'postId': post.id,
+            }),
+          )
+          .timeout(const Duration(minutes: 7));
+      final data = _json(response);
+      _ensureSuccess(response, data);
+      data['imageUrl'] = mediaUrl(data['imageUrl']?.toString() ?? '');
+      return PostTryOnResult.fromJson(data);
+    } on TimeoutException {
+      throw Exception(
+        'The fitting service took too long. Your original photo is unchanged; please try again.',
+      );
+    } on http.ClientException {
+      throw Exception(
+        'The fitting server disconnected. Keep the backend running and try again.',
+      );
+    }
   }
 
   static SocialPost _post(Map<String, dynamic> json) {

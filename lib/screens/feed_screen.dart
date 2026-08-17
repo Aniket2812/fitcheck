@@ -21,7 +21,7 @@ class FeedScreen extends StatefulWidget {
     required this.fetchPosts,
     this.fetchModelPhotos = ModelPhotoService.fetchPhotos,
     this.uploadModelPhoto = ModelPhotoService.upload,
-    this.generateOutfit = SocialService.createOutfitLook,
+    this.generateTryOn = SocialService.createPostTryOn,
     this.profileName = 'YouCam Creator',
     this.profileAvatarUrl,
   });
@@ -31,7 +31,7 @@ class FeedScreen extends StatefulWidget {
   final FetchPosts fetchPosts;
   final FetchModelPhotos fetchModelPhotos;
   final UploadModelPhoto uploadModelPhoto;
-  final GenerateOutfitLook generateOutfit;
+  final GeneratePostTryOn generateTryOn;
   final String profileName;
   final String? profileAvatarUrl;
 
@@ -133,7 +133,7 @@ class _FeedScreenState extends State<FeedScreen> {
           post: post,
           fetchModelPhotos: widget.fetchModelPhotos,
           uploadModelPhoto: widget.uploadModelPhoto,
-          generateOutfit: widget.generateOutfit,
+          generateTryOn: widget.generateTryOn,
         ),
       ),
     );

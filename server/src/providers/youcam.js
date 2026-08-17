@@ -184,13 +184,35 @@ async function downloadCompletedTask(taskPath, taskId) {
     if (data.task_status === 'success') {
       const url = data.results?.url;
       if (!url) throw new YouCamError('YouCam completed without an output image.');
-      const image = await fetch(url, { signal: AbortSignal.timeout(30_000) });
-      if (!image.ok) throw new YouCamError('Could not download the YouCam result.');
-      return {
-        buffer: Buffer.from(await image.arrayBuffer()),
-        contentType: image.headers.get('content-type')?.split(';')[0] || 'image/jpeg',
-        taskId,
-      };
+      try {
+        const image = await fetch(url, {
+          signal: AbortSignal.timeout(30_000),
+        });
+        if (!image.ok) {
+          throw new YouCamError(
+            'Could not download the YouCam result. Please try again.',
+            502,
+            'error_download_image',
+            true,
+          );
+        }
+        return {
+          buffer: Buffer.from(await image.arrayBuffer()),
+          contentType:
+            image.headers.get('content-type')?.split(';')[0] || 'image/jpeg',
+          taskId,
+        };
+      } catch (error) {
+        if (error instanceof YouCamError) throw error;
+        throw new YouCamError(
+          'The completed YouCam image could not be downloaded. Please try again.',
+          error?.name === 'TimeoutError' ? 504 : 502,
+          error?.name === 'TimeoutError'
+            ? 'youcam_timeout'
+            : 'error_download_image',
+          true,
+        );
+      }
     }
     if (data.task_status === 'error') {
       const parsed = providerError(data.error);

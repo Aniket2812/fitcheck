@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../components/diagonal_processing_overlay.dart';
 import '../models/model_photo.dart';
+import '../models/post_try_on_result.dart';
 import '../models/social_post.dart';
 import '../services/model_photo_service.dart';
 import '../services/social_service.dart';
@@ -25,14 +26,14 @@ class TryOnYourselfScreen extends StatefulWidget {
     this.fetchModelPhotos = ModelPhotoService.fetchPhotos,
     this.uploadModelPhoto = ModelPhotoService.upload,
     this.pickPhoto = _pickFullBodyPhoto,
-    this.generateOutfit = SocialService.createOutfitLook,
+    this.generateTryOn = SocialService.createPostTryOn,
   });
 
   final SocialPost post;
   final FetchModelPhotos fetchModelPhotos;
   final UploadModelPhoto uploadModelPhoto;
   final PickFullBodyPhoto pickPhoto;
-  final GenerateOutfitLook generateOutfit;
+  final GeneratePostTryOn generateTryOn;
 
   @override
   State<TryOnYourselfScreen> createState() => _TryOnYourselfScreenState();
@@ -41,11 +42,12 @@ class TryOnYourselfScreen extends StatefulWidget {
 class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
   List<ModelPhoto> _photos = const [];
   ModelPhoto? _selected;
-  String? _resultUrl;
+  PostTryOnResult? _result;
   String? _error;
   bool _loading = true;
   bool _uploading = false;
   bool _generating = false;
+  bool _showOriginal = false;
 
   @override
   void initState() {
@@ -68,7 +70,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = _friendlyError(error);
+        _error = _friendlyError(error, phase: 'photos');
       });
     }
   }
@@ -80,6 +82,22 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.check_circle_outline, size: 19),
+                  SizedBox(width: AppSpacing.x2),
+                  Expanded(
+                    child: Text(
+                      'For the cleanest fit: one person, head to feet visible, facing forward, standing straight with arms slightly away from the body.',
+                      style: TextStyle(fontSize: 12, height: 1.4),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             ListTile(
               key: const Key('try-on-gallery-option'),
               leading: const Icon(Icons.photo_library_outlined),
@@ -116,20 +134,26 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
       setState(() {
         _photos = [photo, ..._photos.where((item) => item.id != photo.id)];
         _selected = photo;
-        _resultUrl = null;
+        _result = null;
+        _showOriginal = false;
       });
     } catch (error) {
-      if (mounted) setState(() => _error = _friendlyError(error));
+      if (mounted) {
+        setState(() => _error = _friendlyError(error, phase: 'upload'));
+      }
     } finally {
       if (mounted) setState(() => _uploading = false);
     }
   }
 
-  String _friendlyError(Object error) {
+  String _friendlyError(Object error, {required String phase}) {
     final message = error.toString().replaceFirst('Exception: ', '');
     if (message.contains('ClientConnection') ||
         message.contains('SocketException') ||
         message.contains('TimeoutException')) {
+      if (phase == 'try-on') {
+        return 'The fitting service did not finish in time. Your original photo is unchanged; retry this look.';
+      }
       return 'Could not reach your photo library. Keep the backend running and reconnect wireless debugging, then try again.';
     }
     return message;
@@ -144,18 +168,19 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
     }
     setState(() {
       _generating = true;
-      _resultUrl = null;
+      _result = null;
+      _showOriginal = false;
       _error = null;
     });
     try {
-      final result = await widget.generateOutfit(
+      final result = await widget.generateTryOn(
         modelPhoto: photo,
-        garments: widget.post.garments,
+        post: widget.post,
       );
-      if (mounted) setState(() => _resultUrl = result);
+      if (mounted) setState(() => _result = result);
     } catch (error) {
       if (mounted) {
-        setState(() => _error = _friendlyError(error));
+        setState(() => _error = _friendlyError(error, phase: 'try-on'));
       }
     } finally {
       if (mounted) setState(() => _generating = false);
@@ -187,7 +212,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
               ),
               const SizedBox(height: AppSpacing.x1),
               Text(
-                _resultUrl == null
+                _result == null
                     ? 'See this complete fit on you.'
                     : 'Your version is ready.',
                 style: const TextStyle(
@@ -196,35 +221,73 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.x3),
-              AspectRatio(
-                aspectRatio: 4 / 5,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(AppRadii.large),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.network(
-                        _resultUrl ??
-                            _selected?.imageUrl ??
-                            widget.post.imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => const ColoredBox(
-                          color: AppColors.sunken,
-                          child: Icon(Icons.person_outline, size: 52),
+              const _CompositionPromise(),
+              const SizedBox(height: AppSpacing.x2),
+              GestureDetector(
+                onLongPressStart: _result == null
+                    ? null
+                    : (_) => setState(() => _showOriginal = true),
+                onLongPressEnd: _result == null
+                    ? null
+                    : (_) => setState(() => _showOriginal = false),
+                onLongPressCancel: _result == null
+                    ? null
+                    : () => setState(() => _showOriginal = false),
+                child: AspectRatio(
+                  aspectRatio: 4 / 5,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(AppRadii.large),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 220),
+                          child: Image.network(
+                            key: ValueKey(
+                              _showOriginal
+                                  ? 'original'
+                                  : _result?.imageUrl ?? 'selected',
+                            ),
+                            _showOriginal
+                                ? _selected?.imageUrl ?? widget.post.imageUrl
+                                : _result?.imageUrl ??
+                                      _selected?.imageUrl ??
+                                      widget.post.imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => const ColoredBox(
+                              color: AppColors.sunken,
+                              child: Icon(Icons.person_outline, size: 52),
+                            ),
+                          ),
                         ),
-                      ),
-                      if (_generating)
-                        DiagonalProcessingOverlay(
-                          key: Key('try-on-processing-animation'),
-                          label: 'Fitting every piece',
-                          points: widget.post.garments
-                              .map((garment) => Offset(garment.x, garment.y))
-                              .toList(growable: false),
-                        ),
-                    ],
+                        if (_generating)
+                          DiagonalProcessingOverlay(
+                            key: const Key('try-on-processing-animation'),
+                            label: 'Fitting every piece',
+                            points: widget.post.garments
+                                .map((garment) => Offset(garment.x, garment.y))
+                                .toList(growable: false),
+                          ),
+                        if (_result != null && !_generating)
+                          Positioned(
+                            left: 12,
+                            bottom: 12,
+                            child: _CompareBadge(
+                              showingOriginal: _showOriginal,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),
+              if (_result != null) ...[
+                const SizedBox(height: AppSpacing.x2),
+                _ResultSummary(
+                  appliedCount: _result!.appliedCount,
+                  compositionPreserved: _result!.preservesSourceComposition,
+                ),
+              ],
               const SizedBox(height: AppSpacing.x3),
               if (_photos.isEmpty)
                 Container(
@@ -243,7 +306,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                       ),
                       const SizedBox(height: AppSpacing.x1),
                       const Text(
-                        'Use it immediately for this fit. It will also be saved in My Photos for future try-ons.',
+                        'Use one clear, front-facing head-to-feet photo. It will be checked for YouCam compatibility and saved in My Photos.',
                         style: TextStyle(height: 1.4),
                       ),
                       const SizedBox(height: AppSpacing.x2),
@@ -287,6 +350,13 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                     ),
                   ],
                 ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 2),
+                  child: Text(
+                    'Pick the pose and background you want to keep in the result.',
+                    style: TextStyle(color: AppColors.textMuted, fontSize: 11),
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.x2),
                 SizedBox(
                   height: 92,
@@ -304,7 +374,8 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                             ? null
                             : () => setState(() {
                                 _selected = photo;
-                                _resultUrl = null;
+                                _result = null;
+                                _showOriginal = false;
                               }),
                         child: Container(
                           width: 70,
@@ -344,22 +415,150 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                   label: Text(
                     _generating
                         ? 'Fitting every piece…'
-                        : _resultUrl == null
+                        : _result == null
                         ? 'Try this look'
                         : 'Try again',
                   ),
                 ),
               ],
-              if (_error != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.x3),
-                  child: Text(
-                    _error!,
-                    key: const Key('try-on-error'),
-                    style: const TextStyle(color: Color(0xFF8B5751)),
-                  ),
+              if (_error != null) ...[
+                const SizedBox(height: AppSpacing.x3),
+                _TryOnErrorCard(
+                  message: _error!,
+                  canRetry: _selected != null && !_generating,
+                  onRetry: _generate,
                 ),
+              ],
             ],
           ),
+  );
+}
+
+class _CompositionPromise extends StatelessWidget {
+  const _CompositionPromise();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: AppSpacing.x2,
+      vertical: AppSpacing.x2,
+    ),
+    decoration: BoxDecoration(
+      color: AppColors.sunken,
+      borderRadius: BorderRadius.circular(AppRadii.medium),
+    ),
+    child: const Row(
+      children: [
+        Icon(Icons.center_focus_strong_outlined, size: 17),
+        SizedBox(width: AppSpacing.x2),
+        Expanded(
+          child: Text(
+            'Your selected photo stays the base — same pose, framing and background. Only the complete outfit is transferred.',
+            style: TextStyle(fontSize: 12, height: 1.35),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _CompareBadge extends StatelessWidget {
+  const _CompareBadge({required this.showingOriginal});
+
+  final bool showingOriginal;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      color: AppColors.textPrimary.withValues(alpha: 0.82),
+      borderRadius: BorderRadius.circular(18),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      child: Text(
+        showingOriginal ? 'ORIGINAL PHOTO' : 'HOLD TO COMPARE',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.1,
+        ),
+      ),
+    ),
+  );
+}
+
+class _ResultSummary extends StatelessWidget {
+  const _ResultSummary({
+    required this.appliedCount,
+    required this.compositionPreserved,
+  });
+
+  final int appliedCount;
+  final bool compositionPreserved;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    key: const Key('try-on-result-summary'),
+    padding: const EdgeInsets.all(AppSpacing.x2),
+    decoration: BoxDecoration(
+      color: AppColors.raised,
+      border: Border.all(color: AppColors.borderDefault),
+      borderRadius: BorderRadius.circular(AppRadii.medium),
+    ),
+    child: Row(
+      children: [
+        const Icon(Icons.check_circle, size: 19),
+        const SizedBox(width: AppSpacing.x2),
+        Expanded(
+          child: Text(
+            '$appliedCount pieces transferred as one complete look'
+            '${compositionPreserved ? ' · source composition retained' : ''}',
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _TryOnErrorCard extends StatelessWidget {
+  const _TryOnErrorCard({
+    required this.message,
+    required this.canRetry,
+    required this.onRetry,
+  });
+
+  final String message;
+  final bool canRetry;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    key: const Key('try-on-error'),
+    padding: const EdgeInsets.all(AppSpacing.x2),
+    decoration: BoxDecoration(
+      color: const Color(0xFFF7EEEE),
+      borderRadius: BorderRadius.circular(AppRadii.medium),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(Icons.info_outline, color: Color(0xFF8B5751), size: 19),
+        const SizedBox(width: AppSpacing.x2),
+        Expanded(
+          child: Text(
+            message,
+            style: const TextStyle(color: Color(0xFF6F4541), height: 1.35),
+          ),
+        ),
+        if (canRetry)
+          TextButton(
+            key: const Key('retry-try-on-button'),
+            onPressed: onRetry,
+            child: const Text('Retry'),
+          ),
+      ],
+    ),
   );
 }

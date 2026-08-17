@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { Hono } from 'hono';
 
+import { validateYouCamSourceImage } from '../imageInfo.js';
 import { readMedia, saveImageBuffer } from '../media.js';
 import {
   configured,
@@ -27,6 +28,18 @@ async function localMedia(imageUrl, missingMessage) {
   const media = await readMedia(name);
   if (!media) throw new YouCamError(missingMessage, 404, 'missing_local_media');
   return media;
+}
+
+function validateTryOnMedia(media, role) {
+  try {
+    return validateYouCamSourceImage(media.bytes);
+  } catch (error) {
+    throw new YouCamError(
+      `${role}: ${error.message}`,
+      422,
+      role === 'Your photo' ? 'error_invalid_src' : 'error_invalid_ref',
+    );
+  }
 }
 
 tryOn.post('/post', requireUser, async (c) => {
@@ -63,6 +76,8 @@ tryOn.post('/post', requireUser, async (c) => {
         'This post does not have a reusable outfit image.',
       ),
     ]);
+    validateTryOnMedia(person, 'Your photo');
+    validateTryOnMedia(reference, 'The outfit image');
     const result = await createCompleteLookTryOn({
       personBuffer: person.bytes,
       personContentType: person.contentType,

@@ -8,6 +8,7 @@ import 'package:youcam2/components/outfit_post_image.dart';
 import 'package:youcam2/models/closet_item.dart';
 import 'package:youcam2/models/fashion_collection.dart';
 import 'package:youcam2/models/model_photo.dart';
+import 'package:youcam2/models/post_try_on_result.dart';
 import 'package:youcam2/models/social_post.dart';
 import 'package:youcam2/models/user_profile.dart';
 import 'package:youcam2/services/share_intent_service.dart';
@@ -603,14 +604,17 @@ void main() {
         fetchModelPhotos: () async => [model],
         fetchCollections: emptyCollections,
         checkYouCamConfigured: () async => true,
-        generateOutfitLook:
-            ({
-              required ModelPhoto modelPhoto,
-              required List<PostGarment> garments,
-            }) {
+        generatePostTryOn:
+            ({required ModelPhoto modelPhoto, required SocialPost post}) {
               expect(modelPhoto.id, 'my-photo');
-              expect(garments.single.id, 'garment-try-on');
-              return result.future;
+              expect(post.id, 'post-try-on');
+              return result.future.then(
+                (imageUrl) => PostTryOnResult(
+                  imageUrl: imageUrl,
+                  appliedCount: post.garments.length,
+                  preservesSourceComposition: true,
+                ),
+              );
             },
         shareIntentReceiver: FakeShareIntentReceiver(),
       ),
@@ -640,6 +644,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('Your version is ready.'), findsOneWidget);
+    expect(find.byKey(const Key('try-on-result-summary')), findsOneWidget);
+    expect(find.textContaining('source composition retained'), findsOneWidget);
   });
 
   testWidgets('try-on can add a camera or gallery photo without leaving', (
