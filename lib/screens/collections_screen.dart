@@ -24,6 +24,7 @@ class CollectionsScreen extends StatefulWidget {
     this.saveItem = CollectionService.addItem,
     this.deleteItem = CollectionService.deleteItem,
     this.ingestLink = IngestService.ingest,
+    this.refreshGeneration = 0,
   });
 
   final VoidCallback onSearch;
@@ -35,6 +36,7 @@ class CollectionsScreen extends StatefulWidget {
   final SaveCollectionItem saveItem;
   final DeleteCollectionItem deleteItem;
   final IngestLink ingestLink;
+  final int refreshGeneration;
 
   @override
   State<CollectionsScreen> createState() => _CollectionsScreenState();
@@ -46,6 +48,7 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
   String? _busyCollectionId;
   String? _error;
   _CollectionFilter _filter = _CollectionFilter.all;
+  int _loadRequest = 0;
 
   int get _pieceCount => _collections.fold(
     0,
@@ -69,17 +72,24 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
     _load();
   }
 
+  @override
+  void didUpdateWidget(covariant CollectionsScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.refreshGeneration != widget.refreshGeneration) _load();
+  }
+
   Future<void> _load() async {
+    final request = ++_loadRequest;
     try {
       final collections = await widget.fetchCollections();
-      if (!mounted) return;
+      if (!mounted || request != _loadRequest) return;
       setState(() {
         _collections = collections;
         _loading = false;
         _error = null;
       });
     } catch (error) {
-      if (!mounted) return;
+      if (!mounted || request != _loadRequest) return;
       setState(() {
         _loading = false;
         _error = error.toString().replaceFirst('Exception: ', '');

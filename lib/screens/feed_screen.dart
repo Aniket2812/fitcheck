@@ -27,6 +27,7 @@ class FeedScreen extends StatefulWidget {
     this.generateTryOn = SocialService.createPostTryOn,
     this.profileName = 'YouCam Creator',
     this.profileAvatarUrl,
+    this.refreshGeneration = 0,
   });
 
   final VoidCallback onSearch;
@@ -37,6 +38,7 @@ class FeedScreen extends StatefulWidget {
   final GeneratePostTryOn generateTryOn;
   final String profileName;
   final String? profileAvatarUrl;
+  final int refreshGeneration;
 
   @override
   State<FeedScreen> createState() => _FeedScreenState();
@@ -49,6 +51,7 @@ class _FeedScreenState extends State<FeedScreen> {
   String _activeFilter = _filters.first;
   bool _loading = true;
   String? _error;
+  int _loadRequest = 0;
 
   @override
   void initState() {
@@ -56,10 +59,17 @@ class _FeedScreenState extends State<FeedScreen> {
     _load();
   }
 
+  @override
+  void didUpdateWidget(covariant FeedScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.refreshGeneration != widget.refreshGeneration) _load();
+  }
+
   Future<void> _load() async {
+    final request = ++_loadRequest;
     try {
       final posts = await widget.fetchPosts();
-      if (mounted) {
+      if (mounted && request == _loadRequest) {
         setState(() {
           _posts = posts;
           _loading = false;
@@ -67,7 +77,7 @@ class _FeedScreenState extends State<FeedScreen> {
         });
       }
     } catch (error) {
-      if (mounted) {
+      if (mounted && request == _loadRequest) {
         setState(() {
           _loading = false;
           _error = _friendlyError(error);

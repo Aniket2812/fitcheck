@@ -14,6 +14,7 @@ import 'package:youcam2/models/saved_fit.dart';
 import 'package:youcam2/models/social_post.dart';
 import 'package:youcam2/models/user_profile.dart';
 import 'package:youcam2/services/share_intent_service.dart';
+import 'package:youcam2/screens/feed_screen.dart';
 import 'package:youcam2/screens/try_on_yourself_screen.dart';
 import 'package:youcam2/theme/app_theme.dart';
 
@@ -153,6 +154,74 @@ void main() {
     await tester.tap(find.byKey(const Key('feed-tab')));
     await tester.pumpAndSettle();
     expect((feedLoads, photoLoads, collectionLoads), (1, 1, 1));
+  });
+
+  testWidgets('feed refreshes in place and ignores stale responses', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final requests = <Completer<List<SocialPost>>>[];
+    Future<List<SocialPost>> fetch() {
+      final request = Completer<List<SocialPost>>();
+      requests.add(request);
+      return request.future;
+    }
+
+    SocialPost post(String id, String caption) => SocialPost(
+      id: id,
+      caption: caption,
+      imageUrl: 'https://example.com/$id.jpg',
+      garments: const [
+        PostGarment(
+          id: 'refresh-top',
+          title: 'Refresh top',
+          imageUrl: 'https://example.com/top.jpg',
+          buyUrl: 'https://example.com/top',
+          category: 'upper_body',
+          x: 0.5,
+          y: 0.3,
+        ),
+      ],
+      author: const SocialUser(
+        id: 'refresh-user',
+        name: 'Refresh User',
+        handle: 'refreshuser',
+      ),
+      likeCount: 0,
+      likedByMe: false,
+      comments: const [],
+      createdAt: DateTime(2026),
+    );
+
+    Widget feed(int generation) => MaterialApp(
+      home: FeedScreen(
+        onSearch: () {},
+        onProfile: () {},
+        fetchPosts: fetch,
+        refreshGeneration: generation,
+      ),
+    );
+
+    await tester.pumpWidget(feed(0));
+    final originalState = tester.state(find.byType(FeedScreen));
+    expect(requests.length, 1);
+
+    await tester.pumpWidget(feed(1));
+    expect(tester.state(find.byType(FeedScreen)), same(originalState));
+    expect(requests.length, 2);
+
+    requests[1].complete([post('latest-refresh', 'Latest fit')]);
+    await tester.pumpAndSettle();
+    expect(find.text('Latest fit'), findsOneWidget);
+
+    requests[0].complete([post('stale-refresh', 'Stale fit')]);
+    await tester.pumpAndSettle();
+    expect(find.text('Latest fit'), findsOneWidget);
+    expect(find.text('Stale fit'), findsNothing);
   });
 
   testWidgets('collections use tailored cards, filters and quick add', (

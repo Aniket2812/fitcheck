@@ -297,9 +297,9 @@ class _CompeteAppState extends State<CompeteApp> {
               index: _activeTab.index,
               children: [
                 FeedScreen(
-                  key: ValueKey(_feedVersion),
                   onSearch: _openSearch,
                   onProfile: _openProfile,
+                  refreshGeneration: _feedVersion,
                   profileName: _profile?.name ?? 'YouCam Creator',
                   profileAvatarUrl: _profile?.avatarUrl,
                   fetchPosts: widget.fetchPosts ?? SocialService.fetchPosts,
@@ -325,9 +325,9 @@ class _CompeteAppState extends State<CompeteApp> {
                     : const SizedBox.shrink(),
                 _visitedTabs.contains(AppTab.collections)
                     ? CollectionsScreen(
-                        key: ValueKey(_collectionsVersion),
                         onSearch: _openSearch,
                         onProfile: _openProfile,
+                        refreshGeneration: _collectionsVersion,
                         profileName: _profile?.name ?? 'YouCam Creator',
                         profileAvatarUrl: _profile?.avatarUrl,
                         fetchCollections:
