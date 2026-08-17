@@ -30,16 +30,16 @@ class FloatingNav extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(4),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              color: AppColors.raised.withValues(alpha: 0.96),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.borderDefault, width: 0.7),
+              color: AppColors.raised.withValues(alpha: 0.94),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: Colors.white, width: 1.2),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x1A1E1D1B),
-                  blurRadius: 18,
-                  offset: Offset(0, 7),
+                  color: Color(0x1F191A17),
+                  blurRadius: 26,
+                  offset: Offset(0, 10),
                 ),
               ],
             ),
@@ -108,22 +108,55 @@ class _NavButton extends StatelessWidget {
       button: true,
       label: label,
       child: ExcludeSemantics(
-        child: IconButton(
-          onPressed: onPressed,
-          icon: Icon(active ? activeIcon : icon, size: 22),
-          color: color,
-          style: ButtonStyle(
-            fixedSize: const WidgetStatePropertyAll(
-              Size.square(AppSizes.navButton),
-            ),
-            padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-            backgroundColor: WidgetStatePropertyAll(
-              active ? AppColors.sunken : Colors.transparent,
-            ),
-            overlayColor: const WidgetStatePropertyAll(Colors.transparent),
-            shape: WidgetStatePropertyAll(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppRadii.large),
+        child: SizedBox.square(
+          dimension: AppSizes.navButton,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onPressed,
+              borderRadius: BorderRadius.circular(AppRadii.medium),
+              child: AnimatedContainer(
+                duration: AppMotion.standard,
+                curve: AppMotion.curve,
+                decoration: BoxDecoration(
+                  color: active ? AppColors.sunken : Colors.transparent,
+                  borderRadius: BorderRadius.circular(AppRadii.medium),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    AnimatedSwitcher(
+                      duration: AppMotion.quick,
+                      switchInCurve: AppMotion.curve,
+                      transitionBuilder: (child, animation) => ScaleTransition(
+                        scale: animation,
+                        child: FadeTransition(opacity: animation, child: child),
+                      ),
+                      child: Icon(
+                        active ? activeIcon : icon,
+                        key: ValueKey(active),
+                        size: 21,
+                        color: color,
+                      ),
+                    ),
+                    AnimatedPositioned(
+                      duration: AppMotion.standard,
+                      curve: AppMotion.curve,
+                      bottom: active ? 5 : 2,
+                      child: AnimatedOpacity(
+                        duration: AppMotion.quick,
+                        opacity: active ? 1 : 0,
+                        child: const DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: AppColors.fresh,
+                            shape: BoxShape.circle,
+                          ),
+                          child: SizedBox.square(dimension: 4),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -140,22 +173,22 @@ class _AddButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      key: const Key('add-post-button'),
-      onPressed: onPressed,
-      tooltip: 'Create post',
-      icon: const Icon(Icons.add, size: 22),
-      color: AppColors.textOnAccent,
-      style: ButtonStyle(
-        fixedSize: const WidgetStatePropertyAll(
-          Size.square(AppSizes.navButton),
-        ),
-        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-        backgroundColor: const WidgetStatePropertyAll(AppColors.accent),
-        overlayColor: const WidgetStatePropertyAll(Colors.transparent),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadii.medium),
+    return SizedBox.square(
+      dimension: AppSizes.navButton,
+      child: Material(
+        key: const Key('add-post-button'),
+        color: AppColors.accent,
+        borderRadius: BorderRadius.circular(AppRadii.medium),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onPressed,
+          splashColor: AppColors.fresh.withValues(alpha: 0.24),
+          child: const Center(
+            child: Icon(
+              Icons.add_rounded,
+              size: 23,
+              color: AppColors.textOnAccent,
+            ),
           ),
         ),
       ),

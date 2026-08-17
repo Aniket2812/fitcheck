@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../components/app_motion.dart';
 import '../components/editorial_photo_frame.dart';
 import '../components/screen.dart';
 import '../components/shoppable_pieces.dart';
@@ -147,7 +148,7 @@ class _FeedScreenState extends State<FeedScreen> {
     profileName: widget.profileName,
     profileAvatarUrl: widget.profileAvatarUrl,
     child: _loading
-        ? const Center(child: CircularProgressIndicator())
+        ? const _FeedLoading()
         : _error != null
         ? _ErrorState(message: _error!, onRetry: _load)
         : _posts.isEmpty
@@ -323,14 +324,18 @@ class _MasonryFeed extends StatelessWidget {
         );
         final ratio = _DiscoveryCard.ratioFor(index);
         columns[shortest].add(
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.x2),
-            child: _DiscoveryCard(
-              post: posts[index],
-              imageRatio: ratio,
-              onOpen: () => onOpen(posts[index]),
-              onLike: () => onLike(posts[index].id),
-              onTryOn: () => onTryOn(posts[index]),
+          AppReveal(
+            key: ValueKey('feed-reveal-${posts[index].id}'),
+            delay: Duration(milliseconds: (index * 35).clamp(0, 175)),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.x2),
+              child: _DiscoveryCard(
+                post: posts[index],
+                imageRatio: ratio,
+                onOpen: () => onOpen(posts[index]),
+                onLike: () => onLike(posts[index].id),
+                onTryOn: () => onTryOn(posts[index]),
+              ),
             ),
           ),
         );
@@ -383,211 +388,289 @@ class _DiscoveryCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Material(
-    color: AppColors.raised,
-    borderRadius: BorderRadius.circular(AppRadii.large),
-    clipBehavior: Clip.antiAlias,
-    child: InkWell(
-      onTap: onOpen,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          EditorialPhotoFrame(
-            key: Key('editorial-frame-${post.id}'),
-            aspectRatio: imageRatio,
-            inset: 4,
-            borderRadius: AppRadii.large,
-            photoRadius: AppRadii.medium,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Hero(
-                  tag: 'post-${post.id}',
-                  child: Image.network(
-                    post.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => const ColoredBox(
-                      color: AppColors.sunken,
-                      child: Icon(Icons.broken_image_outlined),
+  Widget build(BuildContext context) {
+    final logicalWidth = MediaQuery.sizeOf(context).width;
+    final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+    final cacheWidth = ((logicalWidth / 2) * pixelRatio).round().clamp(
+      320,
+      1200,
+    );
+    return Material(
+      color: AppColors.canvas,
+      borderRadius: BorderRadius.circular(AppRadii.large),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onOpen,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            EditorialPhotoFrame(
+              key: Key('editorial-frame-${post.id}'),
+              aspectRatio: imageRatio,
+              inset: 4,
+              borderRadius: AppRadii.large,
+              photoRadius: AppRadii.medium,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Hero(
+                    tag: 'post-${post.id}',
+                    child: Image.network(
+                      post.imageUrl,
+                      fit: BoxFit.cover,
+                      cacheWidth: cacheWidth,
+                      filterQuality: FilterQuality.medium,
+                      gaplessPlayback: true,
+                      errorBuilder: (_, _, _) => const ColoredBox(
+                        color: AppColors.sunken,
+                        child: Icon(Icons.broken_image_outlined),
+                      ),
                     ),
                   ),
-                ),
-                const DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, Color(0x66000000)],
-                      stops: [0.62, 1],
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.transparent, Color(0x66000000)],
+                        stops: [0.62, 1],
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 6,
-                  right: 6,
-                  child: Material(
-                    color: const Color(0xEFFFFFFF),
-                    borderRadius: BorderRadius.circular(18),
-                    child: InkWell(
-                      key: Key('try-on-post-${post.id}'),
-                      onTap: onTryOn,
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Material(
+                      color: const Color(0xEFFFFFFF),
                       borderRadius: BorderRadius.circular(18),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 5,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.auto_awesome, size: 14),
-                            SizedBox(width: 4),
-                            Text(
-                              'TRY',
-                              style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.8,
+                      child: InkWell(
+                        key: Key('try-on-post-${post.id}'),
+                        onTap: onTryOn,
+                        borderRadius: BorderRadius.circular(18),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 5,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.auto_awesome, size: 14),
+                              SizedBox(width: 4),
+                              Text(
+                                'TRY',
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.8,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: 9,
-                  right: 9,
-                  bottom: 9,
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 7,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xCC1E1D1B),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          _categoryLabel,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.8,
+                  Positioned(
+                    right: 8,
+                    bottom: 9,
+                    child: Material(
+                      color: const Color(0xD9191A17),
+                      borderRadius: BorderRadius.circular(14),
+                      child: InkWell(
+                        key: Key('shop-post-${post.id}'),
+                        onTap: () =>
+                            showShoppablePiecesSheet(context, post: post),
+                        borderRadius: BorderRadius.circular(14),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 6,
                           ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          key: Key('shop-post-${post.id}'),
-                          onTap: () =>
-                              showShoppablePiecesSheet(context, post: post),
-                          borderRadius: BorderRadius.circular(14),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 5,
-                              vertical: 4,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.shopping_bag_outlined,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.shopping_bag_outlined,
+                                color: Colors.white,
+                                size: 13,
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                'SHOP ${post.garments.length}',
+                                style: const TextStyle(
                                   color: Colors.white,
-                                  size: 14,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
                                 ),
-                                const SizedBox(width: 3),
-                                Text(
-                                  'SHOP ${post.garments.length}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          if (post.caption.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(9, 7, 9, 3),
-              child: Text(
-                post.caption,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w500,
-                  height: 1.25,
-                ),
+                ],
               ),
             ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 2, 5, 6),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 11,
-                  backgroundColor: AppColors.sunken,
-                  backgroundImage: post.author.avatarUrl == null
-                      ? null
-                      : NetworkImage(post.author.avatarUrl!),
-                  child: post.author.avatarUrl == null
-                      ? Text(
-                          post.author.name.characters.first.toUpperCase(),
-                          style: const TextStyle(fontSize: 9),
-                        )
-                      : null,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    '@${post.author.handle}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(9, 8, 9, 3),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _categoryLabel,
                     style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 11,
+                      color: AppColors.textMuted,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.2,
                     ),
                   ),
-                ),
-                InkResponse(
-                  key: Key('like-${post.id}'),
-                  onTap: onLike,
-                  radius: 20,
-                  child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: Icon(
-                      post.likedByMe ? Icons.favorite : Icons.favorite_border,
-                      size: 18,
-                      color: post.likedByMe
-                          ? const Color(0xFFB64F55)
-                          : AppColors.textPrimary,
+                  if (post.caption.isNotEmpty) ...[
+                    const SizedBox(height: 3),
+                    Text(
+                      post.caption,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w500,
+                        height: 1.25,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 2, 5, 6),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 11,
+                    backgroundColor: AppColors.sunken,
+                    backgroundImage: post.author.avatarUrl == null
+                        ? null
+                        : NetworkImage(post.author.avatarUrl!),
+                    child: post.author.avatarUrl == null
+                        ? Text(
+                            post.author.name.characters.first.toUpperCase(),
+                            style: const TextStyle(fontSize: 9),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      '@${post.author.handle}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 11,
+                      ),
                     ),
                   ),
-                ),
-                Text('${post.likeCount}', style: const TextStyle(fontSize: 11)),
+                  InkResponse(
+                    key: Key('like-${post.id}'),
+                    onTap: onLike,
+                    radius: 20,
+                    child: Padding(
+                      padding: const EdgeInsets.all(6),
+                      child: Icon(
+                        post.likedByMe ? Icons.favorite : Icons.favorite_border,
+                        size: 18,
+                        color: post.likedByMe
+                            ? const Color(0xFFB64F55)
+                            : AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${post.likeCount}',
+                    style: const TextStyle(fontSize: 11),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FeedLoading extends StatelessWidget {
+  const _FeedLoading();
+
+  @override
+  Widget build(BuildContext context) => ListView(
+    physics: const NeverScrollableScrollPhysics(),
+    padding: const EdgeInsets.fromLTRB(12, 14, 12, 92),
+    children: [
+      const Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _Skeleton(width: 72, height: 9),
+                SizedBox(height: AppSpacing.x2),
+                _Skeleton(width: 172, height: 22),
               ],
             ),
           ),
+          _Skeleton(width: 86, height: 10),
         ],
       ),
-    ),
+      const SizedBox(height: AppSpacing.x4),
+      const _Skeleton(width: double.infinity, height: 34),
+      const SizedBox(height: AppSpacing.x3),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (var index = 0; index < 2; index++) ...[
+            if (index > 0) const SizedBox(width: AppSpacing.x2),
+            const Expanded(
+              child: Column(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 4 / 5,
+                    child: _Skeleton(
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.x2),
+                  _Skeleton(width: double.infinity, height: 12),
+                  SizedBox(height: AppSpacing.x1),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: _Skeleton(width: 104, height: 10),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    ],
+  );
+}
+
+class _Skeleton extends StatelessWidget {
+  const _Skeleton({required this.width, required this.height});
+
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: width,
+    height: height,
+    child: const AppLoadingField(child: ColoredBox(color: AppColors.sunken)),
   );
 }
 

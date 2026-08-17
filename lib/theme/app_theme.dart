@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const canvas = Color(0xFFF7F6F4);
+  static const canvas = Color(0xFFF8F8F5);
   static const raised = Color(0xFFFFFFFF);
-  static const sunken = Color(0xFFF0EFEC);
+  static const sunken = Color(0xFFF0F1EC);
   static const photo = Color(0xFFFFFFFF);
 
-  static const textPrimary = Color(0xFF1E1D1B);
-  static const textSecondary = Color(0xFF565350);
-  static const textMuted = Color(0xFF837F79);
+  static const textPrimary = Color(0xFF191A17);
+  static const textSecondary = Color(0xFF565850);
+  static const textMuted = Color(0xFF85877E);
   static const textOnAccent = Color(0xFFFCFCFB);
 
-  static const borderDefault = Color(0xFFE1DFDB);
-  static const borderStrong = Color(0xFFC8C5C0);
-  static const accent = Color(0xFF1E1D1B);
+  static const borderDefault = Color(0xFFE5E6E0);
+  static const borderStrong = Color(0xFFCACCC3);
+  static const accent = Color(0xFF191A17);
+  static const fresh = Color(0xFFDCF46B);
+  static const freshSoft = Color(0xFFF2F8D9);
 }
 
 abstract final class AppSpacing {
@@ -27,15 +29,22 @@ abstract final class AppSpacing {
 }
 
 abstract final class AppRadii {
-  static const small = 8.0;
-  static const medium = 10.0;
-  static const large = 14.0;
+  static const small = 10.0;
+  static const medium = 14.0;
+  static const large = 20.0;
   static const pill = 999.0;
 }
 
 abstract final class AppSizes {
   static const hitTarget = 44.0;
   static const navButton = 44.0;
+}
+
+abstract final class AppMotion {
+  static const quick = Duration(milliseconds: 160);
+  static const standard = Duration(milliseconds: 240);
+  static const relaxed = Duration(milliseconds: 360);
+  static const curve = Curves.easeOutCubic;
 }
 
 ThemeData buildCompeteTheme() {
@@ -78,6 +87,7 @@ ThemeData buildCompeteTheme() {
     textTheme: compactTextTheme,
     visualDensity: VisualDensity.compact,
     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    splashFactory: InkSparkle.splashFactory,
     scaffoldBackgroundColor: AppColors.canvas,
     colorScheme: const ColorScheme.light(
       primary: AppColors.accent,
@@ -85,6 +95,18 @@ ThemeData buildCompeteTheme() {
       surface: AppColors.raised,
       onSurface: AppColors.textPrimary,
       outline: AppColors.borderDefault,
+      secondary: AppColors.fresh,
+      onSecondary: AppColors.textPrimary,
+      surfaceContainerHighest: AppColors.sunken,
+    ),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: _CompetePageTransitionsBuilder(),
+        TargetPlatform.iOS: _CompetePageTransitionsBuilder(),
+        TargetPlatform.macOS: _CompetePageTransitionsBuilder(),
+        TargetPlatform.windows: _CompetePageTransitionsBuilder(),
+        TargetPlatform.linux: _CompetePageTransitionsBuilder(),
+      },
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.canvas,
@@ -212,6 +234,14 @@ ThemeData buildCompeteTheme() {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
     ),
+    popupMenuTheme: const PopupMenuThemeData(
+      color: AppColors.raised,
+      surfaceTintColor: Colors.transparent,
+      elevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(AppRadii.medium)),
+      ),
+    ),
     snackBarTheme: const SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       backgroundColor: AppColors.textPrimary,
@@ -235,4 +265,29 @@ ThemeData buildCompeteTheme() {
       selectionHandleColor: AppColors.textPrimary,
     ),
   );
+}
+
+class _CompetePageTransitionsBuilder extends PageTransitionsBuilder {
+  const _CompetePageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final curved = CurvedAnimation(parent: animation, curve: AppMotion.curve);
+    return FadeTransition(
+      opacity: curved,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0.025, 0),
+          end: Offset.zero,
+        ).animate(curved),
+        child: child,
+      ),
+    );
+  }
 }

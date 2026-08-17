@@ -72,6 +72,7 @@ class _CompeteAppState extends State<CompeteApp> {
 
   final _navigatorKey = GlobalKey<NavigatorState>();
   AppTab _activeTab = AppTab.feed;
+  final Set<AppTab> _visitedTabs = {AppTab.feed};
   bool _searchOpen = false;
   int _feedVersion = 0;
   int _collectionsVersion = 0;
@@ -145,6 +146,7 @@ class _CompeteAppState extends State<CompeteApp> {
     _composerOpen = false;
     if (item != null && mounted) {
       setState(() {
+        _visitedTabs.add(AppTab.collections);
         _activeTab = AppTab.collections;
         _collectionsVersion += 1;
       });
@@ -229,6 +231,7 @@ class _CompeteAppState extends State<CompeteApp> {
       );
     }
     setState(() {
+      _visitedTabs.add(AppTab.feed);
       _activeTab = AppTab.feed;
       _feedVersion += 1;
     });
@@ -249,6 +252,16 @@ class _CompeteAppState extends State<CompeteApp> {
     if (mounted) await _loadHeaderProfile();
   }
 
+  void _openSearch() => setState(() => _searchOpen = true);
+
+  void _changeTab(AppTab tab) {
+    if (tab == _activeTab) return;
+    setState(() {
+      _visitedTabs.add(tab);
+      _activeTab = tab;
+    });
+  }
+
   @override
   void dispose() {
     _shareSubscription?.cancel();
@@ -262,65 +275,97 @@ class _CompeteAppState extends State<CompeteApp> {
       title: 'compete',
       debugShowCheckedModeBanner: false,
       theme: buildCompeteTheme(),
-      home: _searchOpen
-          ? SearchScreen(onClose: () => setState(() => _searchOpen = false))
-          : Stack(
+      home: Stack(
+        children: [
+          Positioned.fill(
+            child: IndexedStack(
+              index: _activeTab.index,
               children: [
-                switch (_activeTab) {
-                  AppTab.feed => FeedScreen(
-                    key: ValueKey(_feedVersion),
-                    onSearch: () => setState(() => _searchOpen = true),
-                    onProfile: _openProfile,
-                    profileName: _profile?.name ?? 'YouCam Creator',
-                    profileAvatarUrl: _profile?.avatarUrl,
-                    fetchPosts: widget.fetchPosts ?? SocialService.fetchPosts,
-                    fetchModelPhotos:
-                        widget.fetchModelPhotos ??
-                        ModelPhotoService.fetchPhotos,
-                    uploadModelPhoto:
-                        widget.uploadModelPhoto ?? ModelPhotoService.upload,
-                    generateTryOn:
-                        widget.generatePostTryOn ??
-                        SocialService.createPostTryOn,
-                  ),
-                  AppTab.photos => ModelPhotosScreen(
-                    onSearch: () => setState(() => _searchOpen = true),
-                    onProfile: _openProfile,
-                    profileName: _profile?.name ?? 'YouCam Creator',
-                    profileAvatarUrl: _profile?.avatarUrl,
-                    fetchPhotos:
-                        widget.fetchModelPhotos ??
-                        ModelPhotoService.fetchPhotos,
-                    uploadPhoto:
-                        widget.uploadModelPhoto ?? ModelPhotoService.upload,
-                  ),
-                  AppTab.collections => CollectionsScreen(
-                    key: ValueKey(_collectionsVersion),
-                    onSearch: () => setState(() => _searchOpen = true),
-                    onProfile: _openProfile,
-                    profileName: _profile?.name ?? 'YouCam Creator',
-                    profileAvatarUrl: _profile?.avatarUrl,
-                    fetchCollections:
-                        widget.fetchCollections ??
-                        CollectionService.fetchCollections,
-                    createCollection:
-                        widget.createCollection ??
-                        CollectionService.createCollection,
-                    saveItem:
-                        widget.saveCollectionItem ?? CollectionService.addItem,
-                    deleteItem:
-                        widget.deleteCollectionItem ??
-                        CollectionService.deleteItem,
-                    ingestLink: widget.ingestLink ?? IngestService.ingest,
-                  ),
-                },
-                FloatingNav(
-                  active: _activeTab,
-                  onChange: (tab) => setState(() => _activeTab = tab),
-                  onAdd: () => _openCreatePost(),
+                FeedScreen(
+                  key: ValueKey(_feedVersion),
+                  onSearch: _openSearch,
+                  onProfile: _openProfile,
+                  profileName: _profile?.name ?? 'YouCam Creator',
+                  profileAvatarUrl: _profile?.avatarUrl,
+                  fetchPosts: widget.fetchPosts ?? SocialService.fetchPosts,
+                  fetchModelPhotos:
+                      widget.fetchModelPhotos ?? ModelPhotoService.fetchPhotos,
+                  uploadModelPhoto:
+                      widget.uploadModelPhoto ?? ModelPhotoService.upload,
+                  generateTryOn:
+                      widget.generatePostTryOn ?? SocialService.createPostTryOn,
                 ),
+                _visitedTabs.contains(AppTab.photos)
+                    ? ModelPhotosScreen(
+                        onSearch: _openSearch,
+                        onProfile: _openProfile,
+                        profileName: _profile?.name ?? 'YouCam Creator',
+                        profileAvatarUrl: _profile?.avatarUrl,
+                        fetchPhotos:
+                            widget.fetchModelPhotos ??
+                            ModelPhotoService.fetchPhotos,
+                        uploadPhoto:
+                            widget.uploadModelPhoto ?? ModelPhotoService.upload,
+                      )
+                    : const SizedBox.shrink(),
+                _visitedTabs.contains(AppTab.collections)
+                    ? CollectionsScreen(
+                        key: ValueKey(_collectionsVersion),
+                        onSearch: _openSearch,
+                        onProfile: _openProfile,
+                        profileName: _profile?.name ?? 'YouCam Creator',
+                        profileAvatarUrl: _profile?.avatarUrl,
+                        fetchCollections:
+                            widget.fetchCollections ??
+                            CollectionService.fetchCollections,
+                        createCollection:
+                            widget.createCollection ??
+                            CollectionService.createCollection,
+                        saveItem:
+                            widget.saveCollectionItem ??
+                            CollectionService.addItem,
+                        deleteItem:
+                            widget.deleteCollectionItem ??
+                            CollectionService.deleteItem,
+                        ingestLink: widget.ingestLink ?? IngestService.ingest,
+                      )
+                    : const SizedBox.shrink(),
               ],
             ),
+          ),
+          FloatingNav(
+            active: _activeTab,
+            onChange: _changeTab,
+            onAdd: _openCreatePost,
+          ),
+          Positioned.fill(
+            child: IgnorePointer(
+              ignoring: !_searchOpen,
+              child: AnimatedSwitcher(
+                duration: AppMotion.standard,
+                switchInCurve: AppMotion.curve,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0.025, 0),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  ),
+                ),
+                child: _searchOpen
+                    ? SearchScreen(
+                        key: const ValueKey('search-open'),
+                        onClose: () => setState(() => _searchOpen = false),
+                      )
+                    : const SizedBox.expand(key: ValueKey('search-closed')),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
