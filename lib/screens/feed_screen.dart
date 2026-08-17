@@ -323,7 +323,7 @@ class _MasonryFeed extends StatelessWidget {
         final shortest = heights.indexOf(
           heights.reduce((a, b) => a < b ? a : b),
         );
-        final ratio = _DiscoveryCard.ratioFor(index);
+        final ratio = _DiscoveryCard.ratioFor(posts[index]);
         columns[shortest].add(
           AppReveal(
             key: ValueKey('feed-reveal-${posts[index].id}'),
@@ -373,9 +373,17 @@ class _DiscoveryCard extends StatelessWidget {
   final VoidCallback onLike;
   final VoidCallback onTryOn;
 
-  // Every post uses the same catalog crop. Card copy can still create the
-  // staggered Pinterest rhythm without cropping different people differently.
-  static double ratioFor(int index) => 4 / 5;
+  // Pinterest-like variation without layout jitter: a post always receives
+  // the same height, even after a refresh or a like-state rebuild.
+  static const _tileRatios = <double>[0.62, 0.68, 0.74, 0.80, 0.66, 0.77];
+
+  static double ratioFor(SocialPost post) {
+    var hash = 0x811C9DC5;
+    for (final value in post.id.codeUnits) {
+      hash = ((hash ^ value) * 0x01000193) & 0x7FFFFFFF;
+    }
+    return _tileRatios[hash % _tileRatios.length];
+  }
 
   String get _categoryLabel {
     final category = post.garments.firstOrNull?.category;

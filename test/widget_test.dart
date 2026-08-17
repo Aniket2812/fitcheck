@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:youcam2/app.dart';
 import 'package:youcam2/components/outfit_post_image.dart';
+import 'package:youcam2/components/editorial_photo_frame.dart';
 import 'package:youcam2/models/closet_item.dart';
 import 'package:youcam2/models/fashion_collection.dart';
 import 'package:youcam2/models/model_photo.dart';
@@ -309,6 +310,67 @@ void main() {
     await tester.pumpAndSettle();
     expect(filterText('for you').style?.color, AppColors.textPrimary);
     expect(filterText('tops').style?.color, AppColors.textOnAccent);
+  });
+
+  testWidgets('home feed uses stable varied masonry tile heights', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 2200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    SocialPost post(String id) => SocialPost(
+      id: id,
+      caption: 'A discovery fit',
+      imageUrl: 'https://example.com/$id.jpg',
+      garments: const [
+        PostGarment(
+          id: 'tile-top',
+          title: 'Tile top',
+          imageUrl: 'https://example.com/top.jpg',
+          buyUrl: 'https://example.com/top',
+          category: 'upper_body',
+          x: 0.5,
+          y: 0.3,
+        ),
+      ],
+      author: const SocialUser(
+        id: 'tile-user',
+        name: 'Tile User',
+        handle: 'tileuser',
+      ),
+      likeCount: 0,
+      likedByMe: false,
+      comments: const [],
+      createdAt: DateTime(2026),
+    );
+
+    await tester.pumpWidget(
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: () async => [
+          post('masonry-alpha'),
+          post('masonry-bravo'),
+          post('masonry-charlie'),
+          post('masonry-delta'),
+          post('masonry-echo'),
+          post('masonry-foxtrot'),
+        ],
+        fetchModelPhotos: emptyModelPhotos,
+        fetchCollections: emptyCollections,
+        checkYouCamConfigured: youCamOff,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ratios = tester
+        .widgetList<EditorialPhotoFrame>(find.byType(EditorialPhotoFrame))
+        .map((frame) => frame.aspectRatio)
+        .toSet();
+    expect(ratios.length, greaterThanOrEqualTo(3));
+    expect(ratios.every((ratio) => ratio >= 0.62 && ratio <= 0.80), isTrue);
   });
 
   testWidgets('another feed viewer can shop every posted collection item', (
