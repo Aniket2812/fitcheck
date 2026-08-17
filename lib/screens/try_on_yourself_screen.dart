@@ -214,9 +214,12 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                         ),
                       ),
                       if (_generating)
-                        const DiagonalProcessingOverlay(
+                        DiagonalProcessingOverlay(
                           key: Key('try-on-processing-animation'),
-                          label: 'FITTING EVERY PIECE',
+                          label: 'Fitting every piece',
+                          points: widget.post.garments
+                              .map((garment) => Offset(garment.x, garment.y))
+                              .toList(growable: false),
                         ),
                     ],
                   ),
@@ -340,7 +343,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                   icon: const Icon(Icons.auto_awesome),
                   label: Text(
                     _generating
-                        ? 'Trying on this fit…'
+                        ? 'Fitting every piece…'
                         : _resultUrl == null
                         ? 'Try this look'
                         : 'Try again',

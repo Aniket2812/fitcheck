@@ -631,6 +631,10 @@ void main() {
       find.byKey(const Key('try-on-processing-animation')),
       findsOneWidget,
     );
+    expect(find.text('FITTING EVERY PIECE'), findsOneWidget);
+    expect(find.byKey(const Key('processing-piece-dot-0')), findsOneWidget);
+    expect(find.byKey(const Key('processing-ellipsis-dot-0')), findsOneWidget);
+    expect(find.text('Fitting every piece…'), findsOneWidget);
 
     result.complete('https://example.com/my-look.jpg');
     await tester.pump();
