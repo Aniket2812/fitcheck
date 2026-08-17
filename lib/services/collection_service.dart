@@ -63,6 +63,9 @@ abstract final class CollectionService {
             'price': item.price,
             'imageUrl': item.image,
             'originalImageUrl': item.originalImage,
+            'productImageUrls': item.productImageUrls
+                .map(_serverMedia)
+                .toList(),
             'buyUrl': item.pageUrl,
             'category': item.category,
           }),
@@ -96,6 +99,7 @@ abstract final class CollectionService {
     if (items is List) {
       for (final item in items.whereType<Map>()) {
         item['imageUrl'] = _media(item['imageUrl']?.toString() ?? '');
+        item['productImageUrls'] = _mediaList(item['productImageUrls']);
       }
     }
     return FashionCollection.fromJson(json);
@@ -103,11 +107,23 @@ abstract final class CollectionService {
 
   static CollectionItem _item(Map<String, dynamic> json) {
     json['imageUrl'] = _media(json['imageUrl']?.toString() ?? '');
+    json['productImageUrls'] = _mediaList(json['productImageUrls']);
     return CollectionItem.fromJson(json);
   }
 
   static String _media(String value) =>
       value.startsWith('/') ? '${IngestService.apiUrl}$value' : value;
+
+  static String _serverMedia(String value) =>
+      value.startsWith(IngestService.apiUrl)
+      ? value.substring(IngestService.apiUrl.length)
+      : value;
+
+  static List<String> _mediaList(Object? values) =>
+      (values as List? ?? const [])
+          .map((value) => _media(value.toString()))
+          .where((value) => value.isNotEmpty)
+          .toList();
 
   static Map<String, dynamic> _json(http.Response response) {
     try {

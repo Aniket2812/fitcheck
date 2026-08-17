@@ -107,7 +107,7 @@ abstract final class SocialService {
               'imageUrl': photoUrl.startsWith(IngestService.apiUrl)
                   ? photoUrl.substring(IngestService.apiUrl.length)
                   : photoUrl,
-              'garments': garments.map((item) => item.toJson()).toList(),
+              'garments': garments.map(_garmentPayload).toList(),
             }),
           )
           .timeout(const Duration(seconds: 30));
@@ -123,7 +123,7 @@ abstract final class SocialService {
     request.headers['authorization'] = 'Bearer ${session.token}';
     request.fields['caption'] = caption;
     request.fields['garments'] = jsonEncode(
-      garments.map((item) => item.toJson()).toList(),
+      garments.map(_garmentPayload).toList(),
     );
     request.files.add(
       http.MultipartFile.fromBytes(
@@ -316,10 +316,29 @@ abstract final class SocialService {
     if (garments is List) {
       for (final garment in garments.whereType<Map>()) {
         garment['imageUrl'] = mediaUrl(garment['imageUrl']?.toString() ?? '');
+        garment['productImageUrls'] =
+            (garment['productImageUrls'] as List? ?? const [])
+                .map((value) => mediaUrl(value.toString()))
+                .where((value) => value.isNotEmpty)
+                .toList();
       }
     }
     return SocialPost.fromJson(json);
   }
+
+  static Map<String, dynamic> _garmentPayload(PostGarment garment) {
+    final json = garment.toJson();
+    json['imageUrl'] = _serverMedia(garment.imageUrl);
+    json['productImageUrls'] = garment.productImageUrls
+        .map(_serverMedia)
+        .toList();
+    return json;
+  }
+
+  static String _serverMedia(String value) =>
+      value.startsWith(IngestService.apiUrl)
+      ? value.substring(IngestService.apiUrl.length)
+      : value;
 
   static MediaType _mediaType(String name, String? supplied) {
     if (supplied == 'image/png' || name.toLowerCase().endsWith('.png')) {

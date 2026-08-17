@@ -11,11 +11,15 @@ class GarmentImage extends StatelessWidget {
     required this.source,
     this.semanticLabel,
     this.cacheWidth,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
   });
 
   final String source;
   final String? semanticLabel;
   final int? cacheWidth;
+  final BoxFit fit;
+  final AlignmentGeometry alignment;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +38,8 @@ class GarmentImage extends StatelessWidget {
         final bytes = base64Decode(source.substring(comma + 1));
         return Image.memory(
           Uint8List.fromList(bytes),
-          fit: BoxFit.contain,
+          fit: fit,
+          alignment: alignment,
           cacheWidth: cacheWidth,
           filterQuality: FilterQuality.medium,
           gaplessPlayback: true,
@@ -47,7 +52,8 @@ class GarmentImage extends StatelessWidget {
 
     return Image.network(
       source,
-      fit: BoxFit.contain,
+      fit: fit,
+      alignment: alignment,
       cacheWidth: cacheWidth,
       filterQuality: FilterQuality.medium,
       gaplessPlayback: true,

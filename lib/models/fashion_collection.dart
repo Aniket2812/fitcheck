@@ -43,6 +43,7 @@ class CollectionItem {
     this.brand,
     this.price,
     this.originalImageUrl,
+    this.productImageUrls = const [],
   });
 
   factory CollectionItem.fromJson(Map<String, dynamic> json) => CollectionItem(
@@ -55,6 +56,11 @@ class CollectionItem {
     brand: json['brand']?.toString(),
     price: json['price']?.toString(),
     originalImageUrl: json['originalImageUrl']?.toString(),
+    productImageUrls: (json['productImageUrls'] as List? ?? const [])
+        .map((value) => value.toString())
+        .where((value) => value.isNotEmpty)
+        .take(5)
+        .toList(),
   );
 
   final String id;
@@ -66,6 +72,7 @@ class CollectionItem {
   final String? brand;
   final String? price;
   final String? originalImageUrl;
+  final List<String> productImageUrls;
 
   PostGarment toGarment({int index = 0}) {
     final position = switch (category) {
@@ -85,6 +92,7 @@ class CollectionItem {
       brand: brand,
       price: price,
       originalImageUrl: originalImageUrl,
+      productImageUrls: productImageUrls,
       category: category,
     );
   }
@@ -97,6 +105,7 @@ class CollectionItem {
     price: price,
     pageUrl: buyUrl,
     originalImage: originalImageUrl,
+    productImageUrls: productImageUrls,
     category: category,
   );
 }

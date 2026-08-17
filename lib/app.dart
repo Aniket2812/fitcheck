@@ -226,6 +226,7 @@ class _CompeteAppState extends State<CompeteApp> {
           price: garment.price,
           pageUrl: garment.buyUrl,
           originalImage: garment.originalImageUrl,
+          productImageUrls: garment.productImageUrls,
           category: garment.category,
         ),
       );

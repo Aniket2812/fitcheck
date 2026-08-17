@@ -56,6 +56,12 @@ abstract final class IngestService {
       throw Exception(data['error']?.toString() ?? 'Something went wrong.');
     }
 
+    data['productImageUrls'] = (data['productImageUrls'] as List? ?? const [])
+        .map((value) {
+          final url = value.toString();
+          return url.startsWith('/') ? '$apiUrl$url' : url;
+        })
+        .toList();
     return ClosetItem.fromJson(data);
   }
 }

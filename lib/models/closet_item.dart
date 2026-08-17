@@ -7,6 +7,7 @@ class ClosetItem {
     this.price,
     this.pageUrl,
     this.originalImage,
+    this.productImageUrls = const [],
     this.category,
   });
 
@@ -17,6 +18,7 @@ class ClosetItem {
   final String? price;
   final String? pageUrl;
   final String? originalImage;
+  final List<String> productImageUrls;
   final String? category;
 
   factory ClosetItem.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,11 @@ class ClosetItem {
       image: image,
       pageUrl: json['pageUrl']?.toString(),
       originalImage: json['originalImage']?.toString(),
+      productImageUrls: (json['productImageUrls'] as List? ?? const [])
+          .map((value) => value.toString())
+          .where((value) => value.isNotEmpty)
+          .take(5)
+          .toList(),
       category: json['category']?.toString(),
     );
   }
@@ -49,6 +56,7 @@ class ClosetItem {
     'image': image,
     'pageUrl': pageUrl,
     'originalImage': originalImage,
+    'productImageUrls': productImageUrls,
     'category': category,
   };
 }

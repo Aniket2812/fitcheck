@@ -30,6 +30,7 @@ class PostGarment {
     this.brand,
     this.price,
     this.originalImageUrl,
+    this.productImageUrls = const [],
     this.category,
   });
 
@@ -42,6 +43,7 @@ class PostGarment {
   final String? brand;
   final String? price;
   final String? originalImageUrl;
+  final List<String> productImageUrls;
   final String? category;
 
   PostGarment copyWith({double? x, double? y}) => PostGarment(
@@ -54,6 +56,7 @@ class PostGarment {
     brand: brand,
     price: price,
     originalImageUrl: originalImageUrl,
+    productImageUrls: productImageUrls,
     category: category,
   );
 
@@ -67,6 +70,11 @@ class PostGarment {
     brand: json['brand']?.toString(),
     price: json['price']?.toString(),
     originalImageUrl: json['originalImageUrl']?.toString(),
+    productImageUrls: (json['productImageUrls'] as List? ?? const [])
+        .map((value) => value.toString())
+        .where((value) => value.isNotEmpty)
+        .take(5)
+        .toList(),
     category: json['category']?.toString(),
   );
 
@@ -80,6 +88,7 @@ class PostGarment {
     'brand': brand,
     'price': price,
     'originalImageUrl': originalImageUrl,
+    'productImageUrls': productImageUrls,
     'category': category,
   };
 }

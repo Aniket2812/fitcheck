@@ -386,7 +386,7 @@ void main() {
       find.byKey(const Key('shop-piece-shared-shop-post-shared-shirt')),
     );
     await tester.pumpAndSettle();
-    expect(find.text('View product'), findsOneWidget);
+    expect(find.text('View exact product'), findsOneWidget);
   });
 
   testWidgets('plus button builds outfits only from saved collections', (
@@ -632,6 +632,12 @@ void main() {
           title: 'Black top',
           imageUrl:
               'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+          productImageUrls: [
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
+          ],
           originalImageUrl: 'https://example.com/top.jpg',
           buyUrl: 'https://example.com/top',
           category: 'upper_body',
@@ -842,7 +848,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Test jacket'), findsOneWidget);
     expect(find.text('Compete · example.com'), findsOneWidget);
-    expect(find.text('View product'), findsOneWidget);
+    expect(find.text('4 images from the product link'), findsOneWidget);
+    expect(find.byKey(const Key('product-gallery-page-view')), findsOneWidget);
+    expect(find.byKey(const Key('product-gallery-image-0')), findsOneWidget);
+    expect(
+      find.byKey(const Key('product-gallery-thumbnail-3')),
+      findsOneWidget,
+    );
+    expect(find.text('View exact product'), findsOneWidget);
   });
 
   testWidgets('feed try-on uses a saved photo and shows diagonal processing', (
