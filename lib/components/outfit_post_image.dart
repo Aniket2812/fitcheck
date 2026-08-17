@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/social_post.dart';
 import '../theme/app_theme.dart';
+import 'app_network_image.dart';
 import 'garment_product_dialog.dart';
 
 class OutfitPostImage extends StatelessWidget {
@@ -34,13 +35,11 @@ class OutfitPostImage extends StatelessWidget {
                 onTap: onOpenPost,
                 child: Hero(
                   tag: 'post-${post.id}',
-                  child: Image.network(
-                    post.imageUrl,
+                  child: AppNetworkImage(
+                    url: post.imageUrl,
                     fit: BoxFit.cover,
                     cacheWidth: cacheWidth,
-                    filterQuality: FilterQuality.medium,
-                    gaplessPlayback: true,
-                    errorBuilder: (_, _, _) => const ColoredBox(
+                    error: const ColoredBox(
                       color: AppColors.sunken,
                       child: Center(
                         child: Icon(Icons.broken_image_outlined, size: 42),

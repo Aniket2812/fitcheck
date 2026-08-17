@@ -5,3 +5,5 @@ import * as openai from './openai.js';
 // interchangeable providers.
 export const cutoutProvider = openai;
 export const describeProduct = openai.describeProduct;
+export const researchProduct = openai.researchProduct;
+export const researchConfigured = openai.researchConfigured;

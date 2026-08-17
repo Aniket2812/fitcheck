@@ -5,6 +5,7 @@
  *   npm run coverage                 # every URL in test/urls.js
  *   npm run coverage -- --file x.txt # newline-separated URLs instead
  *   npm run coverage -- zara nike    # only rows whose host matches a filter
+ *   npm run coverage -- --research   # include paid OpenAI web-search fallbacks
  *
  * Deliberately stops before the cutout: this checks that we can reach a page
  * and find the garment on it, which is the part that varies by retailer. The
@@ -13,14 +14,14 @@
 import { readFile } from 'node:fs/promises';
 
 import { extractProduct } from '../src/extract.js';
-import { unblockerReady } from '../src/fetchPage.js';
 import { hostOf, normalizeInput } from '../src/links.js';
-import { siteFor } from '../src/sites.js';
+import { researchConfigured } from '../src/providers/index.js';
 import { SAMPLE_URLS } from './urls.js';
 
 const CONCURRENCY = Number(process.env.COVERAGE_CONCURRENCY || 4);
 
 const argv = process.argv.slice(2);
+const ALLOW_RESEARCH = argv.includes('--research');
 const fileFlag = argv.indexOf('--file');
 const filters = argv.filter(
   (arg, i) => !arg.startsWith('--') && !(fileFlag !== -1 && i === fileFlag + 1),
@@ -42,7 +43,7 @@ async function check({ url, verified }) {
   const host = hostOf(url);
   const started = Date.now();
   try {
-    const product = await extractProduct(normalizeInput(url));
+    const product = await extractProduct(normalizeInput(url), { allowResearch: ALLOW_RESEARCH });
     return {
       host,
       verified,
@@ -84,7 +85,9 @@ const list = (await urls()).filter(
 );
 
 console.log(
-  `Checking ${list.length} retailers — unblocker: ${unblockerReady() ? 'brightdata' : 'NOT CONFIGURED'}\n`,
+  `Checking ${list.length} retailers — OpenAI fallback: ${
+    ALLOW_RESEARCH ? (researchConfigured ? 'enabled' : 'missing key') : 'disabled'
+  }\n`,
 );
 
 const results = await run(list);
@@ -107,8 +110,6 @@ for (const r of results) {
 }
 
 const passed = results.filter((r) => r.ok).length;
-const blockedFails = results.filter((r) => !r.ok && siteFor(r.host).unblock === 'always').length;
-
 const verifiedResults = results.filter((r) => r.verified);
 const verifiedPassed = verifiedResults.filter((r) => r.ok).length;
 
@@ -116,12 +117,7 @@ console.log(
   `\n${passed}/${results.length} retailers extracted ` +
     `(${verifiedPassed}/${verifiedResults.length} of the confirmed-live sample URLs).`,
 );
-if (blockedFails && !unblockerReady()) {
-  console.log(
-    `${blockedFails} of the failures are bot-protected hosts. Set BRIGHTDATA_API_KEY and ` +
-      'BRIGHTDATA_ZONE in server/.env and re-run.',
-  );
-}
+if (!ALLOW_RESEARCH) console.log('Re-run with --research to exercise OpenAI web-search fallback.');
 
 // Only the confirmed-live URLs gate the exit code; the rest are informational
 // until someone replaces them with a real product link.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../components/diagonal_processing_overlay.dart';
+import '../components/app_network_image.dart';
 import '../components/garment_image.dart';
 import '../models/fashion_collection.dart';
 import '../models/model_photo.dart';
@@ -1480,13 +1481,11 @@ class _PhotoPicker extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(9),
-                child: Image.network(
-                  photo.imageUrl,
+                child: AppNetworkImage(
+                  url: photo.imageUrl,
                   fit: BoxFit.cover,
                   cacheWidth: 240,
-                  filterQuality: FilterQuality.medium,
-                  gaplessPlayback: true,
-                  errorBuilder: (_, _, _) => const ColoredBox(
+                  error: const ColoredBox(
                     color: AppColors.sunken,
                     child: Icon(Icons.person, color: AppColors.textMuted),
                   ),
@@ -1541,18 +1540,16 @@ class _OutfitPreview extends StatelessWidget {
                   ),
                 )
               else
-                Image.network(
+                AppNetworkImage(
                   key: const Key('outfit-preview-image'),
-                  imageUrl!,
+                  url: imageUrl!,
                   fit: BoxFit.cover,
                   cacheWidth:
                       (constraints.maxWidth *
                               MediaQuery.devicePixelRatioOf(context))
                           .round()
                           .clamp(480, 1600),
-                  filterQuality: FilterQuality.medium,
-                  gaplessPlayback: true,
-                  errorBuilder: (_, _, _) => const ColoredBox(
+                  error: const ColoredBox(
                     color: AppColors.sunken,
                     child: Icon(Icons.person, size: 48),
                   ),

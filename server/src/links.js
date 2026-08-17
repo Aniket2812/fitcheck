@@ -69,7 +69,7 @@ const isTracking = (key) => {
 
 /**
  * Hosts that only ever serve a redirect. We resolve these before deciding
- * whether the destination needs the unblocker, since the shortener itself
+ * whether to parse or research the destination, since the shortener itself
  * tells us nothing about the retailer behind it.
  */
 const SHORTENERS = new Set([

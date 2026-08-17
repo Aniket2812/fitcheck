@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../components/app_motion.dart';
+import '../components/app_network_image.dart';
 import '../components/app_page_intro.dart';
 import '../components/app_state.dart';
 import '../components/screen.dart';
@@ -305,13 +306,11 @@ class _PhotoCard extends StatelessWidget {
       children: [
         ColoredBox(
           color: AppColors.photo,
-          child: Image.network(
-            photo.imageUrl,
+          child: AppNetworkImage(
+            url: photo.imageUrl,
             fit: BoxFit.cover,
             cacheWidth: 720,
-            filterQuality: FilterQuality.medium,
-            gaplessPlayback: true,
-            errorBuilder: (_, _, _) => const Center(
+            error: const Center(
               child: Icon(Icons.person, size: 42, color: AppColors.textMuted),
             ),
           ),

@@ -18,24 +18,24 @@ Listens on `0.0.0.0:8787` so a phone on the same Wi-Fi can reach it.
 
 | Variable | Purpose |
 |---|---|
-| `OPENAI_API_KEY` | Required. Used for the cutout and the metadata fallback. |
+| `OPENAI_API_KEY` | Required. Used for product research, metadata, and cutouts. |
+| `OPENAI_RESEARCH_MODEL` | OpenAI model for product-link research. Defaults to `gpt-5.6-sol`. |
+| `OPENAI_RESEARCH_TIMEOUT_MS` | Product research limit. Defaults to 100 seconds. |
 | `YOUCAM_API_KEY` | Perfect Corp API key used as the v2 bearer token for AI Clothes v3. |
 | `YOUCAM_SECRET_KEY` | Account secret retained server-side; never sent to the app. |
 | `YOUCAM_TIMEOUT_MS` | Maximum Clothes task time; defaults to 180 seconds. |
-| `BRIGHTDATA_API_KEY` | Optional. Unlocks the bot-protected retailers. |
-| `BRIGHTDATA_ZONE` | Required alongside the key — your Web Unlocker zone name. |
-| `BRIGHTDATA_COUNTRY` | Optional two-letter exit country, e.g. `us`. |
 | `PORT` | Defaults to `8787`. |
 | `GOOGLE_CLIENT_ID` | OAuth client id(s) allowed as an ID token audience, comma-separated. Unset = dev sign-ins only. |
 | `DATA_FILE` | Where accounts and sessions are stored. Defaults to `server/data/users.json`. |
 | `MEDIA_DIR` | Persistent outfit/cutout upload directory. Defaults to `server/data/media`. |
+| `SEED_DEMO_DATA` | Seeds the versioned starter feed on first run. Defaults to enabled; set to `false` for production. |
 
 `.env` is gitignored. `.env.example` is the template.
 
 ## Endpoints
 
 ### `GET /health`
-`{ ok, provider, hasKey, unblocker, sites }` — quick check that the keys are
+`{ ok, provider, hasKey, productResearch, sites }` — quick check that the keys are
 actually loaded and how many retailers have tuned rules.
 
 ### `GET /api/sites`
@@ -121,6 +121,19 @@ Posts are persisted beside accounts and sessions; uploaded images and garment
 cutouts are stored under `server/data/media` and served from immutable
 `/media/:name` URLs.
 
+On first startup, the server imports 14 starter posts from the versioned
+fixture in `seed/feed.json` into the same persistent store. The app receives
+them exclusively from `GET /api/posts`; there is no client-side fallback or
+hardcoded feed. Stable
+seed IDs prevent duplicate users or posts after restarts. Set
+`SEED_DEMO_DATA=false` to start with an empty feed instead.
+
+The bundled demo outfits and product previews are cropped from the same source
+boards, so each hotspot opens the item shown in the post. Every `buyUrl` is a
+direct retailer product page rather than a category or search-results link.
+`seed/visual-matches.json` records the audited colour and product identity for
+every tag; `npm run test:feed` fails if either side is remapped independently.
+
 - `GET /api/posts` — newest-first feed; bearer auth is optional and adds
   `likedByMe`.
 - `POST /api/posts` — bearer-authenticated multipart upload (`image`, `caption`,
@@ -160,11 +173,12 @@ Four stages, each falling back only when the cheaper one fails.
 **1. Normalise the link** (`links.js`) — pull the URL out of share text, follow
 shorteners, drop tracking params.
 
-**2. Fetch the page** (`fetchPage.js`) — a plain fetch shaped like a real
-Chrome navigation (the `sec-fetch-*` set matters; a bare user-agent is no
-longer enough). If the host is a known blocker, or the response is a challenge
-page, or nothing parses out of it, the request is retried through Bright Data's
-Web Unlocker. That tier costs money per request, so it never runs first.
+**2. Fetch or research the product** — `fetchPage.js` first makes a plain fetch
+shaped like a real Chrome navigation. If the retailer rejects that request,
+returns a bot challenge, times out, or serves an empty app shell, `extract.js`
+uses the OpenAI Responses API with built-in web search to identify the exact
+product and direct product-photo URLs. OpenAI never substitutes a similar item;
+uncertain results fail cleanly.
 
 **3. Find the product** (`extract.js`), in reliability order:
 
@@ -183,8 +197,9 @@ the CDN's thumbnail token for a full-size one — cutout quality tracks input
 resolution closely, and `og:image` is often a 400px crop. The original is kept
 as a fallback in case the rewrite 404s.
 
-An LLM (`gpt-4o-mini`) is only called when the page yields no title, so pages
-with structured data cost nothing extra.
+`gpt-4o-mini` is only called for missing metadata. The more capable product
+research model runs only when direct fetching or parsing fails, so structured
+retailer pages incur no research call.
 
 **4. Cut it out** — the image is downloaded (with a `referer`, or the CDNs
 reject the hotlink) and sent to `images.edit` (`gpt-image-1`) with
@@ -195,7 +210,7 @@ reject the hotlink) and sent to `images.edit` (`gpt-image-1`) with
 `sites.js` carries per-host rules for ~50 retailers, global and Indian. A host
 that is not in that table still works — it just gets the generic path.
 
-Confirmed extracting over a plain fetch, no unblocker needed: **Myntra,
+Confirmed extracting over a plain fetch: **Myntra,
 Bewakoof, Westside, Libas, Flipkart, Uniqlo, J.Crew, Madewell, Nike, Levi's.**
 Myntra in particular returns full JSON-LD — title, brand, price and a 1080px
 image — to an ordinary server fetch.
@@ -208,6 +223,8 @@ shared AJIO product link should work; it is untested.
 ```bash
 npm run coverage              # pass/fail table, one row per retailer
 npm run coverage -- zara nike # filter by host
+npm run coverage -- --research zara # also exercise paid OpenAI fallback
+npm run test:research         # one exact-product OpenAI integration check
 ```
 
 The table marks rows whose sample URL has not been confirmed live, since a dead
@@ -216,15 +233,14 @@ rows gate the exit code.
 
 ## Known limits
 
-- **The bot-protected half needs Bright Data.** Amazon, Zara, H&M, ASOS, SHEIN,
-  Nordstrom, Nike, SSENSE and friends refuse plain server fetches. Without
-  `BRIGHTDATA_API_KEY` they fail with a message naming the reason; with it they
-  go through the unblocker. This is not something a better parser fixes.
+- **Bot-protected shops require an OpenAI research call.** Amazon, Zara, H&M,
+  ASOS, SHEIN, Nordstrom and similar retailers may refuse direct server fetches.
+  Those imports cost more and take longer than deterministic parsing.
 - **Sample product URLs rot.** Items sell out and 404. Replace the URL in
   `test/urls.js` rather than reading a regression into it.
-- **Some retailers rate-limit rather than block.** adidas extracted fine for
-  the first few requests, then started refusing this IP. A host that worked
-  yesterday and fails today usually needs the unblocker, not a parser change.
+- **Some retailers rate-limit rather than block.** adidas can parse directly
+  and then start refusing the same server IP; the same OpenAI fallback handles
+  that case.
 - **The cutout is generative**, so it can subtly redraw fabric detail. For a
   shopping decision that matters — worth comparing against `originalImage`.
 - **Cutouts return as base64 data URLs.** Fine for a demo; move to object

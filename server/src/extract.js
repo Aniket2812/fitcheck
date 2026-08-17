@@ -2,6 +2,7 @@ import * as cheerio from 'cheerio';
 
 import { hostOf, isShortener, cleanUrl } from './links.js';
 import { loadPage, resolveRedirect } from './fetchPage.js';
+import { researchProduct } from './providers/index.js';
 import { upgradeImage, siteFor } from './sites.js';
 
 const absolute = (src, base) => {
@@ -486,22 +487,44 @@ export function parseProduct(html, base) {
 /**
  * Pulls a product out of an arbitrary retailer page.
  *
- * Deterministic strategies run first and in order of reliability; an LLM only
- * gets involved (in index.js) when they come back thin, which keeps ingestion
+ * Deterministic strategies run first and in order of reliability; OpenAI only
+ * gets involved when they come back thin, which keeps ingestion
  * cheap for the majority of retailers that publish structured data.
  */
-export async function extractProduct(inputUrl) {
-  const url = isShortener(inputUrl) ? cleanUrl(await resolveRedirect(inputUrl)) : inputUrl;
+export async function extractProduct(inputUrl, { allowResearch = true } = {}) {
+  const shortLink = isShortener(inputUrl);
+  const url = shortLink ? cleanUrl(await resolveRedirect(inputUrl)) : inputUrl;
+  const shortLinkUnresolved = shortLink && url === cleanUrl(inputUrl);
 
   let parsed = null;
-  const page = await loadPage(url, {
-    // Accept the free tier only if it actually yielded a product — a bot shell
-    // returns 200 and parses to nothing, which is what the unblocker is for.
-    onCandidate: ({ html, finalUrl }) => {
-      parsed = parseProduct(html, finalUrl);
-      return Boolean(parsed);
-    },
-  });
+  let page;
+  try {
+    page = await loadPage(url, {
+      // A 200 response can still be an empty SPA shell. Only accept a direct
+      // hit if a real product was parsed from it.
+      onCandidate: ({ html, finalUrl }) => {
+        parsed = parseProduct(html, finalUrl);
+        return Boolean(parsed);
+      },
+    });
+  } catch (error) {
+    if (allowResearch && ['challenge', 'http', 'timeout', 'no-product'].includes(error.reason)) {
+      try {
+        return await researchProduct(url, { reason: error.reason });
+      } catch (researchError) {
+        if (shortLinkUnresolved && researchError.status === 422) {
+          throw Object.assign(
+            new Error(
+              'That shopping share link did not reveal its product. Open it in your browser, then share or copy the full product-page link.',
+            ),
+            { status: 422, cause: researchError },
+          );
+        }
+        throw researchError;
+      }
+    }
+    throw error;
+  }
 
   if (!parsed) parsed = parseProduct(page.html, page.finalUrl);
 

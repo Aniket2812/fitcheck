@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/app_motion.dart';
+import '../components/app_network_image.dart';
 import '../components/app_state.dart';
 import '../components/avatar.dart';
 import '../components/editorial_photo_frame.dart';
@@ -543,13 +544,11 @@ class _ProfilePost extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            post.imageUrl,
+          AppNetworkImage(
+            url: post.imageUrl,
             fit: BoxFit.cover,
             cacheWidth: 720,
-            filterQuality: FilterQuality.medium,
-            gaplessPlayback: true,
-            errorBuilder: (_, _, _) => const ColoredBox(
+            error: const ColoredBox(
               color: AppColors.sunken,
               child: Icon(Icons.checkroom, color: AppColors.textMuted),
             ),

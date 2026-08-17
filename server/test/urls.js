@@ -21,8 +21,8 @@ export const SAMPLE_URLS = [
   { url: 'https://www.madewell.com/the-perfect-vintage-jean-MC504.html', verified: true },
   { url: 'https://www.nike.com/t/sportswear-club-t-shirt-ShrJfX', verified: true },
   // adidas extracted cleanly (via app-state) on the first couple of runs, then
-  // started refusing this IP outright — they rate-limit rather than block
-  // outright, so treat a FAIL here as "needs the unblocker", not a parser bug.
+  // started refusing this IP outright — they rate-limit rather than exposing
+  // a stable parser target, so the OpenAI fallback may be needed.
   { url: 'https://www.adidas.com/us/adicolor-classics-trefoil-tee/IA4870.html' },
   {
     url: 'https://www.levi.com/US/en_US/clothing/men/jeans/501-original-fit-mens-jeans/p/005010114',
@@ -72,7 +72,8 @@ export const SAMPLE_URLS = [
   { url: 'https://www.boohoo.com/mens/mens-t-shirts' },
   { url: 'https://www.prettylittlething.us/womens-dresses.html' },
 
-  // Bot-protected hosts: expect FAIL until BRIGHTDATA_API_KEY is set, PASS after.
+  // Bot-protected hosts: use `npm run coverage -- --research` to include the
+  // OpenAI web-search fallback. Plain coverage intentionally tests parsers only.
   { url: 'https://www.amazon.com/dp/B07TXPWRQF' },
   { url: 'https://www.zara.com/us/en/ribbed-t-shirt-p05644304.html' },
   { url: 'https://www2.hm.com/en_us/productpage.1218755001.html' },

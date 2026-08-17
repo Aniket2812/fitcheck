@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import 'app_network_image.dart';
 
 class GarmentImage extends StatelessWidget {
   const GarmentImage({
@@ -50,14 +51,12 @@ class GarmentImage extends StatelessWidget {
       }
     }
 
-    return Image.network(
-      source,
+    return AppNetworkImage(
+      url: source,
       fit: fit,
-      alignment: alignment,
+      alignment: alignment.resolve(TextDirection.ltr),
       cacheWidth: cacheWidth,
-      filterQuality: FilterQuality.medium,
-      gaplessPlayback: true,
-      errorBuilder: _errorBuilder,
+      error: _placeholder(),
     );
   }
 

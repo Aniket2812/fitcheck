@@ -7,6 +7,8 @@
     "dev": "node --env-file=.env src/index.js",
     "start": "node --env-file=.env src/index.js",
     "coverage": "node --env-file=.env test/coverage.js",
+    "test:research": "node --env-file=.env test/openaiResearch.js",
+    "test:feed": "node test/demoFeed.js",
     "test:social": "node test/social.js",
     "test:model-photos": "node test/modelPhotos.js",
     "test:http-model-photos": "node test/httpModelPhotos.js"

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../components/diagonal_processing_overlay.dart';
+import '../components/app_network_image.dart';
 import '../models/model_photo.dart';
 import '../models/post_try_on_result.dart';
 import '../models/social_post.dart';
@@ -348,8 +349,8 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                                       ? 'original'
                                       : _result?.imageUrl ?? 'selected',
                                 ),
-                                child: Image.network(
-                                  _showOriginal
+                                child: AppNetworkImage(
+                                  url: _showOriginal
                                       ? _selected?.imageUrl ??
                                             widget.post.imageUrl
                                       : _result?.imageUrl ??
@@ -363,9 +364,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                                               ))
                                           .round()
                                           .clamp(480, 1600),
-                                  filterQuality: FilterQuality.medium,
-                                  gaplessPlayback: true,
-                                  errorBuilder: (_, _, _) => const ColoredBox(
+                                  error: const ColoredBox(
                                     color: AppColors.sunken,
                                     child: Icon(Icons.person_outline, size: 52),
                                   ),
@@ -528,13 +527,11 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(9),
-                            child: Image.network(
-                              photo.imageUrl,
+                            child: AppNetworkImage(
+                              url: photo.imageUrl,
                               fit: BoxFit.cover,
                               cacheWidth: 220,
-                              filterQuality: FilterQuality.medium,
-                              gaplessPlayback: true,
-                              errorBuilder: (_, _, _) => const ColoredBox(
+                              error: const ColoredBox(
                                 color: AppColors.sunken,
                                 child: Icon(Icons.person_outline),
                               ),

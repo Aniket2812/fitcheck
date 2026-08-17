@@ -227,6 +227,73 @@ void main() {
     expect(find.text('Stale fit'), findsNothing);
   });
 
+  testWidgets('uploaded posts receive an adaptive editorial crop', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    SocialPost post({required String id, required String backgroundStyle}) =>
+        SocialPost(
+          id: id,
+          caption: 'A fit worth trying',
+          imageUrl: '',
+          garments: const [
+            PostGarment(
+              id: 'crop-top',
+              title: 'Top',
+              imageUrl: '',
+              buyUrl: 'https://example.com/top',
+              category: 'upper_body',
+              x: 0.5,
+              y: 0.3,
+            ),
+          ],
+          author: const SocialUser(
+            id: 'crop-user',
+            name: 'Crop User',
+            handle: 'cropuser',
+          ),
+          likeCount: 0,
+          likedByMe: false,
+          comments: const [],
+          createdAt: DateTime(2026),
+          backgroundStyle: backgroundStyle,
+        );
+
+    final generated = post(
+      id: 'f3f53daf-b6cb-4907-9444-48ad0e38f66d',
+      backgroundStyle: 'youcam:neutral_linen_white',
+    );
+    final editorial = post(
+      id: 'mock-editorial',
+      backgroundStyle: 'compete:studio',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FeedScreen(
+          onSearch: () {},
+          onProfile: () {},
+          fetchPosts: () async => [generated, editorial],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final generatedCrop = tester.widget<Transform>(
+      find.byKey(Key('post-photo-crop-${generated.id}')),
+    );
+    final editorialCrop = tester.widget<Transform>(
+      find.byKey(Key('post-photo-crop-${editorial.id}')),
+    );
+
+    expect(generatedCrop.transform.getMaxScaleOnAxis(), greaterThan(1.2));
+    expect(editorialCrop.transform.getMaxScaleOnAxis(), 1);
+  });
+
   testWidgets('collections use tailored cards, filters and quick add', (
     WidgetTester tester,
   ) async {

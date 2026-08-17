@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import 'app_network_image.dart';
 
 class Avatar extends StatelessWidget {
   const Avatar({
@@ -32,17 +33,15 @@ class Avatar extends StatelessWidget {
         child: ClipOval(
           child: imageUrl == null || imageUrl!.isEmpty
               ? _Initial(initial: initial, size: size)
-              : Image.network(
-                  imageUrl!,
+              : AppNetworkImage(
+                  url: imageUrl!,
                   width: size,
                   height: size,
                   fit: BoxFit.cover,
                   cacheWidth: (size * MediaQuery.devicePixelRatioOf(context))
                       .round(),
-                  filterQuality: FilterQuality.medium,
-                  gaplessPlayback: true,
-                  errorBuilder: (_, _, _) =>
-                      _Initial(initial: initial, size: size),
+                  placeholder: _Initial(initial: initial, size: size),
+                  error: _Initial(initial: initial, size: size),
                 ),
         ),
       ),

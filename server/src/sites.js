@@ -4,9 +4,6 @@
  * The extractor is site-agnostic on purpose — this registry only carries the
  * two things a generic parser cannot infer:
  *
- *   unblock  'always' when the host refuses plain server fetches outright, so
- *            we skip straight to the unblocker instead of burning a round trip.
- *            Omitted means "try direct first, escalate only if it fails".
  *   image    A rewrite that swaps the CDN's thumbnail token for a full-size
  *            one. Cutout quality tracks input resolution closely, and og:image
  *            is frequently a 400px crop.
@@ -38,19 +35,16 @@ function setWidth(url, width) {
 const SITES = {
   'amazon.com': {
     label: 'Amazon',
-    unblock: 'always',
     // ".../71abc._AC_SX679_.jpg" — dropping the size token yields the original.
     image: (url) => url.replace(/\._[A-Z0-9_,]+_\.(jpg|jpeg|png|webp)/i, '.$1'),
   },
-  'amazon.co.uk': { label: 'Amazon UK', unblock: 'always', alias: 'amazon.com' },
+  'amazon.co.uk': { label: 'Amazon UK', alias: 'amazon.com' },
   'zara.com': {
     label: 'Zara',
-    unblock: 'always',
     image: (url) => setWidth(url, 1500),
   },
   'hm.com': {
     label: 'H&M',
-    unblock: 'always',
     image: (url) => setWidth(url, 1536),
   },
   'uniqlo.com': {
@@ -59,24 +53,21 @@ const SITES = {
   },
   'asos.com': {
     label: 'ASOS',
-    unblock: 'always',
     // "$n_640w$" is a Scene7 preset; the widest preset ASOS serves is 1920.
     image: (url) => url.replace(/\$n_\d+w\$/, '$n_1920w$'),
   },
   'shein.com': {
     label: 'SHEIN',
-    unblock: 'always',
     image: (url) => url.replace(/_thumbnail_\d+x\d*/, '').replace(/\/thumbnail\//, '/'),
   },
-  'nordstrom.com': { label: 'Nordstrom', unblock: 'always', image: (url) => setWidth(url, 1600) },
-  'net-a-porter.com': { label: 'Net-A-Porter', unblock: 'always' },
-  'mrporter.com': { label: 'Mr Porter', unblock: 'always', alias: 'net-a-porter.com' },
+  'nordstrom.com': { label: 'Nordstrom', image: (url) => setWidth(url, 1600) },
+  'net-a-porter.com': { label: 'Net-A-Porter' },
+  'mrporter.com': { label: 'Mr Porter', alias: 'net-a-porter.com' },
   'farfetch.com': {
     label: 'Farfetch',
-    unblock: 'always',
     image: (url) => url.replace(/_(\d{3,4})\//, '_1000/'),
   },
-  'ssense.com': { label: 'SSENSE', unblock: 'always' },
+  'ssense.com': { label: 'SSENSE' },
   'gap.com': { label: 'Gap', image: (url) => setWidth(url, 1500) },
   'oldnavy.gap.com': { label: 'Old Navy', alias: 'gap.com' },
   'bananarepublic.gap.com': { label: 'Banana Republic', alias: 'gap.com' },
@@ -87,20 +78,20 @@ const SITES = {
   'weekday.com': { label: 'Weekday', image: (url) => setWidth(url, 1536) },
   'urbanoutfitters.com': { label: 'Urban Outfitters', image: (url) => setWidth(url, 1500) },
   'everlane.com': { label: 'Everlane', image: (url) => setWidth(url, 1500) },
-  'revolve.com': { label: 'Revolve', unblock: 'always' },
-  'nike.com': { label: 'Nike', unblock: 'always', image: (url) => setWidth(url, 1728) },
-  'adidas.com': { label: 'adidas', unblock: 'always', image: (url) => setWidth(url, 1500) },
+  'revolve.com': { label: 'Revolve' },
+  'nike.com': { label: 'Nike', image: (url) => setWidth(url, 1728) },
+  'adidas.com': { label: 'adidas', image: (url) => setWidth(url, 1500) },
   'levi.com': { label: "Levi's", image: (url) => setWidth(url, 1500) },
   'jcrew.com': { label: 'J.Crew', image: (url) => setWidth(url, 1500) },
   'madewell.com': { label: 'Madewell', image: (url) => setWidth(url, 1500) },
   'abercrombie.com': { label: 'Abercrombie & Fitch', image: (url) => setWidth(url, 1500) },
   'hollisterco.com': { label: 'Hollister', alias: 'abercrombie.com' },
-  'aritzia.com': { label: 'Aritzia', unblock: 'always', image: (url) => setWidth(url, 1500) },
-  'lululemon.com': { label: 'lululemon', unblock: 'always', image: (url) => setWidth(url, 1500) },
-  'macys.com': { label: "Macy's", unblock: 'always', image: (url) => setWidth(url, 1500) },
-  'zalando.com': { label: 'Zalando', unblock: 'always' },
-  'zalando.co.uk': { label: 'Zalando UK', unblock: 'always', alias: 'zalando.com' },
-  'endclothing.com': { label: 'END.', unblock: 'always' },
+  'aritzia.com': { label: 'Aritzia', image: (url) => setWidth(url, 1500) },
+  'lululemon.com': { label: 'lululemon', image: (url) => setWidth(url, 1500) },
+  'macys.com': { label: "Macy's", image: (url) => setWidth(url, 1500) },
+  'zalando.com': { label: 'Zalando' },
+  'zalando.co.uk': { label: 'Zalando UK', alias: 'zalando.com' },
+  'endclothing.com': { label: 'END.' },
   'boohoo.com': { label: 'boohoo' },
   'prettylittlething.com': { label: 'PrettyLittleThing' },
   'anthropologie.com': { label: 'Anthropologie', image: (url) => setWidth(url, 1500) },
@@ -123,7 +114,7 @@ const SITES = {
     // Flipkart sizes in the path: /image/128/128/... -> /image/1664/1664/...
     image: (url) => url.replace(/\/image\/\d+\/\d+\//, '/image/1664/1664/'),
   },
-  'amazon.in': { label: 'Amazon India', unblock: 'always', alias: 'amazon.com' },
+  'amazon.in': { label: 'Amazon India', alias: 'amazon.com' },
   'nykaafashion.com': { label: 'Nykaa Fashion', image: (url) => setWidth(url, 1500) },
   'tatacliq.com': { label: 'Tata CLiQ' },
   'bewakoof.com': {
@@ -133,7 +124,7 @@ const SITES = {
   'thesouledstore.com': { label: 'The Souled Store' },
   'westside.com': { label: 'Westside', image: (url) => setWidth(url, 1500) },
   'snapdeal.com': { label: 'Snapdeal' },
-  'zivame.com': { label: 'Zivame', unblock: 'always' },
+  'zivame.com': { label: 'Zivame' },
   'biba.in': { label: 'BIBA', image: (url) => setWidth(url, 1500) },
   'fabindia.com': { label: 'Fabindia', image: (url) => setWidth(url, 1500) },
   'lifestylestores.com': { label: 'Lifestyle' },

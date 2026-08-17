@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/app_motion.dart';
+import '../components/app_network_image.dart';
 import '../components/app_state.dart';
 import '../components/avatar.dart';
 import '../components/editorial_photo_frame.dart';
@@ -410,6 +411,15 @@ class _DiscoveryCard extends StatelessWidget {
     return _tileRatios[hash % _tileRatios.length];
   }
 
+  // Phone uploads are usually portrait photos with more breathing room than
+  // the tightly framed studio seed images. Adapt the feed crop to the tile's
+  // shape so generated posts keep the person prominent without over-cropping
+  // already-short masonry cards.
+  double get _editorialImageScale {
+    if (!post.backgroundStyle.startsWith('youcam:')) return 1;
+    return (0.80 / imageRatio).clamp(1.0, 1.24).toDouble();
+  }
+
   String get _categoryLabel {
     final category = post.garments.firstOrNull?.category;
     return switch (category) {
@@ -449,15 +459,18 @@ class _DiscoveryCard extends StatelessWidget {
                 children: [
                   Hero(
                     tag: 'post-${post.id}',
-                    child: Image.network(
-                      post.imageUrl,
-                      fit: BoxFit.cover,
-                      cacheWidth: cacheWidth,
-                      filterQuality: FilterQuality.medium,
-                      gaplessPlayback: true,
-                      errorBuilder: (_, _, _) => const ColoredBox(
-                        color: AppColors.sunken,
-                        child: Icon(Icons.broken_image_outlined),
+                    child: Transform.scale(
+                      key: Key('post-photo-crop-${post.id}'),
+                      scale: _editorialImageScale,
+                      alignment: Alignment.center,
+                      child: AppNetworkImage(
+                        url: post.imageUrl,
+                        fit: BoxFit.cover,
+                        cacheWidth: cacheWidth,
+                        error: const ColoredBox(
+                          color: AppColors.sunken,
+                          child: Icon(Icons.broken_image_outlined),
+                        ),
                       ),
                     ),
                   ),

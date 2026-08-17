@@ -5,12 +5,12 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
 import { extractProduct } from './extract.js';
-import { BROWSER_HEADERS, unblockerReady } from './fetchPage.js';
+import { BROWSER_HEADERS } from './fetchPage.js';
 import { googleConfigured } from './google.js';
 import { normalizeInput } from './links.js';
 import { readMedia, saveImageBuffer } from './media.js';
 import { supportedSites } from './sites.js';
-import { cutoutProvider, describeProduct } from './providers/index.js';
+import { cutoutProvider, describeProduct, researchConfigured } from './providers/index.js';
 import { configured as youcamConfigured } from './providers/youcam.js';
 import { authRoutes, meRoutes, userRoutes } from './routes/auth.js';
 import { collectionRoutes } from './routes/collections.js';
@@ -33,7 +33,7 @@ app.get('/health', (c) =>
     hasKey: Boolean(process.env.OPENAI_API_KEY),
     youcam: youcamConfigured ? 'configured' : 'missing-key',
     googleAuth: googleConfigured ? 'configured' : 'dev',
-    unblocker: unblockerReady() ? 'brightdata' : 'none',
+    productResearch: researchConfigured ? 'openai-web-search' : 'missing-key',
     sites: supportedSites().length,
   }),
 );
@@ -62,9 +62,13 @@ app.get('/api/sites', (c) => c.json({ sites: supportedSites() }));
  * Product image CDNs reject hotlinks with no referer far more often than they
  * reject an odd user-agent, so mirror the page we found the image on.
  */
-async function downloadImage(imageUrl, pageUrl) {
+async function downloadImage(imageUrl, pageUrl, { includeReferer = true } = {}) {
   return fetch(imageUrl, {
-    headers: { ...BROWSER_HEADERS, accept: 'image/avif,image/webp,image/*,*/*', referer: pageUrl },
+    headers: {
+      ...BROWSER_HEADERS,
+      accept: 'image/avif,image/webp,image/*,*/*',
+      ...(includeReferer ? { referer: pageUrl } : {}),
+    },
     redirect: 'follow',
     signal: AbortSignal.timeout(IMAGE_DOWNLOAD_TIMEOUT_MS),
   });
@@ -76,12 +80,37 @@ const galleryContentType = (response) =>
     .trim()
     .toLowerCase();
 
+const SUPPORTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']);
+
+/** Tries every discovered photo because retailer CDN links can expire independently. */
+async function downloadFirstProductImage(product) {
+  const candidates = [
+    product.imageUrl,
+    product.rawImageUrl,
+    ...(product.imageUrls || []),
+  ].filter(Boolean);
+
+  for (const imageUrl of [...new Set(candidates)]) {
+    for (const includeReferer of [true, false]) {
+      try {
+        const response = await downloadImage(imageUrl, product.pageUrl, { includeReferer });
+        if (!response.ok || !SUPPORTED_IMAGE_TYPES.has(galleryContentType(response))) continue;
+        const buffer = Buffer.from(await response.arrayBuffer());
+        if (buffer.length < 1024) continue;
+        return { response, buffer, sourceImage: imageUrl };
+      } catch {
+        // Some mirrors reject a foreign retailer referer; retry once without it.
+      }
+    }
+  }
+
+  throw Object.assign(new Error('Could not download any product image.'), { status: 422 });
+}
+
 async function persistProductImage(response) {
   if (!response.ok) return null;
   const contentType = galleryContentType(response);
-  if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(contentType)) {
-    return null;
-  }
+  if (!SUPPORTED_IMAGE_TYPES.has(contentType)) return null;
   return saveImageBuffer(Buffer.from(await response.arrayBuffer()), contentType, 'product');
 }
 
@@ -158,7 +187,7 @@ app.post('/api/ingest', async (c) => {
     // Accepts a raw paste: share text, a shortener, or an app deep link.
     stage = 'normalise';
     const url = normalizeInput(body?.url ?? body?.text);
-    mark('normalised', new URL(url).hostname);
+    mark('normalised', `${new URL(url).hostname} ${url}`);
 
     stage = 'extract-product';
     const product = await extractProduct(url);
@@ -177,20 +206,9 @@ app.post('/api/ingest', async (c) => {
     }
     category = category || inferFashionCategory(title, product.pageUrl);
 
-    // The upgraded (full-size) URL is a rewrite, so fall back to the original
-    // if the CDN does not recognise it.
     stage = 'download-image';
-    let imageResponse = await downloadImage(product.imageUrl, product.pageUrl);
-    let sourceImage = product.imageUrl;
-    if (!imageResponse.ok && product.rawImageUrl && product.rawImageUrl !== product.imageUrl) {
-      imageResponse = await downloadImage(product.rawImageUrl, product.pageUrl);
-      sourceImage = product.rawImageUrl;
-    }
-    if (!imageResponse.ok) {
-      throw Object.assign(new Error('Could not download the product image.'), { status: 422 });
-    }
-
-    const buffer = Buffer.from(await imageResponse.arrayBuffer());
+    const { response: imageResponse, buffer, sourceImage } =
+      await downloadFirstProductImage(product);
     mark('image-downloaded', `${Math.round(buffer.length / 1024)}KB`);
 
     stage = 'cache-gallery';
