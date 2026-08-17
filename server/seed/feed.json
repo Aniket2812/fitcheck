@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "users": [
     {
       "id": "demo-user-maya",
@@ -86,7 +86,7 @@
           "price": null,
           "imageUrl": "/media/maya-black-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/search/?text=women%20black%20wide%20leg%20trousers",
+          "buyUrl": "https://www.ajio.com/ajio-flat-front-high-rise-trousers/p/460286863_grey",
           "category": "lower_body",
           "x": 0.52,
           "y": 0.64
@@ -146,7 +146,7 @@
           "price": null,
           "imageUrl": "/media/arjun-white-sneakers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/s?k=men+minimal+white+leather+sneakers",
+          "buyUrl": "https://www.amazon.in/Souled-Store-Urban-Blaze-Sneaker/dp/B0CR1M4Z32",
           "category": "shoes",
           "x": 0.52,
           "y": 0.9
@@ -200,7 +200,7 @@
           "price": null,
           "imageUrl": "/media/zoya-black-sandals.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/black-heeled-sandals-women",
+          "buyUrl": "https://www.myntra.com/heels/metro/metro-women-black-solid-block-heeled-pumps/12007394/buy",
           "category": "shoes",
           "x": 0.49,
           "y": 0.9
@@ -254,7 +254,7 @@
           "price": null,
           "imageUrl": "/media/kabir-black-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/search/?text=men%20black%20tapered%20tailored%20trousers",
+          "buyUrl": "https://www.ajio.com/ajio-checked-slim-fit-flat-front-tapered-trousers/p/460453067_navy",
           "category": "lower_body",
           "x": 0.54,
           "y": 0.65
@@ -313,7 +313,7 @@
           "price": null,
           "imageUrl": "/media/rehan-white-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/search/?text=men%20white%20linen%20trousers",
+          "buyUrl": "https://www.ajio.com/ajio-checked-slim-fit-flat-front-tapered-trousers/p/460453067_navy",
           "category": "lower_body",
           "x": 0.52,
           "y": 0.65
@@ -325,7 +325,7 @@
           "price": null,
           "imageUrl": "/media/rehan-sunglasses.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/s?k=men+tortoiseshell+square+sunglasses",
+          "buyUrl": "https://www.amazon.in/CREEK-Blocking-anti-glare-Eyeglasses-Protection/dp/B09DW4DLZS",
           "category": "accessory",
           "x": 0.49,
           "y": 0.13
@@ -337,7 +337,7 @@
           "price": null,
           "imageUrl": "/media/rehan-brown-loafers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/men-brown-leather-penny-loafers",
+          "buyUrl": "https://www.myntra.com/casual-shoes/alberto-moreno/alberto-moreno-men-brown-casual-loafers-/14184726/buy",
           "category": "shoes",
           "x": 0.52,
           "y": 0.9
@@ -391,7 +391,7 @@
           "price": null,
           "imageUrl": "/media/zoya-black-skirt.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/black-midi-skirt-women",
+          "buyUrl": "https://www.myntra.com/skirts/sassafras/sassafras-black-midi-wrap-skirt/10604550/buy",
           "category": "lower_body",
           "x": 0.5,
           "y": 0.62
@@ -426,7 +426,7 @@
           "price": null,
           "imageUrl": "/media/maya-black-tank.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/search/?text=women%20black%20fitted%20tank%20top",
+          "buyUrl": "https://www.ajio.com/ajio-top-with-tied-sleeve-hems/p/460216517002",
           "category": "upper_body",
           "x": 0.5,
           "y": 0.32
@@ -450,7 +450,7 @@
           "price": null,
           "imageUrl": "/media/maya-black-shoulder-bag.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/small-black-shoulder-bag-women",
+          "buyUrl": "https://www.myntra.com/handbags/van-heusen-woman/van-heusen-woman-abstract-structured-shoulder-bag/35649930/buy",
           "category": "accessory",
           "x": 0.34,
           "y": 0.39
@@ -462,7 +462,7 @@
           "price": null,
           "imageUrl": "/media/maya-black-sandals.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/women-black-minimal-flat-sandals",
+          "buyUrl": "https://www.myntra.com/flats/cai/cai-women-black-toe-thong-flats/32478571/buy",
           "category": "shoes",
           "x": 0.52,
           "y": 0.9
@@ -492,7 +492,7 @@
           "price": null,
           "imageUrl": "/media/arjun-cream-polo.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/men-cream-textured-knit-polo",
+          "buyUrl": "https://www.myntra.com/tshirts/roadster/roadster-men-cream-coloured-pure-cotton-solid-polo-collar-t-shirt/18404710/buy",
           "category": "upper_body",
           "x": 0.52,
           "y": 0.33
@@ -504,7 +504,7 @@
           "price": null,
           "imageUrl": "/media/arjun-black-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/search/?text=men%20black%20relaxed%20tailored%20trousers",
+          "buyUrl": "https://www.ajio.com/ajio-checked-slim-fit-flat-front-tapered-trousers/p/460453067_navy",
           "category": "lower_body",
           "x": 0.51,
           "y": 0.63
@@ -528,7 +528,7 @@
           "price": null,
           "imageUrl": "/media/arjun-black-sunglasses.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/s?k=men+black+wayfarer+sunglasses",
+          "buyUrl": "https://www.amazon.in/CREEK-Blocking-anti-glare-Eyeglasses-Protection/dp/B09DW4DLZS",
           "category": "accessory",
           "x": 0.5,
           "y": 0.14
@@ -551,7 +551,7 @@
           "price": null,
           "imageUrl": "/media/zoya-brown-satin-blouse.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/women-brown-satin-shirt",
+          "buyUrl": "https://www.myntra.com/shirts/hm/hm-women-brown-satin-shirt/15960072/buy",
           "category": "upper_body",
           "x": 0.52,
           "y": 0.34
@@ -563,7 +563,7 @@
           "price": null,
           "imageUrl": "/media/zoya-cream-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/search/?text=women%20cream%20straight%20tailored%20trousers",
+          "buyUrl": "https://www.ajio.com/ajio-flat-front-high-rise-trousers/p/460286863_grey",
           "category": "lower_body",
           "x": 0.54,
           "y": 0.64
@@ -587,7 +587,7 @@
           "price": null,
           "imageUrl": "/media/zoya-brown-pumps.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/women-brown-pointed-pumps",
+          "buyUrl": "https://www.myntra.com/heels/nell/nell-women-brown-pumps/124149/buy",
           "category": "shoes",
           "x": 0.54,
           "y": 0.9
@@ -622,7 +622,7 @@
           "price": null,
           "imageUrl": "/media/maya-black-top.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/search/?text=women%20black%20fitted%20scoop%20neck%20top",
+          "buyUrl": "https://www.ajio.com/ajio-top-with-tied-sleeve-hems/p/460216517002",
           "category": "upper_body",
           "x": 0.5,
           "y": 0.41
@@ -646,7 +646,7 @@
           "price": null,
           "imageUrl": "/media/maya-black-boots.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/women-black-pointed-ankle-boots",
+          "buyUrl": "https://www.myntra.com/boots/roadster/roadster-women-black-ankle-boots/36931538/buy",
           "category": "shoes",
           "x": 0.52,
           "y": 0.89
@@ -676,7 +676,7 @@
           "price": null,
           "imageUrl": "/media/zoya-pink-cardigan.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/women-pink-cropped-cardigan",
+          "buyUrl": "https://www.myntra.com/sweaters/hm/hm-fine-knit-cardigan/39331498/buy",
           "category": "upper_body",
           "x": 0.51,
           "y": 0.33
@@ -688,7 +688,7 @@
           "price": null,
           "imageUrl": "/media/zoya-light-blue-jeans.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/search/?text=women%20light%20blue%20wide%20leg%20jeans",
+          "buyUrl": "https://www.ajio.com/styli-women-high-rise-wide-leg-jeans-with-cargo-pocket/p/700097546_blue",
           "category": "lower_body",
           "x": 0.52,
           "y": 0.63
@@ -712,7 +712,7 @@
           "price": null,
           "imageUrl": "/media/zoya-pink-shoulder-bag.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/mini-pink-shoulder-bag-women",
+          "buyUrl": "https://www.myntra.com/handbags/fastrack/fastrack-women-powder-pink-shoulder-bag/23676800/buy",
           "category": "accessory",
           "x": 0.34,
           "y": 0.38
@@ -735,7 +735,7 @@
           "price": null,
           "imageUrl": "/media/arjun-white-shirt.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/search/?text=men%20white%20relaxed%20cotton%20shirt",
+          "buyUrl": "https://www.ajio.com/ajio-men-slim-fit-cotton-shirt-with-curved-hem/p/460289078_white",
           "category": "upper_body",
           "x": 0.51,
           "y": 0.33
@@ -759,7 +759,7 @@
           "price": null,
           "imageUrl": "/media/arjun-brown-loafers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/men-dark-brown-leather-penny-loafers",
+          "buyUrl": "https://www.myntra.com/casual-shoes/alberto-moreno/alberto-moreno-men-brown-casual-loafers-/14184726/buy",
           "category": "shoes",
           "x": 0.5,
           "y": 0.89
@@ -794,7 +794,7 @@
           "price": null,
           "imageUrl": "/media/maya-cream-trousers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.ajio.com/search/?text=women%20cream%20wide%20leg%20tailored%20trousers",
+          "buyUrl": "https://www.ajio.com/ajio-flat-front-high-rise-trousers/p/460286863_grey",
           "category": "lower_body",
           "x": 0.54,
           "y": 0.64
@@ -806,7 +806,7 @@
           "price": null,
           "imageUrl": "/media/maya-cream-loafers.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/women-cream-horsebit-loafers",
+          "buyUrl": "https://www.myntra.com/casual-shoes/shoetopia/shoetopia-women-cream-coloured-solid-loafers/12801316/buy",
           "category": "shoes",
           "x": 0.52,
           "y": 0.9
@@ -818,7 +818,7 @@
           "price": null,
           "imageUrl": "/media/maya-black-shoulder-bag.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/s?k=women+black+curved+shoulder+bag",
+          "buyUrl": "https://www.amazon.in/EXOTIC-Womens-Punched-Sling-Black/dp/B09T73C8V8",
           "category": "accessory",
           "x": 0.37,
           "y": 0.47
@@ -860,7 +860,7 @@
           "price": null,
           "imageUrl": "/media/zoya-tan-sandals.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.myntra.com/women-tan-minimalist-heeled-sandals",
+          "buyUrl": "https://www.myntra.com/heels/guess/guess-women-tan-solid-slip-on-leather-wedge-sandals/36593969/buy",
           "category": "shoes",
           "x": 0.5,
           "y": 0.9
@@ -872,7 +872,7 @@
           "price": null,
           "imageUrl": "/media/zoya-gold-earrings.jpg",
           "originalImageUrl": null,
-          "buyUrl": "https://www.amazon.in/s?k=women+gold+filigree+drop+earrings",
+          "buyUrl": "https://www.amazon.in/Zaveri-Pearls-Contemporary-Earrings-Women-ZPFK15140/dp/B0BJFCHR4W",
           "category": "accessory",
           "x": 0.52,
           "y": 0.14

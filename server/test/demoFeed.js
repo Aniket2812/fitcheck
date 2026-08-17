@@ -42,6 +42,7 @@ try {
     'www.ajio.com',
     'www.flipkart.com',
   ]);
+  const retailerCounts = new Map();
   for (const post of posts) {
     assert.match(post.imageUrl, /^\/media\/[a-z0-9-]+\.jpg$/);
     const postImage = await readMedia(post.imageUrl.replace('/media/', ''));
@@ -67,9 +68,35 @@ try {
       const productUrl = new URL(garment.buyUrl);
       assert.equal(productUrl.protocol, 'https:');
       assert.ok(retailerHosts.has(productUrl.host));
+      retailerCounts.set(
+        productUrl.host,
+        (retailerCounts.get(productUrl.host) || 0) + 1,
+      );
+
+      if (productUrl.host === 'www.amazon.in') {
+        assert.match(productUrl.pathname, /\/dp\/[A-Z0-9]{10}$/);
+      }
+      if (productUrl.host === 'www.ajio.com') {
+        assert.match(productUrl.pathname, /\/p\/[a-z0-9_]+$/i);
+      }
+      if (productUrl.host === 'www.myntra.com') {
+        assert.match(productUrl.pathname, /\/\d+\/buy$/);
+      }
+      if (
+        ['www.amazon.in', 'www.ajio.com', 'www.myntra.com'].includes(
+          productUrl.host,
+        )
+      ) {
+        assert.equal(productUrl.pathname.startsWith('/search'), false);
+        assert.equal(productUrl.searchParams.has('k'), false);
+        assert.equal(productUrl.searchParams.has('text'), false);
+      }
     }
   }
   assert.equal(matchesByGarment.size, 53);
+  assert.ok(retailerCounts.get('www.amazon.in') >= 5);
+  assert.ok(retailerCounts.get('www.ajio.com') >= 8);
+  assert.ok(retailerCounts.get('www.myntra.com') >= 10);
 
   const accessoryCounts = posts.map(
     (post) =>
@@ -96,7 +123,7 @@ try {
   assert.ok(seededImage.bytes.length > 100_000);
 
   const persisted = JSON.parse(await readFile(process.env.DATA_FILE, 'utf8'));
-  assert.equal(persisted.demoFeedVersion, 5);
+  assert.equal(persisted.demoFeedVersion, 6);
   assert.equal(persisted.posts.length, 14);
 
   await store.loadStore();
@@ -130,7 +157,7 @@ try {
     2,
     Date.parse('2026-08-17T00:00:00.000Z'),
   );
-  assert.equal(migration.version, 5);
+  assert.equal(migration.version, 6);
   assert.equal(migrationDb.posts.size, 14);
   const migratedPost = migrationDb.posts.get('demo-post-city-layers');
   assert.deepEqual(migratedPost.likeUserIds, ['existing-viewer']);
