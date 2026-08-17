@@ -553,12 +553,12 @@ void main() {
       find.byKey(const Key('composer-no-collection-items')),
       findsOneWidget,
     );
-    expect(find.byKey(const Key('composer-no-saved-photos')), findsOneWidget);
-
-    expect(
-      find.text('Choose at least one product to continue.'),
-      findsOneWidget,
-    );
+    expect(find.text('Start with a piece you love'), findsOneWidget);
+    expect(find.byKey(const Key('composer-step-1')), findsOneWidget);
+    expect(find.byKey(const Key('composer-active-step-1')), findsOneWidget);
+    expect(find.byKey(const Key('composer-step-2')), findsNothing);
+    expect(find.byKey(const Key('composer-no-saved-photos')), findsNothing);
+    expect(find.byKey(const Key('outfit-preview-empty')), findsNothing);
   });
 
   testWidgets('shared fashion link asks which collection should receive it', (
@@ -801,7 +801,22 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('add-post-button')));
     await tester.pumpAndSettle();
+
+    // A preselected default photo must not skip the first guided step.
+    expect(find.byKey(const Key('composer-active-step-1')), findsOneWidget);
+    expect(find.byKey(const Key('composer-active-step-2')), findsNothing);
     await tester.tap(find.byKey(const Key('collection-item-top-1')));
+    await tester.pump();
+    expect(find.byKey(const Key('outfit-preview-empty')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('composer-pieces-next')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('composer-active-step-2')), findsOneWidget);
+    expect(find.byKey(const Key('outfit-preview-empty')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('composer-photo-next')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('composer-active-step-3')), findsOneWidget);
 
     expect(find.byKey(const Key('outfit-preview-empty')), findsOneWidget);
     expect(find.text('Your complete look will appear here'), findsOneWidget);
@@ -934,9 +949,17 @@ void main() {
     await tester.tap(find.byKey(const Key('add-post-button')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('collection-item-draft-shirt')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('composer-pieces-next')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('composer-photo-next')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('generate-outfit-button')));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField).last, 'Dinner downtown');
+    await tester.enterText(
+      find.byKey(const Key('composer-caption-field')),
+      'Dinner downtown',
+    );
     await tester.tap(find.byKey(const Key('save-fit-button')));
     await tester.pumpAndSettle();
     expect(savedFits.single.caption, 'Dinner downtown');
@@ -1077,6 +1100,9 @@ void main() {
         find.byKey(const Key('selected-piece-studio-shirt')),
         findsOneWidget,
       );
+
+      await tester.tap(find.byKey(const Key('composer-pieces-next')));
+      await tester.pumpAndSettle();
 
       // Camera/gallery choice is available inline; its platform picker is
       // separately covered by the try-on upload test.

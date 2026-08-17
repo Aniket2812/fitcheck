@@ -55,6 +55,7 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _caption = TextEditingController();
+  final _scrollController = ScrollController();
   List<FashionCollection> _collections = const [];
   List<ModelPhoto> _modelPhotos = const [];
   final Set<String> _selectedIds = {};
@@ -68,6 +69,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool _savingFit = false;
   bool _addingProduct = false;
   bool _uploadingPhoto = false;
+  int _activeStep = 0;
   String? _error;
 
   List<CollectionItem> get _selectedItems => _collections
@@ -328,7 +330,45 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   void dispose() {
     _caption.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _showStep(int step) {
+    final unlocked = switch (step) {
+      0 => true,
+      1 => _selectedItems.isNotEmpty,
+      2 => _selectedItems.isNotEmpty && _selectedModelPhoto != null,
+      _ => false,
+    };
+    if (!unlocked) return;
+    setState(() {
+      _activeStep = step;
+      _error = null;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: AppMotion.standard,
+          curve: AppMotion.curve,
+        );
+      }
+    });
+  }
+
+  void _continueFromPieces() {
+    if (_selectedItems.isEmpty) {
+      return _setError('Choose at least one product to continue.');
+    }
+    _showStep(1);
+  }
+
+  void _continueFromPhoto() {
+    if (_selectedModelPhoto == null) {
+      return _setError('Choose or add a full-body photo to continue.');
+    }
+    _showStep(2);
   }
 
   void _toggle(CollectionItem item) {
@@ -482,6 +522,265 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (mounted) setState(() => _error = message);
   }
 
+  Widget _stepCard({
+    required int step,
+    required String title,
+    required String subtitle,
+    required List<Widget> children,
+  }) => Container(
+    key: Key('composer-step-${step + 1}'),
+    padding: const EdgeInsets.all(AppSpacing.x3),
+    decoration: BoxDecoration(
+      color: AppColors.raised,
+      borderRadius: BorderRadius.circular(AppRadii.large),
+      border: Border.all(color: AppColors.borderDefault),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _StepTitle(number: '0${step + 1}', title: title, subtitle: subtitle),
+        const SizedBox(height: AppSpacing.x3),
+        ...children,
+      ],
+    ),
+  );
+
+  Widget _buildPiecesStep() => _stepCard(
+    step: 0,
+    title: 'Build your outfit',
+    subtitle:
+        'Choose compatible pieces from your collections, or bring in a new fashion link.',
+    children: [
+      Row(
+        children: [
+          Expanded(
+            child: FilledButton.icon(
+              key: const Key('composer-add-product-button'),
+              onPressed: _addingProduct ? null : _addProduct,
+              icon: _addingProduct
+                  ? const SizedBox.square(
+                      dimension: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.add_link, size: 18),
+              label: Text(_addingProduct ? 'Fetching…' : 'Add product link'),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.x2),
+          Expanded(
+            child: OutlinedButton.icon(
+              key: const Key('composer-create-collection-button'),
+              onPressed: _addingProduct ? null : _createCollection,
+              icon: const Icon(Icons.create_new_folder_outlined, size: 18),
+              label: const Text('New collection'),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: AppSpacing.x3),
+      Row(
+        children: [
+          const Expanded(
+            child: Text(
+              'YOUR COLLECTIONS',
+              style: TextStyle(
+                color: AppColors.textMuted,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.5,
+              ),
+            ),
+          ),
+          TextButton.icon(
+            key: const Key('composer-refresh-button'),
+            onPressed: _load,
+            icon: const Icon(Icons.sync_rounded, size: 15),
+            label: const Text('Refresh'),
+          ),
+        ],
+      ),
+      const SizedBox(height: AppSpacing.x1),
+      _CollectionPicker(
+        collections: _collections,
+        selectedIds: _selectedIds,
+        onToggle: _toggle,
+      ),
+      if (_selectedItems.isNotEmpty) ...[
+        const SizedBox(height: AppSpacing.x2),
+        _SelectedPieces(items: _selectedItems, onRemove: _toggle),
+      ],
+      const SizedBox(height: AppSpacing.x3),
+      SizedBox(
+        width: double.infinity,
+        child: FilledButton.icon(
+          key: const Key('composer-pieces-next'),
+          onPressed: _selectedItems.isEmpty ? null : _continueFromPieces,
+          icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+          label: Text(
+            _selectedItems.isEmpty
+                ? 'Select a product to continue'
+                : 'Continue with ${_selectedItems.length} ${_selectedItems.length == 1 ? 'piece' : 'pieces'}',
+          ),
+        ),
+      ),
+    ],
+  );
+
+  Widget _buildPhotoStep() => _stepCard(
+    step: 1,
+    title: 'Choose your photo',
+    subtitle:
+        'Pick the full-body photo whose pose, framing, and background you want to keep.',
+    children: [
+      _SelectionSummary(
+        icon: Icons.checkroom_outlined,
+        title:
+            '${_selectedItems.length} ${_selectedItems.length == 1 ? 'piece' : 'pieces'} selected',
+        detail: _selectedItems.map((item) => item.title).join(' · '),
+        actionLabel: 'Edit pieces',
+        onAction: () => _showStep(0),
+      ),
+      const SizedBox(height: AppSpacing.x3),
+      _PhotoPicker(
+        photos: _modelPhotos,
+        selected: _selectedModelPhoto,
+        onSelect: _selectPhoto,
+      ),
+      const SizedBox(height: AppSpacing.x2),
+      SizedBox(
+        width: double.infinity,
+        child: OutlinedButton.icon(
+          key: const Key('composer-add-photo-button'),
+          onPressed: _uploadingPhoto ? null : _choosePhotoSource,
+          icon: _uploadingPhoto
+              ? const SizedBox.square(
+                  dimension: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.add_a_photo_outlined, size: 18),
+          label: Text(
+            _uploadingPhoto
+                ? 'Saving photo…'
+                : _modelPhotos.isEmpty
+                ? 'Add a full-body photo'
+                : 'Add another photo',
+          ),
+        ),
+      ),
+      const SizedBox(height: AppSpacing.x3),
+      SizedBox(
+        width: double.infinity,
+        child: FilledButton.icon(
+          key: const Key('composer-photo-next'),
+          onPressed: _selectedModelPhoto == null ? null : _continueFromPhoto,
+          icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+          label: Text(
+            _selectedModelPhoto == null
+                ? 'Choose a photo to continue'
+                : 'Continue to preview',
+          ),
+        ),
+      ),
+    ],
+  );
+
+  Widget _buildPreviewStep() => _stepCard(
+    step: 2,
+    title: 'Create your look',
+    subtitle:
+        'YouCam fits every selected piece while keeping your pose and original background unchanged.',
+    children: [
+      _SelectionSummary(
+        icon: Icons.person_outline_rounded,
+        title: _selectedModelPhoto?.label ?? 'Selected photo',
+        detail:
+            '${_selectedItems.length} ${_selectedItems.length == 1 ? 'piece' : 'pieces'} ready to fit',
+        actionLabel: 'Change',
+        onAction: () => _showStep(1),
+      ),
+      const SizedBox(height: AppSpacing.x3),
+      SizedBox(
+        width: double.infinity,
+        child: FilledButton.icon(
+          key: const Key('generate-outfit-button'),
+          onPressed: _generating ? null : _generate,
+          icon: _generating
+              ? const SizedBox.square(
+                  dimension: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.auto_awesome),
+          label: Text(
+            _generating
+                ? 'Fitting every piece…'
+                : _previewUrl == null
+                ? 'Generate outfit preview'
+                : 'Regenerate outfit',
+          ),
+        ),
+      ),
+      const SizedBox(height: AppSpacing.x2),
+      AspectRatio(
+        aspectRatio: 4 / 5,
+        child: _OutfitPreview(
+          imageUrl: _previewUrl,
+          garments: _garments,
+          selectedIndex: _selectedGarmentIndex,
+          generating: _generating,
+          onSelect: (index) => setState(() => _selectedGarmentIndex = index),
+          onPlace: _placeTag,
+        ),
+      ),
+      if (_previewUrl != null) ...[
+        const SizedBox(height: AppSpacing.x2),
+        const _PublishBackgroundNote(),
+        const SizedBox(height: AppSpacing.x3),
+        TextField(
+          key: const Key('composer-caption-field'),
+          controller: _caption,
+          maxLength: 500,
+          maxLines: 3,
+          decoration: const InputDecoration(
+            labelText: 'Caption',
+            hintText: 'Tell people about this fit…',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                key: const Key('save-fit-button'),
+                onPressed: _savingFit || _publishing ? null : _saveFit,
+                icon: _savingFit
+                    ? const SizedBox.square(
+                        dimension: 15,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.bookmark_add_outlined, size: 17),
+                label: Text(_savingFit ? 'Saving…' : 'Save fit'),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.x2),
+            Expanded(
+              child: FilledButton.icon(
+                key: const Key('publish-post-button'),
+                onPressed: _publishing || _savingFit ? null : _publish,
+                icon: _publishing
+                    ? const SizedBox.square(
+                        dimension: 15,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.arrow_upward_rounded, size: 17),
+                label: Text(_publishing ? 'Posting…' : 'Post outfit'),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ],
+  );
+
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: AppColors.canvas,
@@ -489,30 +788,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       title: const Text('Build an outfit'),
       backgroundColor: AppColors.canvas,
       surfaceTintColor: Colors.transparent,
-      actions: [
-        TextButton.icon(
-          key: const Key('save-fit-button'),
-          onPressed: _savingFit || _publishing ? null : _saveFit,
-          icon: _savingFit
-              ? const SizedBox.square(
-                  dimension: 15,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.bookmark_add_outlined, size: 17),
-          label: const Text('Save'),
-        ),
-        TextButton(
-          key: const Key('publish-post-button'),
-          onPressed: _publishing || _savingFit ? null : _publish,
-          child: _publishing
-              ? const SizedBox.square(
-                  dimension: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Post'),
-        ),
-        const SizedBox(width: AppSpacing.x2),
-      ],
     ),
     body: _loading
         ? const Center(child: CircularProgressIndicator())
@@ -524,184 +799,55 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 onRefresh: _load,
                 child: ListView(
                   key: const Key('outfit-studio'),
+                  controller: _scrollController,
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 28),
+                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 28),
                   children: [
                     _StudioProgress(
+                      activeStep: _activeStep,
                       hasPieces: _selectedIds.isNotEmpty,
                       hasPhoto: _selectedModelPhoto != null,
                       hasPreview: _previewUrl != null,
+                      onSelect: _showStep,
                     ),
                     const SizedBox(height: AppSpacing.x3),
-                    const _StepTitle(
-                      number: '01',
-                      title: 'Pick your pieces',
-                      subtitle:
-                          'Mix items from your collections. Tops, bottoms, dresses, and shoes stay category-aware.',
-                    ),
-                    const SizedBox(height: AppSpacing.x2),
-                    Wrap(
-                      spacing: AppSpacing.x2,
-                      runSpacing: AppSpacing.x2,
-                      children: [
-                        FilledButton.icon(
-                          key: const Key('composer-add-product-button'),
-                          onPressed: _addingProduct ? null : _addProduct,
-                          icon: _addingProduct
-                              ? const SizedBox.square(
-                                  dimension: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Icon(Icons.add_link, size: 18),
-                          label: Text(
-                            _addingProduct
-                                ? 'Fetching product…'
-                                : 'Add product link',
-                          ),
-                        ),
-                        OutlinedButton.icon(
-                          key: const Key('composer-create-collection-button'),
-                          onPressed: _addingProduct ? null : _createCollection,
-                          icon: const Icon(
-                            Icons.create_new_folder_outlined,
-                            size: 18,
-                          ),
-                          label: const Text('New collection'),
-                        ),
-                        IconButton.outlined(
-                          key: const Key('composer-refresh-button'),
-                          tooltip: 'Refresh studio data',
-                          onPressed: _load,
-                          icon: const Icon(Icons.refresh),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.x2),
-                    _CollectionPicker(
-                      collections: _collections,
-                      selectedIds: _selectedIds,
-                      onToggle: _toggle,
-                    ),
-                    if (_selectedItems.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.x2),
-                      _SelectedPieces(items: _selectedItems, onRemove: _toggle),
-                    ],
-                    const SizedBox(height: AppSpacing.x6),
-                    const _StepTitle(
-                      number: '02',
-                      title: 'Choose your photo',
-                      subtitle:
-                          'Select a full-body photo you already saved in My Photos.',
-                    ),
-                    const SizedBox(height: AppSpacing.x2),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: OutlinedButton.icon(
-                        key: const Key('composer-add-photo-button'),
-                        onPressed: _uploadingPhoto ? null : _choosePhotoSource,
-                        icon: _uploadingPhoto
-                            ? const SizedBox.square(
-                                dimension: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.add_a_photo_outlined, size: 18),
-                        label: Text(
-                          _uploadingPhoto
-                              ? 'Saving photo…'
-                              : _modelPhotos.isEmpty
-                              ? 'Add full-body photo'
-                              : 'Add another photo',
+                    AnimatedSwitcher(
+                      duration: AppMotion.standard,
+                      switchInCurve: AppMotion.curve,
+                      switchOutCurve: Curves.easeIn,
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0.025, 0),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.x2),
-                    _PhotoPicker(
-                      photos: _modelPhotos,
-                      selected: _selectedModelPhoto,
-                      onSelect: _selectPhoto,
-                    ),
-                    const SizedBox(height: AppSpacing.x6),
-                    const _StepTitle(
-                      number: '03',
-                      title: 'Create the look',
-                      subtitle:
-                          'YouCam fits every piece while keeping this photo’s pose, framing, and background unchanged.',
-                    ),
-                    const SizedBox(height: AppSpacing.x2),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.icon(
-                        key: const Key('generate-outfit-button'),
-                        onPressed: _generating ? null : _generate,
-                        icon: _generating
-                            ? const SizedBox.square(
-                                dimension: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.auto_awesome),
-                        label: Text(
-                          _generating
-                              ? 'Styling your complete look…'
-                              : _previewUrl == null
-                              ? 'Generate outfit preview'
-                              : 'Regenerate outfit',
-                        ),
-                      ),
-                    ),
-                    if (_selectedIds.isEmpty || _selectedModelPhoto == null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: AppSpacing.x2),
-                        child: Text(
-                          _selectedIds.isEmpty
-                              ? 'Choose at least one product to continue.'
-                              : 'Choose or add a full-body photo to continue.',
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: AppSpacing.x2),
-                    AspectRatio(
-                      aspectRatio: 4 / 5,
-                      child: _OutfitPreview(
-                        imageUrl: _previewUrl,
-                        garments: _garments,
-                        selectedIndex: _selectedGarmentIndex,
-                        generating: _generating,
-                        onSelect: (index) =>
-                            setState(() => _selectedGarmentIndex = index),
-                        onPlace: _placeTag,
-                      ),
-                    ),
-                    if (_previewUrl != null) ...[
-                      const SizedBox(height: AppSpacing.x2),
-                      const _PublishBackgroundNote(),
-                    ],
-                    const SizedBox(height: AppSpacing.x3),
-                    TextField(
-                      controller: _caption,
-                      maxLength: 500,
-                      maxLines: 3,
-                      decoration: const InputDecoration(
-                        labelText: 'Caption',
-                        hintText: 'Tell people about this fit…',
-                        border: OutlineInputBorder(),
-                      ),
+                      child: switch (_activeStep) {
+                        1 => _buildPhotoStep(),
+                        2 => _buildPreviewStep(),
+                        _ => _buildPiecesStep(),
+                      },
                     ),
                     if (_error != null)
                       Padding(
-                        padding: const EdgeInsets.only(top: AppSpacing.x2),
-                        child: Text(
-                          _error!,
-                          key: const Key('create-post-error'),
-                          style: const TextStyle(color: Color(0xFF8B5751)),
+                        padding: const EdgeInsets.only(top: AppSpacing.x3),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(AppSpacing.x2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF7EEEE),
+                            borderRadius: BorderRadius.circular(
+                              AppRadii.medium,
+                            ),
+                          ),
+                          child: Text(
+                            _error!,
+                            key: const Key('create-post-error'),
+                            style: const TextStyle(color: Color(0xFF8B5751)),
+                          ),
                         ),
                       ),
                   ],
@@ -742,74 +888,254 @@ class _PublishBackgroundNote extends StatelessWidget {
   );
 }
 
-class _StudioProgress extends StatelessWidget {
-  const _StudioProgress({
-    required this.hasPieces,
-    required this.hasPhoto,
-    required this.hasPreview,
+class _SelectionSummary extends StatelessWidget {
+  const _SelectionSummary({
+    required this.icon,
+    required this.title,
+    required this.detail,
+    required this.actionLabel,
+    required this.onAction,
   });
 
-  final bool hasPieces;
-  final bool hasPhoto;
-  final bool hasPreview;
+  final IconData icon;
+  final String title;
+  final String detail;
+  final String actionLabel;
+  final VoidCallback onAction;
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(
-      horizontal: AppSpacing.x3,
-      vertical: AppSpacing.x2,
-    ),
+    width: double.infinity,
+    padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
     decoration: BoxDecoration(
-      color: AppColors.raised,
-      borderRadius: BorderRadius.circular(AppRadii.large),
+      color: AppColors.sunken,
+      borderRadius: BorderRadius.circular(AppRadii.medium),
     ),
     child: Row(
       children: [
-        _ProgressNode(label: 'Pieces', complete: hasPieces),
-        const Expanded(child: Divider()),
-        _ProgressNode(label: 'Photo', complete: hasPhoto),
-        const Expanded(child: Divider()),
-        _ProgressNode(label: 'Preview', complete: hasPreview),
+        Container(
+          width: 34,
+          height: 34,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: AppColors.raised,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 17),
+        ),
+        const SizedBox(width: AppSpacing.x2),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              if (detail.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(
+                  detail,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.textMuted,
+                    fontSize: 10.5,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        TextButton(onPressed: onAction, child: Text(actionLabel)),
       ],
     ),
   );
 }
 
-class _ProgressNode extends StatelessWidget {
-  const _ProgressNode({required this.label, required this.complete});
+class _StudioProgress extends StatelessWidget {
+  const _StudioProgress({
+    required this.activeStep,
+    required this.hasPieces,
+    required this.hasPhoto,
+    required this.hasPreview,
+    required this.onSelect,
+  });
 
-  final String label;
+  final int activeStep;
+  final bool hasPieces;
+  final bool hasPhoto;
+  final bool hasPreview;
+  final ValueChanged<int> onSelect;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.fromLTRB(14, 12, 14, 13),
+    decoration: BoxDecoration(
+      color: AppColors.raised,
+      borderRadius: BorderRadius.circular(AppRadii.large),
+      border: Border.all(color: AppColors.borderDefault),
+    ),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            const Expanded(
+              child: Text(
+                'OUTFIT STUDIO',
+                style: TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.5,
+                ),
+              ),
+            ),
+            Text(
+              'STEP ${activeStep + 1} OF 3',
+              style: const TextStyle(
+                color: AppColors.textMuted,
+                fontSize: 9.5,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.1,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.x2),
+        Row(
+          children: [
+            _ProgressNode(
+              index: 0,
+              label: 'Pieces',
+              active: activeStep == 0,
+              complete: activeStep > 0,
+              enabled: true,
+              onTap: () => onSelect(0),
+            ),
+            _ProgressConnector(complete: activeStep > 0),
+            _ProgressNode(
+              index: 1,
+              label: 'Photo',
+              active: activeStep == 1,
+              complete: activeStep > 1,
+              enabled: hasPieces,
+              onTap: () => onSelect(1),
+            ),
+            _ProgressConnector(complete: activeStep > 1),
+            _ProgressNode(
+              index: 2,
+              label: hasPreview ? 'Ready' : 'Preview',
+              active: activeStep == 2,
+              complete: hasPreview,
+              enabled: hasPieces && hasPhoto,
+              onTap: () => onSelect(2),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+class _ProgressConnector extends StatelessWidget {
+  const _ProgressConnector({required this.complete});
+
   final bool complete;
 
   @override
-  Widget build(BuildContext context) => Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      AnimatedContainer(
-        duration: AppMotion.standard,
-        curve: AppMotion.curve,
-        width: 27,
-        height: 27,
-        decoration: BoxDecoration(
-          color: complete ? AppColors.fresh : AppColors.sunken,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: complete ? AppColors.fresh : AppColors.borderStrong,
-          ),
-        ),
-        child: AnimatedSwitcher(
-          duration: AppMotion.quick,
-          child: Icon(
-            complete ? Icons.check_rounded : Icons.circle_outlined,
-            key: ValueKey(complete),
-            size: 14,
-            color: complete ? AppColors.textPrimary : AppColors.textMuted,
-          ),
+  Widget build(BuildContext context) => Expanded(
+    child: AnimatedContainer(
+      duration: AppMotion.standard,
+      curve: AppMotion.curve,
+      height: 2,
+      margin: const EdgeInsets.only(bottom: 17),
+      color: complete ? AppColors.fresh : AppColors.borderDefault,
+    ),
+  );
+}
+
+class _ProgressNode extends StatelessWidget {
+  const _ProgressNode({
+    required this.index,
+    required this.label,
+    required this.active,
+    required this.complete,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final int index;
+  final String label;
+  final bool active;
+  final bool complete;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    selected: active,
+    enabled: enabled,
+    label: '$label step',
+    child: InkWell(
+      key: Key('composer-progress-step-${index + 1}'),
+      onTap: enabled ? onTap : null,
+      borderRadius: BorderRadius.circular(AppRadii.medium),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedContainer(
+              key: active ? Key('composer-active-step-${index + 1}') : null,
+              duration: AppMotion.standard,
+              curve: AppMotion.curve,
+              width: 29,
+              height: 29,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: active || complete ? AppColors.fresh : AppColors.sunken,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: active || complete
+                      ? AppColors.fresh
+                      : AppColors.borderStrong,
+                ),
+              ),
+              child: AnimatedSwitcher(
+                duration: AppMotion.quick,
+                child: complete
+                    ? const Icon(Icons.check_rounded, size: 15)
+                    : Text(
+                        '${index + 1}',
+                        key: ValueKey(active),
+                        style: TextStyle(
+                          color: enabled
+                              ? AppColors.textPrimary
+                              : AppColors.textMuted,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: enabled ? AppColors.textPrimary : AppColors.textMuted,
+                fontSize: 10.5,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
         ),
       ),
-      const SizedBox(height: AppSpacing.x1),
-      Text(label, style: const TextStyle(fontSize: 11)),
-    ],
+    ),
   );
 }
 
@@ -922,69 +1248,55 @@ class _CollectionPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (collections.isEmpty) {
-      return Container(
-        key: const Key('composer-no-collection-items'),
-        padding: const EdgeInsets.all(AppSpacing.x4),
-        decoration: BoxDecoration(
-          color: AppColors.sunken,
-          borderRadius: BorderRadius.circular(AppRadii.medium),
-          border: Border.all(color: AppColors.borderDefault),
-        ),
-        child: const Text(
-          'No products yet. Add a retailer link above or create a collection without leaving this studio.',
-          style: TextStyle(color: AppColors.textSecondary, height: 1.4),
-        ),
-      );
-    }
     final populated = collections
         .where((collection) => collection.items.isNotEmpty)
         .toList();
-    final empty = collections
-        .where((collection) => collection.items.isEmpty)
-        .toList();
+    if (populated.isEmpty) {
+      return Container(
+        key: const Key('composer-no-collection-items'),
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(18, 20, 18, 18),
+        decoration: BoxDecoration(
+          color: AppColors.sunken,
+          borderRadius: BorderRadius.circular(AppRadii.large),
+          border: Border.all(color: AppColors.borderDefault),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: AppColors.raised,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.checkroom_outlined, size: 22),
+            ),
+            const SizedBox(height: AppSpacing.x2),
+            const Text(
+              'Start with a piece you love',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: AppSpacing.x1),
+            Text(
+              collections.isEmpty
+                  ? 'Paste a product link, then choose or create a collection for it.'
+                  : '${collections.length} collections are ready. Add a product link and choose where it belongs.',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 12,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (empty.isNotEmpty) ...[
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.x3),
-            decoration: BoxDecoration(
-              color: AppColors.sunken,
-              borderRadius: BorderRadius.circular(AppRadii.medium),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Ready for your first product',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: AppSpacing.x2),
-                Wrap(
-                  spacing: AppSpacing.x2,
-                  runSpacing: AppSpacing.x1,
-                  children: empty
-                      .map(
-                        (collection) => Chip(
-                          key: Key('empty-collection-${collection.id}'),
-                          avatar: const Icon(Icons.folder_outlined, size: 16),
-                          label: Text(collection.name),
-                        ),
-                      )
-                      .toList(),
-                ),
-                const SizedBox(height: AppSpacing.x1),
-                const Text(
-                  'Tap Add product link and choose where to save it.',
-                  style: TextStyle(color: AppColors.textSecondary),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppSpacing.x3),
-        ],
         ...populated.map(
           (collection) => Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.x3),
