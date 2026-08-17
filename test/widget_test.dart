@@ -152,6 +152,94 @@ void main() {
     expect((feedLoads, photoLoads, collectionLoads), (1, 1, 1));
   });
 
+  testWidgets('collections use tailored cards, filters and quick add', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    const pixel =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==';
+    final collections = [
+      const FashionCollection(
+        id: 'tees',
+        name: 'T-shirts',
+        kind: 'tshirt',
+        isDefault: true,
+        items: [],
+      ),
+      const FashionCollection(
+        id: 'shirts',
+        name: 'Shirts & Tops',
+        kind: 'shirt',
+        isDefault: true,
+        items: [
+          CollectionItem(
+            id: 'saved-shirt',
+            collectionId: 'shirts',
+            title: 'Blue shirt',
+            imageUrl: pixel,
+            buyUrl: 'https://example.com/blue-shirt',
+            category: 'upper_body',
+          ),
+        ],
+      ),
+      const FashionCollection(
+        id: 'shoes',
+        name: 'Shoes',
+        kind: 'shoes',
+        isDefault: true,
+        items: [],
+      ),
+    ];
+
+    await tester.pumpWidget(
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: emptyFeed,
+        fetchModelPhotos: emptyModelPhotos,
+        fetchCollections: () async => collections,
+        checkYouCamConfigured: youCamOff,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('collections-tab')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('wardrobe-overview')), findsOneWidget);
+    expect(
+      find.text('Start with a tee you would wear on repeat.'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Add the pair that completes your next outfit.'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Share a product here or paste its buying link.'),
+      findsNothing,
+    );
+
+    await tester.tap(find.byKey(const Key('collection-filter-ready')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('collection-card-shirts')), findsOneWidget);
+    expect(find.byKey(const Key('collection-card-tees')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('quick-add-product-button')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const Key('quick-add-collection-shirts')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const Key('quick-add-collection-shirts')));
+    await tester.pumpAndSettle();
+    expect(find.text('Add to Shirts & Tops'), findsOneWidget);
+    expect(find.byKey(const Key('collection-product-link')), findsOneWidget);
+  });
+
   testWidgets('all home filters stay visible when unselected', (
     WidgetTester tester,
   ) async {
