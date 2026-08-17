@@ -10,6 +10,7 @@ import '../components/screen.dart';
 import '../components/shoppable_pieces.dart';
 import '../models/social_post.dart';
 import '../services/model_photo_service.dart';
+import '../services/saved_fit_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
 import 'post_detail_screen.dart';
@@ -26,6 +27,7 @@ class FeedScreen extends StatefulWidget {
     this.fetchModelPhotos = ModelPhotoService.fetchPhotos,
     this.uploadModelPhoto = ModelPhotoService.upload,
     this.generateTryOn = SocialService.createPostTryOn,
+    this.saveFit = SavedFitService.save,
     this.profileName = 'YouCam Creator',
     this.profileAvatarUrl,
     this.refreshGeneration = 0,
@@ -37,6 +39,7 @@ class FeedScreen extends StatefulWidget {
   final FetchModelPhotos fetchModelPhotos;
   final UploadModelPhoto uploadModelPhoto;
   final GeneratePostTryOn generateTryOn;
+  final SaveFitDraft saveFit;
   final String profileName;
   final String? profileAvatarUrl;
   final int refreshGeneration;
@@ -148,6 +151,7 @@ class _FeedScreenState extends State<FeedScreen> {
           fetchModelPhotos: widget.fetchModelPhotos,
           uploadModelPhoto: widget.uploadModelPhoto,
           generateTryOn: widget.generateTryOn,
+          saveFit: widget.saveFit,
         ),
       ),
     );

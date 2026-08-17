@@ -1183,6 +1183,9 @@ void main() {
       createdAt: DateTime(2026),
     );
     final result = Completer<String>();
+    String? savedImageUrl;
+    String? savedModelPhotoId;
+    List<PostGarment>? savedGarments;
 
     await tester.pumpWidget(
       CompeteApp(
@@ -1201,6 +1204,27 @@ void main() {
                   appliedCount: post.garments.length,
                   preservesSourceComposition: true,
                 ),
+              );
+            },
+        saveFitDraft:
+            ({
+              required String caption,
+              required String imageUrl,
+              required List<PostGarment> garments,
+              String? modelPhotoId,
+            }) async {
+              expect(caption, 'Borrow this look');
+              savedImageUrl = imageUrl;
+              savedModelPhotoId = modelPhotoId;
+              savedGarments = garments;
+              return SavedFit(
+                id: 'saved-from-try-on',
+                caption: caption,
+                imageUrl: imageUrl,
+                garments: garments,
+                modelPhotoId: modelPhotoId,
+                createdAt: DateTime(2026),
+                updatedAt: DateTime(2026),
               );
             },
         shareIntentReceiver: FakeShareIntentReceiver(),
@@ -1233,6 +1257,20 @@ void main() {
     expect(find.text('Your version is ready.'), findsOneWidget);
     expect(find.byKey(const Key('try-on-result-summary')), findsOneWidget);
     expect(find.textContaining('source composition retained'), findsOneWidget);
+
+    await tester.ensureVisible(find.byKey(const Key('save-try-on-fit-button')));
+    await tester.tap(find.byKey(const Key('save-try-on-fit-button')));
+    await tester.pumpAndSettle();
+
+    expect(savedImageUrl, 'https://example.com/my-look.jpg');
+    expect(savedModelPhotoId, 'my-photo');
+    expect(savedGarments?.map((garment) => garment.id), ['garment-try-on']);
+    expect(find.text('Ready for later'), findsOneWidget);
+    expect(find.text('Saved'), findsOneWidget);
+    expect(
+      find.text('Fit saved. Find it in Profile → Saved Fits.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('try-on can add a camera or gallery photo without leaving', (

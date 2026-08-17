@@ -309,6 +309,7 @@ class _CompeteAppState extends State<CompeteApp> {
                       widget.uploadModelPhoto ?? ModelPhotoService.upload,
                   generateTryOn:
                       widget.generatePostTryOn ?? SocialService.createPostTryOn,
+                  saveFit: widget.saveFitDraft ?? SavedFitService.save,
                 ),
                 _visitedTabs.contains(AppTab.photos)
                     ? ModelPhotosScreen(

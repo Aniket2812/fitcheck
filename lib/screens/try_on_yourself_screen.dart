@@ -6,6 +6,7 @@ import '../models/model_photo.dart';
 import '../models/post_try_on_result.dart';
 import '../models/social_post.dart';
 import '../services/model_photo_service.dart';
+import '../services/saved_fit_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
 
@@ -27,6 +28,7 @@ class TryOnYourselfScreen extends StatefulWidget {
     this.uploadModelPhoto = ModelPhotoService.upload,
     this.pickPhoto = _pickFullBodyPhoto,
     this.generateTryOn = SocialService.createPostTryOn,
+    this.saveFit = SavedFitService.save,
   });
 
   final SocialPost post;
@@ -34,6 +36,7 @@ class TryOnYourselfScreen extends StatefulWidget {
   final UploadModelPhoto uploadModelPhoto;
   final PickFullBodyPhoto pickPhoto;
   final GeneratePostTryOn generateTryOn;
+  final SaveFitDraft saveFit;
 
   @override
   State<TryOnYourselfScreen> createState() => _TryOnYourselfScreenState();
@@ -47,7 +50,10 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
   bool _loading = true;
   bool _uploading = false;
   bool _generating = false;
+  bool _saving = false;
+  bool _saved = false;
   bool _showOriginal = false;
+  String? _saveError;
 
   @override
   void initState() {
@@ -135,6 +141,8 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
         _photos = [photo, ..._photos.where((item) => item.id != photo.id)];
         _selected = photo;
         _result = null;
+        _saved = false;
+        _saveError = null;
         _showOriginal = false;
       });
     } catch (error) {
@@ -154,6 +162,9 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
       if (phase == 'try-on') {
         return 'The fitting service did not finish in time. Your original photo is unchanged; retry this look.';
       }
+      if (phase == 'save') {
+        return 'Could not save this fit. Keep the backend running and reconnect wireless debugging, then try again.';
+      }
       return 'Could not reach your photo library. Keep the backend running and reconnect wireless debugging, then try again.';
     }
     return message;
@@ -169,6 +180,8 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
     setState(() {
       _generating = true;
       _result = null;
+      _saved = false;
+      _saveError = null;
       _showOriginal = false;
       _error = null;
     });
@@ -184,6 +197,41 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
       }
     } finally {
       if (mounted) setState(() => _generating = false);
+    }
+  }
+
+  Future<void> _saveResult() async {
+    final result = _result;
+    final photo = _selected;
+    if (result == null || photo == null || _saving || _saved) return;
+
+    setState(() {
+      _saving = true;
+      _saveError = null;
+    });
+    try {
+      await widget.saveFit(
+        caption: widget.post.caption,
+        imageUrl: result.imageUrl,
+        garments: widget.post.garments,
+        modelPhotoId: photo.id,
+      );
+      if (!mounted) return;
+      setState(() {
+        _saving = false;
+        _saved = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Fit saved. Find it in Profile → Saved Fits.'),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _saving = false;
+        _saveError = _friendlyError(error, phase: 'save');
+      });
     }
   }
 
@@ -294,6 +342,13 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                   appliedCount: _result!.appliedCount,
                   compositionPreserved: _result!.preservesSourceComposition,
                 ),
+                const SizedBox(height: AppSpacing.x2),
+                _SaveFitAction(
+                  saving: _saving,
+                  saved: _saved,
+                  error: _saveError,
+                  onSave: _saveResult,
+                ),
               ],
               const SizedBox(height: AppSpacing.x3),
               if (_photos.isEmpty)
@@ -349,7 +404,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                     ),
                     TextButton.icon(
                       key: const Key('try-on-add-another-photo-button'),
-                      onPressed: _uploading || _generating
+                      onPressed: _uploading || _generating || _saving
                           ? null
                           : _chooseSource,
                       icon: const Icon(Icons.add_a_photo_outlined, size: 17),
@@ -377,11 +432,13 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                       final active = photo.id == _selected?.id;
                       return InkWell(
                         key: Key('try-on-photo-${photo.id}'),
-                        onTap: _generating
+                        onTap: _generating || _saving
                             ? null
                             : () => setState(() {
                                 _selected = photo;
                                 _result = null;
+                                _saved = false;
+                                _saveError = null;
                                 _showOriginal = false;
                               }),
                         child: Container(
@@ -420,7 +477,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                 const SizedBox(height: AppSpacing.x2),
                 FilledButton.icon(
                   key: const Key('run-try-on-button'),
-                  onPressed: _generating ? null : _generate,
+                  onPressed: _generating || _saving ? null : _generate,
                   icon: const Icon(Icons.auto_awesome),
                   label: Text(
                     _generating
@@ -527,6 +584,102 @@ class _ResultSummary extends StatelessWidget {
             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
         ),
+      ],
+    ),
+  );
+}
+
+class _SaveFitAction extends StatelessWidget {
+  const _SaveFitAction({
+    required this.saving,
+    required this.saved,
+    required this.error,
+    required this.onSave,
+  });
+
+  final bool saving;
+  final bool saved;
+  final String? error;
+  final VoidCallback onSave;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    key: const Key('try-on-save-fit-card'),
+    padding: const EdgeInsets.all(AppSpacing.x2),
+    decoration: BoxDecoration(
+      color: saved ? const Color(0xFFF0F5EF) : AppColors.raised,
+      border: Border.all(
+        color: saved ? const Color(0xFFBDD0B9) : AppColors.borderDefault,
+      ),
+      borderRadius: BorderRadius.circular(AppRadii.medium),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    saved ? 'Ready for later' : 'Keep this version',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    saved
+                        ? 'Saved privately with every shoppable piece.'
+                        : 'Save privately, then post it anytime from Profile.',
+                    style: const TextStyle(
+                      color: AppColors.textMuted,
+                      fontSize: 11,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.x2),
+            FilledButton.icon(
+              key: const Key('save-try-on-fit-button'),
+              onPressed: saving || saved ? null : onSave,
+              icon: saving
+                  ? const SizedBox.square(
+                      dimension: 15,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(
+                      saved
+                          ? Icons.bookmark_added_outlined
+                          : Icons.bookmark_add_outlined,
+                      size: 18,
+                    ),
+              label: Text(
+                saving
+                    ? 'Saving…'
+                    : saved
+                    ? 'Saved'
+                    : 'Save fit',
+              ),
+            ),
+          ],
+        ),
+        if (error != null) ...[
+          const SizedBox(height: AppSpacing.x2),
+          Text(
+            error!,
+            key: const Key('save-try-on-fit-error'),
+            style: const TextStyle(
+              color: Color(0xFF6F4541),
+              fontSize: 11,
+              height: 1.35,
+            ),
+          ),
+        ],
       ],
     ),
   );
