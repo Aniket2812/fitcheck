@@ -3,6 +3,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { validateYouCamSourceImage } from './imageInfo.js';
+
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const MEDIA_DIR = process.env.MEDIA_DIR || join(HERE, '..', 'data', 'media');
 const SEED_MEDIA_DIR = join(HERE, '..', 'seed', 'media');
@@ -38,6 +40,21 @@ export async function saveUploadedImage(file, prefix = 'post') {
     throw new MediaError('Choose an outfit photo.');
   }
   return persist(Buffer.from(await file.arrayBuffer()), file.type, prefix);
+}
+
+export async function saveModelPhoto(file) {
+  if (!file || typeof file.arrayBuffer !== 'function') {
+    throw new MediaError('Choose a full-body photo.');
+  }
+  const bytes = Buffer.from(await file.arrayBuffer());
+  let info;
+  try {
+    info = validateYouCamSourceImage(bytes);
+  } catch (error) {
+    throw new MediaError(error.message, error.status || 422);
+  }
+  const imageUrl = await persist(bytes, info.contentType, 'model');
+  return { imageUrl, ...info };
 }
 
 export async function saveImageBuffer(buffer, contentType, prefix = 'image') {

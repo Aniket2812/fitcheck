@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 
 const baseUrl = process.env.TEST_BASE_URL || 'http://127.0.0.1:8787';
 const identity = `http-photo-${Date.now()}`;
@@ -14,12 +15,15 @@ assert.equal(signIn.status, 200);
 const { token } = await signIn.json();
 const authorization = `Bearer ${token}`;
 
-const pixel = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==',
-  'base64',
+const fullBodyPhoto = await readFile(
+  new URL('../seed/media/studio-arjun-denim-day.jpg', import.meta.url),
 );
 const form = new FormData();
-form.append('image', new Blob([pixel], { type: 'image/png' }), 'full-body.png');
+form.append(
+  'image',
+  new Blob([fullBodyPhoto], { type: 'image/jpeg' }),
+  'full-body.jpg',
+);
 
 const upload = await fetch(`${baseUrl}/api/model-photos`, {
   method: 'POST',
@@ -29,6 +33,9 @@ const upload = await fetch(`${baseUrl}/api/model-photos`, {
 assert.equal(upload.status, 201);
 const { photo } = await upload.json();
 assert.equal(photo.isPrimary, true);
+assert.ok(photo.width >= 512);
+assert.ok(photo.height >= 512);
+assert.equal(photo.youCamReady, true);
 
 const list = await fetch(`${baseUrl}/api/model-photos`, {
   headers: { authorization },

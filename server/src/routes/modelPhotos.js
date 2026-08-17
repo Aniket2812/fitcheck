@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 
-import { MediaError, saveUploadedImage } from '../media.js';
+import { MediaError, saveModelPhoto } from '../media.js';
 import {
   addModelPhoto,
   deleteModelPhoto,
@@ -21,8 +21,13 @@ modelPhotos.get('/', (c) =>
 modelPhotos.post('/', async (c) => {
   try {
     const body = await c.req.parseBody();
-    const imageUrl = await saveUploadedImage(body.image, 'model');
-    const photo = await addModelPhoto(c.get('user').id, imageUrl, body.label);
+    const saved = await saveModelPhoto(body.image);
+    const photo = await addModelPhoto(
+      c.get('user').id,
+      saved.imageUrl,
+      body.label,
+      { width: saved.width, height: saved.height },
+    );
     return c.json({ photo }, 201);
   } catch (error) {
     if (error instanceof MediaError || error instanceof ProfileError) {

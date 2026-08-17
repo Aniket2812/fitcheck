@@ -282,6 +282,9 @@ function projectedModelPhoto(photo) {
     imageUrl: photo.imageUrl,
     label: photo.label,
     isPrimary: Boolean(photo.isPrimary),
+    width: photo.width || null,
+    height: photo.height || null,
+    youCamReady: true,
     createdAt: photo.createdAt,
   };
 }
@@ -297,7 +300,7 @@ export function findModelPhoto(userId, photoId) {
   return user?.modelPhotos?.find((photo) => photo.id === photoId) || null;
 }
 
-export async function addModelPhoto(userId, imageUrl, label) {
+export async function addModelPhoto(userId, imageUrl, label, metadata = {}) {
   const user = db.users.get(userId);
   if (!user) throw new ProfileError('No such account.', 404);
   const photos = user.modelPhotos || [];
@@ -311,6 +314,8 @@ export async function addModelPhoto(userId, imageUrl, label) {
     imageUrl,
     label: cleanLabel || `Photo ${photos.length + 1}`,
     isPrimary: photos.length === 0,
+    width: Number(metadata.width) || null,
+    height: Number(metadata.height) || null,
     createdAt: new Date().toISOString(),
   };
   user.modelPhotos = [...photos, photo];
