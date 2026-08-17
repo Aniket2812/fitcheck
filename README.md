@@ -24,12 +24,12 @@ npm install
 npm start
 ```
 
-Android emulators use `http://10.0.2.2:8787`; iOS simulators and web use
-`http://localhost:8787`.
-For a physical device or another host, pass the server URL explicitly:
+The app uses `https://youcam2.15-206-240-61.sslip.io` by default. To develop
+against a local backend, pass its URL explicitly. With wireless Android
+debugging, keep `adb reverse tcp:8787 tcp:8787` active and run:
 
 ```sh
-flutter run --dart-define=API_URL=http://192.168.1.10:8787
+flutter run --dart-define=API_URL=http://127.0.0.1:8787
 ```
 
 ## Outfit publishing flow

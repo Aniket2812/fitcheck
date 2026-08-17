@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/closet_item.dart';
@@ -9,18 +8,12 @@ import '../models/closet_item.dart';
 typedef IngestLink = Future<ClosetItem> Function(String url);
 
 abstract final class IngestService {
+  static const productionApiUrl = 'https://youcam2.15-206-240-61.sslip.io';
+
   static String get apiUrl {
     const configured = String.fromEnvironment('API_URL');
     if (configured.isNotEmpty) return configured;
-
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      // This project is demoed on a physical Android phone over wireless ADB.
-      // `adb reverse tcp:8787 tcp:8787` exposes the Mac backend here. The old
-      // 10.0.2.2 default only works inside an Android emulator and caused every
-      // physical-phone request to sit until its client timeout.
-      return 'http://127.0.0.1:8787';
-    }
-    return 'http://localhost:8787';
+    return productionApiUrl;
   }
 
   static Future<ClosetItem> ingest(String url) async {
