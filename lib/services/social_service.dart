@@ -72,7 +72,7 @@ abstract final class SocialService {
 
   static List<SocialPost> _posts(List<dynamic> posts) => posts
       .whereType<Map>()
-      .map((post) => _post(Map<String, dynamic>.from(post)))
+      .map((post) => postFromJson(Map<String, dynamic>.from(post)))
       .toList();
 
   static Future<List<SocialPost>> _cachedPosts() async {
@@ -113,7 +113,7 @@ abstract final class SocialService {
           .timeout(const Duration(seconds: 30));
       final data = _json(response);
       _ensureSuccess(response, data);
-      return _post(Map<String, dynamic>.from(data['post'] as Map));
+      return postFromJson(Map<String, dynamic>.from(data['post'] as Map));
     }
     if (photo == null) throw Exception('Choose an outfit photo.');
     final request = http.MultipartRequest(
@@ -137,7 +137,7 @@ abstract final class SocialService {
     final response = await http.Response.fromStream(streamed);
     final data = _json(response);
     _ensureSuccess(response, data);
-    return _post(Map<String, dynamic>.from(data['post'] as Map));
+    return postFromJson(Map<String, dynamic>.from(data['post'] as Map));
   }
 
   static Future<SocialPost> toggleLike(String postId) async {
@@ -150,7 +150,7 @@ abstract final class SocialService {
         .timeout(const Duration(seconds: 15));
     final data = _json(response);
     _ensureSuccess(response, data);
-    return _post(Map<String, dynamic>.from(data['post'] as Map));
+    return postFromJson(Map<String, dynamic>.from(data['post'] as Map));
   }
 
   static Future<SocialPost> addComment(String postId, String text) async {
@@ -167,7 +167,7 @@ abstract final class SocialService {
         .timeout(const Duration(seconds: 15));
     final data = _json(response);
     _ensureSuccess(response, data);
-    return _post(Map<String, dynamic>.from(data['post'] as Map));
+    return postFromJson(Map<String, dynamic>.from(data['post'] as Map));
   }
 
   static Future<bool> youCamConfigured() async {
@@ -310,7 +310,7 @@ abstract final class SocialService {
     }
   }
 
-  static SocialPost _post(Map<String, dynamic> json) {
+  static SocialPost postFromJson(Map<String, dynamic> json) {
     json['imageUrl'] = mediaUrl(json['imageUrl']?.toString() ?? '');
     final garments = json['garments'];
     if (garments is List) {

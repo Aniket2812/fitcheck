@@ -9,6 +9,7 @@ import '../models/social_post.dart';
 import '../services/collection_service.dart';
 import '../services/ingest_service.dart';
 import '../services/model_photo_service.dart';
+import '../services/saved_fit_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
 
@@ -34,6 +35,7 @@ class CreatePostScreen extends StatefulWidget {
     this.pickPhoto = _pickComposerPhoto,
     this.checkYouCamConfigured = SocialService.youCamConfigured,
     this.generateOutfit = SocialService.createOutfitLook,
+    this.saveFit = SavedFitService.save,
   });
 
   final FetchCollections fetchCollections;
@@ -45,6 +47,7 @@ class CreatePostScreen extends StatefulWidget {
   final PickComposerPhoto pickPhoto;
   final CheckYouCamConfigured checkYouCamConfigured;
   final GenerateOutfitLook generateOutfit;
+  final SaveFitDraft saveFit;
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -62,6 +65,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool _youCamConfigured = false;
   bool _generating = false;
   bool _publishing = false;
+  bool _savingFit = false;
   bool _addingProduct = false;
   bool _uploadingPhoto = false;
   String? _error;
@@ -427,6 +431,44 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
+  Future<void> _saveFit() async {
+    if (_garments.isEmpty) {
+      return _setError('Choose at least one collection item.');
+    }
+    if (_selectedModelPhoto == null) {
+      return _setError('Choose a saved full-body photo from My Photos.');
+    }
+    if (_generating) {
+      return _setError('Wait for your outfit preview to finish.');
+    }
+    final preview = _previewUrl;
+    if (preview == null) {
+      return _setError('Generate your outfit preview before saving this fit.');
+    }
+    setState(() {
+      _savingFit = true;
+      _error = null;
+    });
+    try {
+      await widget.saveFit(
+        caption: _caption.text,
+        imageUrl: preview,
+        garments: _garments,
+        modelPhotoId: _selectedModelPhoto?.id,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Fit saved. Open Profile whenever you are ready.'),
+        ),
+      );
+      Navigator.pop(context);
+    } catch (error) {
+      _setError(error.toString().replaceFirst('Exception: ', ''));
+      if (mounted) setState(() => _savingFit = false);
+    }
+  }
+
   void _placeTag(TapDownDetails details, Size size) {
     final garments = _garments;
     if (garments.isEmpty || _selectedGarmentIndex >= garments.length) return;
@@ -448,9 +490,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       backgroundColor: AppColors.canvas,
       surfaceTintColor: Colors.transparent,
       actions: [
+        TextButton.icon(
+          key: const Key('save-fit-button'),
+          onPressed: _savingFit || _publishing ? null : _saveFit,
+          icon: _savingFit
+              ? const SizedBox.square(
+                  dimension: 15,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.bookmark_add_outlined, size: 17),
+          label: const Text('Save'),
+        ),
         TextButton(
           key: const Key('publish-post-button'),
-          onPressed: _publishing ? null : _publish,
+          onPressed: _publishing || _savingFit ? null : _publish,
           child: _publishing
               ? const SizedBox.square(
                   dimension: 18,

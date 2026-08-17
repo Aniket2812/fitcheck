@@ -4,11 +4,15 @@ import '../components/app_motion.dart';
 import '../components/app_state.dart';
 import '../components/avatar.dart';
 import '../components/editorial_photo_frame.dart';
+import '../components/garment_image.dart';
+import '../models/saved_fit.dart';
 import '../models/social_post.dart';
 import '../models/user_profile.dart';
 import '../services/profile_service.dart';
+import '../services/saved_fit_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
+import 'get_ready_screen.dart';
 import 'post_detail_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,11 +21,19 @@ class ProfileScreen extends StatefulWidget {
     this.fetchProfile = ProfileService.fetchMe,
     this.updateProfile = ProfileService.update,
     this.fetchPosts = SocialService.fetchPosts,
+    this.fetchSavedFits = SavedFitService.fetch,
+    this.publishSavedFit = SavedFitService.publish,
+    this.deleteSavedFit = SavedFitService.delete,
+    this.onPublished,
   });
 
   final FetchProfile fetchProfile;
   final UpdateProfile updateProfile;
   final FetchProfilePosts fetchPosts;
+  final FetchSavedFits fetchSavedFits;
+  final PublishSavedFit publishSavedFit;
+  final DeleteSavedFit deleteSavedFit;
+  final ValueChanged<SocialPost>? onPublished;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -32,6 +44,7 @@ typedef FetchProfilePosts = Future<List<SocialPost>> Function();
 class _ProfileScreenState extends State<ProfileScreen> {
   UserProfile? _profile;
   List<SocialPost> _posts = const [];
+  List<SavedFit> _savedFits = const [];
   bool _loading = true;
   String? _error;
 
@@ -49,12 +62,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final profileFuture = widget.fetchProfile();
       final postsFuture = widget.fetchPosts();
+      final savedFitsFuture = widget.fetchSavedFits();
       final profile = await profileFuture;
       final posts = await postsFuture;
+      final savedFits = await savedFitsFuture;
       if (!mounted) return;
       setState(() {
         _profile = profile;
         _posts = posts.where((post) => post.author.id == profile.id).toList();
+        _savedFits = savedFits;
         _loading = false;
       });
     } catch (error) {
@@ -63,6 +79,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _loading = false;
         _error = error.toString().replaceFirst('Exception: ', '');
       });
+    }
+  }
+
+  Future<void> _openSavedFit(SavedFit fit) async {
+    final post = await Navigator.push<SocialPost>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => GetReadyScreen(
+          fit: fit,
+          publishFit: widget.publishSavedFit,
+          deleteFit: widget.deleteSavedFit,
+        ),
+      ),
+    );
+    if (!mounted) return;
+    await _load();
+    if (post != null && mounted) {
+      widget.onPublished?.call(post);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your saved fit is now live.')),
+      );
     }
   }
 
@@ -110,8 +147,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         : _ProfileContent(
             profile: _profile!,
             posts: _posts,
+            savedFits: _savedFits,
             onRefresh: _load,
             onEdit: _edit,
+            onOpenSavedFit: _openSavedFit,
           ),
   );
 }
@@ -120,14 +159,18 @@ class _ProfileContent extends StatelessWidget {
   const _ProfileContent({
     required this.profile,
     required this.posts,
+    required this.savedFits,
     required this.onRefresh,
     required this.onEdit,
+    required this.onOpenSavedFit,
   });
 
   final UserProfile profile;
   final List<SocialPost> posts;
+  final List<SavedFit> savedFits;
   final Future<void> Function() onRefresh;
   final VoidCallback onEdit;
+  final ValueChanged<SavedFit> onOpenSavedFit;
 
   @override
   Widget build(BuildContext context) {
@@ -232,6 +275,67 @@ class _ProfileContent extends StatelessWidget {
               ),
             ),
           ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 2, 16, 10),
+              child: Row(
+                children: [
+                  const Icon(Icons.bookmarks_outlined, size: 16),
+                  const SizedBox(width: AppSpacing.x2),
+                  const Text(
+                    'SAVED FITS',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.freshSoft,
+                      borderRadius: BorderRadius.circular(AppRadii.pill),
+                    ),
+                    child: Text(
+                      '${savedFits.length}',
+                      key: const Key('saved-fits-count'),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (savedFits.isEmpty)
+            const SliverToBoxAdapter(child: _EmptySavedFits())
+          else
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 224,
+                child: ListView.separated(
+                  key: const Key('saved-fits-list'),
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
+                  itemCount: savedFits.length,
+                  separatorBuilder: (_, _) =>
+                      const SizedBox(width: AppSpacing.x2),
+                  itemBuilder: (context, index) => AppReveal(
+                    delay: Duration(milliseconds: index * 35),
+                    child: _SavedFitCard(
+                      fit: savedFits[index],
+                      onTap: () => onOpenSavedFit(savedFits[index]),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -283,6 +387,107 @@ class _ProfileContent extends StatelessWidget {
       ),
     );
   }
+}
+
+class _SavedFitCard extends StatelessWidget {
+  const _SavedFitCard({required this.fit, required this.onTap});
+
+  final SavedFit fit;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: 146,
+    child: Material(
+      key: Key('saved-fit-card-${fit.id}'),
+      color: AppColors.raised,
+      borderRadius: BorderRadius.circular(AppRadii.medium),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: SizedBox(
+                width: double.infinity,
+                child: GarmentImage(
+                  source: fit.imageUrl,
+                  semanticLabel: 'Saved fit preview',
+                  cacheWidth: 520,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.x2),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          fit.caption.isEmpty ? 'Untitled fit' : fit.caption,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${fit.garments.length} pieces · Get ready',
+                          style: const TextStyle(
+                            color: AppColors.textMuted,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_rounded, size: 16),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _EmptySavedFits extends StatelessWidget {
+  const _EmptySavedFits();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+    child: Container(
+      padding: const EdgeInsets.all(AppSpacing.x3),
+      decoration: BoxDecoration(
+        color: AppColors.sunken,
+        borderRadius: BorderRadius.circular(AppRadii.large),
+      ),
+      child: const Row(
+        children: [
+          Icon(Icons.bookmark_add_outlined, color: AppColors.textMuted),
+          SizedBox(width: AppSpacing.x3),
+          Expanded(
+            child: Text(
+              'Save a generated look from Build an outfit and it will wait here until you are ready.',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 12,
+                height: 1.35,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class _Stat extends StatelessWidget {

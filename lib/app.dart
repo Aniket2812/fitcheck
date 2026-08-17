@@ -21,6 +21,7 @@ import 'services/ingest_service.dart';
 import 'services/collection_service.dart';
 import 'services/model_photo_service.dart';
 import 'services/profile_service.dart';
+import 'services/saved_fit_service.dart';
 import 'services/share_intent_service.dart';
 import 'services/social_service.dart';
 import 'theme/app_theme.dart';
@@ -44,6 +45,10 @@ class CompeteApp extends StatefulWidget {
     this.createCollection,
     this.saveCollectionItem,
     this.deleteCollectionItem,
+    this.fetchSavedFits,
+    this.saveFitDraft,
+    this.publishSavedFit,
+    this.deleteSavedFit,
   });
 
   final IngestLink? ingestLink;
@@ -62,6 +67,10 @@ class CompeteApp extends StatefulWidget {
   final CreateFashionCollection? createCollection;
   final SaveCollectionItem? saveCollectionItem;
   final DeleteCollectionItem? deleteCollectionItem;
+  final FetchSavedFits? fetchSavedFits;
+  final SaveFitDraft? saveFitDraft;
+  final PublishSavedFit? publishSavedFit;
+  final DeleteSavedFit? deleteSavedFit;
 
   @override
   State<CompeteApp> createState() => _CompeteAppState();
@@ -210,6 +219,7 @@ class _CompeteAppState extends State<CompeteApp> {
               widget.checkYouCamConfigured ?? SocialService.youCamConfigured,
           generateOutfit:
               widget.generateOutfitLook ?? SocialService.createOutfitLook,
+          saveFit: widget.saveFitDraft ?? SavedFitService.save,
         ),
       ),
     );
@@ -247,6 +257,10 @@ class _CompeteAppState extends State<CompeteApp> {
           fetchProfile: widget.fetchProfile ?? ProfileService.fetchMe,
           updateProfile: widget.updateProfile ?? ProfileService.update,
           fetchPosts: widget.fetchPosts ?? SocialService.fetchPosts,
+          fetchSavedFits: widget.fetchSavedFits ?? SavedFitService.fetch,
+          publishSavedFit: widget.publishSavedFit ?? SavedFitService.publish,
+          deleteSavedFit: widget.deleteSavedFit ?? SavedFitService.delete,
+          onPublished: (_) => setState(() => _feedVersion += 1),
         ),
       ),
     );

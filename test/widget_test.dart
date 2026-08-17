@@ -9,6 +9,7 @@ import 'package:youcam2/models/closet_item.dart';
 import 'package:youcam2/models/fashion_collection.dart';
 import 'package:youcam2/models/model_photo.dart';
 import 'package:youcam2/models/post_try_on_result.dart';
+import 'package:youcam2/models/saved_fit.dart';
 import 'package:youcam2/models/social_post.dart';
 import 'package:youcam2/models/user_profile.dart';
 import 'package:youcam2/services/share_intent_service.dart';
@@ -18,6 +19,7 @@ import 'package:youcam2/theme/app_theme.dart';
 Future<List<SocialPost>> emptyFeed() async => const [];
 Future<List<ModelPhoto>> emptyModelPhotos() async => const [];
 Future<List<FashionCollection>> emptyCollections() async => const [];
+Future<List<SavedFit>> emptySavedFits() async => const [];
 Future<bool> youCamOff() async => false;
 
 class FakeShareIntentReceiver implements ShareIntentReceiver {
@@ -569,6 +571,7 @@ void main() {
         checkYouCamConfigured: youCamOff,
         fetchProfile: fetchProfile,
         updateProfile: updateProfile,
+        fetchSavedFits: emptySavedFits,
         shareIntentReceiver: FakeShareIntentReceiver(),
       ),
     );
@@ -679,6 +682,158 @@ void main() {
     expect(generatedItems, ['top-1']);
     expect(find.byKey(const Key('outfit-preview-empty')), findsNothing);
     expect(find.text('Regenerate outfit'), findsOneWidget);
+  });
+
+  testWidgets('saved fit moves from composer to Get Ready and then feed', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 2200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    const pixel =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7WQAAAABJRU5ErkJggg==';
+    final profile = UserProfile(
+      id: 'draft-owner',
+      name: 'Draft Owner',
+      handle: 'draftowner',
+      bio: '',
+      createdAt: DateTime(2026),
+    );
+    final model = ModelPhoto(
+      id: 'draft-model',
+      imageUrl: pixel,
+      label: 'Full body',
+      isPrimary: true,
+      createdAt: DateTime(2026),
+    );
+    final collection = FashionCollection(
+      id: 'draft-tops',
+      name: 'Tops',
+      kind: 'shirt',
+      isDefault: true,
+      items: const [
+        CollectionItem(
+          id: 'draft-shirt',
+          collectionId: 'draft-tops',
+          title: 'Saved white shirt',
+          imageUrl: pixel,
+          productImageUrls: [pixel, pixel, pixel, pixel],
+          originalImageUrl: 'https://example.com/white-shirt.jpg',
+          buyUrl: 'https://example.com/white-shirt',
+          category: 'upper_body',
+        ),
+      ],
+    );
+    var savedFits = <SavedFit>[];
+    var posts = <SocialPost>[];
+
+    Future<SavedFit> saveDraft({
+      required String caption,
+      required String imageUrl,
+      required List<PostGarment> garments,
+      String? modelPhotoId,
+    }) async {
+      final fit = SavedFit(
+        id: 'saved-dinner-fit',
+        caption: caption,
+        imageUrl: imageUrl,
+        garments: garments,
+        modelPhotoId: modelPhotoId,
+        createdAt: DateTime(2026),
+        updatedAt: DateTime(2026),
+      );
+      savedFits = [fit];
+      return fit;
+    }
+
+    Future<SocialPost> publishDraft(String fitId, String caption) async {
+      expect(fitId, 'saved-dinner-fit');
+      final fit = savedFits.single;
+      final post = SocialPost(
+        id: 'published-dinner-fit',
+        caption: caption,
+        imageUrl: fit.imageUrl,
+        garments: fit.garments,
+        author: profile.toSocialUser(),
+        likeCount: 0,
+        likedByMe: false,
+        comments: const [],
+        createdAt: DateTime(2026),
+      );
+      savedFits = [];
+      posts = [post];
+      return post;
+    }
+
+    Future<void> deleteDraft(String fitId) async {
+      savedFits = savedFits.where((fit) => fit.id != fitId).toList();
+    }
+
+    await tester.pumpWidget(
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: () async => posts,
+        fetchProfile: () async => profile,
+        updateProfile:
+            ({
+              required String name,
+              required String handle,
+              required String bio,
+            }) async => profile,
+        fetchCollections: () async => [collection],
+        fetchModelPhotos: () async => [model],
+        checkYouCamConfigured: () async => true,
+        generateOutfitLook:
+            ({
+              required ModelPhoto modelPhoto,
+              required List<PostGarment> garments,
+            }) async => pixel,
+        fetchSavedFits: () async => savedFits,
+        saveFitDraft: saveDraft,
+        publishSavedFit: publishDraft,
+        deleteSavedFit: deleteDraft,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('add-post-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('collection-item-draft-shirt')));
+    await tester.tap(find.byKey(const Key('generate-outfit-button')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).last, 'Dinner downtown');
+    await tester.tap(find.byKey(const Key('save-fit-button')));
+    await tester.pumpAndSettle();
+    expect(savedFits.single.caption, 'Dinner downtown');
+
+    await tester.tap(find.byKey(const Key('profile-button')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const Key('saved-fit-card-saved-dinner-fit')),
+      findsOneWidget,
+    );
+    expect(find.text('1'), findsWidgets);
+
+    await tester.tap(find.byKey(const Key('saved-fit-card-saved-dinner-fit')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('get-ready-screen')), findsOneWidget);
+    expect(find.text('Ready when you are.'), findsOneWidget);
+    expect(
+      find.byKey(const Key('get-ready-piece-draft-shirt')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const Key('get-ready-post-button')));
+    await tester.pumpAndSettle();
+    expect(savedFits, isEmpty);
+    expect(
+      find.byKey(const ValueKey('profile-post-published-dinner-fit')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('saved-fits-count')), findsOneWidget);
   });
 
   testWidgets(
