@@ -163,7 +163,7 @@ class _GetReadyScreenState extends State<GetReadyScreen> {
             ),
             const SizedBox(height: AppSpacing.x1),
             const Text(
-              'Review the complete look, check every product, then send it to your feed.',
+              'This saved preview keeps your pose and original background. When you post, only the background changes to the Compete studio.',
               style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
@@ -182,6 +182,30 @@ class _GetReadyScreenState extends State<GetReadyScreen> {
                 semanticLabel: 'Saved outfit preview',
                 cacheWidth: 1200,
                 fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.x2),
+            Container(
+              key: const Key('get-ready-background-note'),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.x3,
+                vertical: AppSpacing.x2,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.freshSoft,
+                borderRadius: BorderRadius.circular(AppRadii.medium),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.accessibility_new_outlined, size: 18),
+                  SizedBox(width: AppSpacing.x2),
+                  Expanded(
+                    child: Text(
+                      'Same person. Same posture. Same framing. A clean Linen White background is applied only to the feed post.',
+                      style: TextStyle(fontSize: 12, height: 1.35),
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: AppSpacing.x5),
@@ -283,7 +307,11 @@ class _GetReadyScreenState extends State<GetReadyScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.arrow_upward_rounded),
-                label: Text(_publishing ? 'Posting fit…' : 'Post this fit'),
+                label: Text(
+                  _publishing
+                      ? 'Preparing studio post…'
+                      : 'Post with studio background',
+                ),
               ),
             ),
           ],

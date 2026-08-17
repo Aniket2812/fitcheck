@@ -629,7 +629,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       number: '03',
                       title: 'Create the look',
                       subtitle:
-                          'YouCam applies compatible pieces in outfit order and returns one post-ready image.',
+                          'YouCam fits every piece while keeping this photo’s pose, framing, and background unchanged.',
                     ),
                     const SizedBox(height: AppSpacing.x2),
                     SizedBox(
@@ -680,6 +680,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         onPlace: _placeTag,
                       ),
                     ),
+                    if (_previewUrl != null) ...[
+                      const SizedBox(height: AppSpacing.x2),
+                      const _PublishBackgroundNote(),
+                    ],
                     const SizedBox(height: AppSpacing.x3),
                     TextField(
                       controller: _caption,
@@ -705,6 +709,36 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               ),
             ),
           ),
+  );
+}
+
+class _PublishBackgroundNote extends StatelessWidget {
+  const _PublishBackgroundNote();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    key: const Key('publish-background-note'),
+    padding: const EdgeInsets.symmetric(
+      horizontal: AppSpacing.x3,
+      vertical: AppSpacing.x2,
+    ),
+    decoration: BoxDecoration(
+      color: AppColors.freshSoft,
+      borderRadius: BorderRadius.circular(AppRadii.medium),
+    ),
+    child: const Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(Icons.layers_outlined, size: 18),
+        SizedBox(width: AppSpacing.x2),
+        Expanded(
+          child: Text(
+            'This preview and any saved fit keep your original background. Posting applies the Compete studio background without changing your pose.',
+            style: TextStyle(fontSize: 12, height: 1.35),
+          ),
+        ),
+      ],
+    ),
   );
 }
 

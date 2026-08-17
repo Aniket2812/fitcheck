@@ -9,6 +9,8 @@ class SavedFit {
     required this.createdAt,
     required this.updatedAt,
     this.modelPhotoId,
+    this.backgroundStyle = 'original',
+    this.posePreserved = true,
   });
 
   factory SavedFit.fromJson(Map<String, dynamic> json) => SavedFit(
@@ -20,6 +22,8 @@ class SavedFit {
         .map((item) => PostGarment.fromJson(Map<String, dynamic>.from(item)))
         .toList(),
     modelPhotoId: json['modelPhotoId']?.toString(),
+    backgroundStyle: json['backgroundStyle']?.toString() ?? 'original',
+    posePreserved: json['posePreserved'] != false,
     createdAt:
         DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
         DateTime.now(),
@@ -33,6 +37,8 @@ class SavedFit {
   final String imageUrl;
   final List<PostGarment> garments;
   final String? modelPhotoId;
+  final String backgroundStyle;
+  final bool posePreserved;
   final DateTime createdAt;
   final DateTime updatedAt;
 }

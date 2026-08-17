@@ -110,7 +110,7 @@ abstract final class SocialService {
               'garments': garments.map(_garmentPayload).toList(),
             }),
           )
-          .timeout(const Duration(seconds: 30));
+          .timeout(const Duration(seconds: 300));
       final data = _json(response);
       _ensureSuccess(response, data);
       return postFromJson(Map<String, dynamic>.from(data['post'] as Map));

@@ -682,6 +682,7 @@ void main() {
     expect(generatedItems, ['top-1']);
     expect(find.byKey(const Key('outfit-preview-empty')), findsNothing);
     expect(find.text('Regenerate outfit'), findsOneWidget);
+    expect(find.byKey(const Key('publish-background-note')), findsOneWidget);
   });
 
   testWidgets('saved fit moves from composer to Get Ready and then feed', (

@@ -66,7 +66,7 @@ abstract final class SavedFitService {
           headers: {...await _headers(), 'content-type': 'application/json'},
           body: jsonEncode({'caption': caption}),
         )
-        .timeout(const Duration(seconds: 30));
+        .timeout(const Duration(seconds: 300));
     final data = _json(response);
     _ensureSuccess(response, data);
     return SocialService.postFromJson(

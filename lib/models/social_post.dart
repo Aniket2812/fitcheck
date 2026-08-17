@@ -129,6 +129,8 @@ class SocialPost {
     required this.likedByMe,
     required this.comments,
     required this.createdAt,
+    this.backgroundStyle = 'compete:studio',
+    this.posePreserved = true,
   });
 
   final String id;
@@ -140,6 +142,8 @@ class SocialPost {
   final bool likedByMe;
   final List<PostComment> comments;
   final DateTime createdAt;
+  final String backgroundStyle;
+  final bool posePreserved;
 
   factory SocialPost.fromJson(Map<String, dynamic> json) => SocialPost(
     id: json['id']?.toString() ?? '',
@@ -154,6 +158,8 @@ class SocialPost {
     ),
     likeCount: (json['likeCount'] as num?)?.toInt() ?? 0,
     likedByMe: json['likedByMe'] == true,
+    backgroundStyle: json['backgroundStyle']?.toString() ?? 'compete:studio',
+    posePreserved: json['posePreserved'] != false,
     comments: (json['comments'] as List? ?? const [])
         .whereType<Map>()
         .map((item) => PostComment.fromJson(Map<String, dynamic>.from(item)))
