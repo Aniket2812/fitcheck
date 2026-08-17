@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../components/app_motion.dart';
 import '../components/app_state.dart';
+import '../components/avatar.dart';
 import '../components/editorial_photo_frame.dart';
 import '../components/screen.dart';
 import '../components/shoppable_pieces.dart';
@@ -567,18 +568,10 @@ class _DiscoveryCard extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 2, 5, 6),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 11,
-                    backgroundColor: AppColors.sunken,
-                    backgroundImage: post.author.avatarUrl == null
-                        ? null
-                        : NetworkImage(post.author.avatarUrl!),
-                    child: post.author.avatarUrl == null
-                        ? Text(
-                            post.author.name.characters.first.toUpperCase(),
-                            style: const TextStyle(fontSize: 9),
-                          )
-                        : null,
+                  Avatar(
+                    name: post.author.name,
+                    imageUrl: post.author.avatarUrl,
+                    size: 22,
                   ),
                   const SizedBox(width: 6),
                   Expanded(
