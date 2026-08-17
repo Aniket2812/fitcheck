@@ -198,27 +198,30 @@ class _FeedScreenState extends State<FeedScreen> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 44,
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.x3,
-                      vertical: AppSpacing.x1,
-                    ),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _filters.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(width: AppSpacing.x2),
-                    itemBuilder: (context, index) {
-                      final filter = _filters[index];
-                      return ChoiceChip(
-                        key: Key('feed-filter-${filter.toLowerCase()}'),
-                        label: Text(filter),
-                        selected: filter == _activeFilter,
-                        onSelected: (_) =>
-                            setState(() => _activeFilter = filter),
-                      );
-                    },
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.x3,
+                    AppSpacing.x1,
+                    AppSpacing.x3,
+                    AppSpacing.x2,
+                  ),
+                  child: Row(
+                    children: [
+                      for (var index = 0; index < _filters.length; index++) ...[
+                        if (index > 0) const SizedBox(width: AppSpacing.x1),
+                        Expanded(
+                          child: _FeedFilterTile(
+                            key: Key(
+                              'feed-filter-${_filters[index].toLowerCase()}',
+                            ),
+                            label: _filters[index],
+                            selected: _filters[index] == _activeFilter,
+                            onTap: () =>
+                                setState(() => _activeFilter = _filters[index]),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
                 if (_visiblePosts.isEmpty)
@@ -241,6 +244,56 @@ class _FeedScreenState extends State<FeedScreen> {
               ],
             ),
           ),
+  );
+}
+
+class _FeedFilterTile extends StatelessWidget {
+  const _FeedFilterTile({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    selected: selected,
+    label: '$label filter',
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          height: 34,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? AppColors.textPrimary : AppColors.sunken,
+            borderRadius: BorderRadius.circular(AppRadii.pill),
+            border: Border.all(
+              color: selected ? AppColors.textPrimary : AppColors.borderStrong,
+            ),
+          ),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.fade,
+            softWrap: false,
+            style: TextStyle(
+              color: selected ? AppColors.textOnAccent : AppColors.textPrimary,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    ),
   );
 }
 

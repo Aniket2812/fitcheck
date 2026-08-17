@@ -13,6 +13,7 @@ import 'package:youcam2/models/social_post.dart';
 import 'package:youcam2/models/user_profile.dart';
 import 'package:youcam2/services/share_intent_service.dart';
 import 'package:youcam2/screens/try_on_yourself_screen.dart';
+import 'package:youcam2/theme/app_theme.dart';
 
 Future<List<SocialPost>> emptyFeed() async => const [];
 Future<List<ModelPhoto>> emptyModelPhotos() async => const [];
@@ -105,6 +106,75 @@ void main() {
     expect(find.textContaining('feed server is not reachable'), findsOneWidget);
     expect(find.textContaining('TimeoutException'), findsNothing);
     expect(find.text('Retry'), findsOneWidget);
+  });
+
+  testWidgets('all home filters stay visible when unselected', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final post = SocialPost(
+      id: 'filter-post',
+      caption: 'A filtered fit',
+      imageUrl: 'https://example.com/filter-fit.jpg',
+      garments: const [
+        PostGarment(
+          id: 'filter-top',
+          title: 'Visible top',
+          imageUrl: 'https://example.com/top.jpg',
+          buyUrl: 'https://example.com/top',
+          category: 'upper_body',
+          x: 0.5,
+          y: 0.3,
+        ),
+      ],
+      author: const SocialUser(
+        id: 'filter-user',
+        name: 'Filter User',
+        handle: 'filteruser',
+      ),
+      likeCount: 0,
+      likedByMe: false,
+      comments: const [],
+      createdAt: DateTime(2026),
+    );
+
+    await tester.pumpWidget(
+      CompeteApp(
+        persistCloset: false,
+        fetchPosts: () async => [post],
+        fetchModelPhotos: emptyModelPhotos,
+        fetchCollections: emptyCollections,
+        checkYouCamConfigured: youCamOff,
+        shareIntentReceiver: FakeShareIntentReceiver(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    const labels = ['for you', 'tops', 'bottoms', 'shoes', 'dresses'];
+    for (final label in labels) {
+      final tile = find.byKey(Key('feed-filter-$label'));
+      expect(tile, findsOneWidget);
+      expect(tester.getTopRight(tile).dx, lessThanOrEqualTo(360));
+    }
+
+    Text filterText(String key) => tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(Key('feed-filter-$key')),
+        matching: find.byType(Text),
+      ),
+    );
+
+    expect(filterText('for you').style?.color, AppColors.textOnAccent);
+    expect(filterText('tops').style?.color, AppColors.textPrimary);
+
+    await tester.tap(find.byKey(const Key('feed-filter-tops')));
+    await tester.pumpAndSettle();
+    expect(filterText('for you').style?.color, AppColors.textPrimary);
+    expect(filterText('tops').style?.color, AppColors.textOnAccent);
   });
 
   testWidgets('plus button builds outfits only from saved collections', (
