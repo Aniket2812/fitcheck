@@ -27,6 +27,12 @@ try {
     title: 'Graphic tee',
     imageUrl: 'https://example.com/tee.png',
     originalImageUrl: 'https://example.com/tee.jpg',
+    productImageUrls: [
+      'https://example.com/tee-front.jpg',
+      'https://example.com/tee-back.jpg',
+      'https://example.com/tee-detail.jpg',
+      'https://example.com/tee-side.jpg',
+    ],
     buyUrl: 'https://example.com/products/tee',
     category: 'upper_body',
   });
@@ -41,6 +47,7 @@ try {
   const populated = await listCollections('user-1');
   assert.equal(populated[0].itemCount, 1);
   assert.equal(populated[0].items[0].title, 'Graphic tee');
+  assert.equal(populated[0].items[0].productImageUrls.length, 4);
 
   await deleteCollectionItem('user-1', defaults[0].id, first.item.id);
   assert.equal((await listCollections('user-1'))[0].itemCount, 0);

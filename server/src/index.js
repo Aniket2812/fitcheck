@@ -8,7 +8,7 @@ import { extractProduct } from './extract.js';
 import { BROWSER_HEADERS, unblockerReady } from './fetchPage.js';
 import { googleConfigured } from './google.js';
 import { normalizeInput } from './links.js';
-import { readMedia } from './media.js';
+import { readMedia, saveImageBuffer } from './media.js';
 import { supportedSites } from './sites.js';
 import { cutoutProvider, describeProduct } from './providers/index.js';
 import { configured as youcamConfigured } from './providers/youcam.js';
@@ -66,6 +66,51 @@ async function downloadImage(imageUrl, pageUrl) {
     redirect: 'follow',
     signal: AbortSignal.timeout(IMAGE_DOWNLOAD_TIMEOUT_MS),
   });
+}
+
+const galleryContentType = (response) =>
+  String(response.headers.get('content-type') || '')
+    .split(';')[0]
+    .trim()
+    .toLowerCase();
+
+async function persistProductImage(response) {
+  if (!response.ok) return null;
+  const contentType = galleryContentType(response);
+  if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(contentType)) {
+    return null;
+  }
+  return saveImageBuffer(Buffer.from(await response.arrayBuffer()), contentType, 'product');
+}
+
+async function cacheProductGallery(product, primaryImage, primaryBuffer) {
+  const stored = [];
+  try {
+    const primaryType = galleryContentType(primaryImage);
+    if (primaryType) {
+      stored.push(await saveImageBuffer(primaryBuffer, primaryType, 'product'));
+    }
+  } catch {
+    // The remote original remains a valid gallery fallback below.
+  }
+
+  const candidates = [...new Set(product.imageUrls || [])]
+    .filter((imageUrl) => imageUrl && imageUrl !== product.imageUrl)
+    .slice(0, 4);
+  const extras = await Promise.all(
+    candidates.map(async (imageUrl) => {
+      try {
+        return await persistProductImage(await downloadImage(imageUrl, product.pageUrl));
+      } catch {
+        return null;
+      }
+    }),
+  );
+  stored.push(...extras.filter(Boolean));
+
+  const gallery = [...new Set(stored.length ? stored : [product.imageUrl])].slice(0, 5);
+  while (gallery.length < 4) gallery.push(gallery.at(-1));
+  return gallery;
 }
 
 function inferFashionCategory(...values) {
@@ -148,6 +193,10 @@ app.post('/api/ingest', async (c) => {
     const buffer = Buffer.from(await imageResponse.arrayBuffer());
     mark('image-downloaded', `${Math.round(buffer.length / 1024)}KB`);
 
+    stage = 'cache-gallery';
+    const productImageUrls = await cacheProductGallery(product, imageResponse, buffer);
+    mark('gallery-cached', `${new Set(productImageUrls).size}/${productImageUrls.length}-images`);
+
     stage = 'cutout';
     const image = await cutoutProvider.cutout(buffer);
     mark('cutout-complete');
@@ -160,6 +209,7 @@ app.post('/api/ingest', async (c) => {
       category,
       image,
       originalImage: sourceImage,
+      productImageUrls,
       pageUrl: product.pageUrl,
       extractedVia: product.source,
       fetchedVia: product.fetchedVia,

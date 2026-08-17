@@ -81,11 +81,23 @@ function findProduct(node, depth = 0) {
   return null;
 }
 
-function firstImage(image) {
-  if (!image) return null;
-  if (Array.isArray(image)) return firstImage(image[0]);
-  if (typeof image === 'string') return image;
-  return image.url || image.contentUrl || null;
+function imagesFromValue(value, depth = 0) {
+  if (value == null || depth > 4) return [];
+  if (typeof value === 'string') {
+    return /^(https?:)?\/\/|^\//.test(value.trim()) ? [value.trim()] : [];
+  }
+  if (Array.isArray(value)) {
+    return value.flatMap((entry) => imagesFromValue(entry, depth + 1));
+  }
+  if (typeof value === 'object') {
+    return ['url', 'contentUrl', 'src', 'imageUrl', 'href', 'large', 'zoom', 'original']
+      .flatMap((key) => imagesFromValue(value[key], depth + 1));
+  }
+  return [];
+}
+
+function absoluteImages(value, base) {
+  return [...new Set(imagesFromValue(value).map((image) => absolute(image, base)).filter(Boolean))];
 }
 
 function priceFromOffers(offers) {
@@ -120,14 +132,15 @@ function fromJsonLd($, base) {
     const product = findProduct(parsed);
     if (!product) continue;
 
-    const imageUrl = absolute(firstImage(product.image), base);
-    if (!imageUrl) continue;
+    const imageUrls = absoluteImages(product.image, base);
+    if (!imageUrls.length) continue;
 
     return {
       title: clean(product.name),
       brand: brandName(product.brand),
       price: priceFromOffers(product.offers),
-      imageUrl,
+      imageUrl: imageUrls[0],
+      imageUrls,
       source: 'json-ld',
     };
   }
@@ -150,12 +163,19 @@ function fromMicrodata($, base) {
     return clean(el.attr('content') || el.attr('href') || el.text());
   };
 
-  const imageEl = prop('image');
-  const imageUrl = absolute(
-    imageEl.attr('content') || imageEl.attr('src') || imageEl.attr('href'),
-    base,
-  );
-  if (!imageUrl) return null;
+  const imageUrls = [...new Set(
+    scope
+      .find('[itemprop="image"]')
+      .toArray()
+      .flatMap((element) => {
+        const image = $(element);
+        return absoluteImages(
+          image.attr('content') || image.attr('src') || image.attr('href'),
+          base,
+        );
+      }),
+  )];
+  if (!imageUrls.length) return null;
 
   return {
     title: value('name'),
@@ -164,7 +184,8 @@ function fromMicrodata($, base) {
       prop('price').attr('content') || prop('price').text(),
       value('priceCurrency'),
     ),
-    imageUrl,
+    imageUrl: imageUrls[0],
+    imageUrls,
     source: 'microdata',
   };
 }
@@ -196,22 +217,6 @@ const pick = (node, keys) => {
   return null;
 };
 
-function imageFromValue(value, depth = 0) {
-  if (value == null || depth > 3) return null;
-  if (typeof value === 'string') return /^(https?:)?\/\/|^\//.test(value) ? value : null;
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      const hit = imageFromValue(item, depth + 1);
-      if (hit) return hit;
-    }
-    return null;
-  }
-  if (typeof value === 'object') {
-    return imageFromValue(pick(value, ['url', 'src', 'imageUrl', 'href', 'large', 'zoom']), depth + 1);
-  }
-  return null;
-}
-
 /**
  * Scores every object in a state blob and keeps the best product-shaped one.
  * Deliberately loose: SPAs name these fields a dozen different ways, and a
@@ -219,8 +224,8 @@ function imageFromValue(value, depth = 0) {
  */
 function scoreNode(node) {
   const name = clean(pick(node, NAME_KEYS));
-  const image = imageFromValue(pick(node, IMAGE_KEYS));
-  if (!name || !image) return null;
+  const imageUrls = imagesFromValue(pick(node, IMAGE_KEYS));
+  if (!name || !imageUrls.length) return null;
   const price = pick(node, PRICE_KEYS);
   return {
     score: 1 + (price != null ? 1 : 0) + (pick(node, BRAND_KEYS) != null ? 1 : 0),
@@ -228,7 +233,8 @@ function scoreNode(node) {
       title: name,
       brand: brandName(pick(node, BRAND_KEYS)),
       price: formatPrice(typeof price === 'object' ? pick(price ?? {}, PRICE_KEYS) : price, null),
-      imageUrl: image,
+      imageUrl: imageUrls[0],
+      imageUrls,
     },
   };
 }
@@ -292,8 +298,10 @@ function fromEmbeddedState($, base) {
     }
 
     const found = walkForProduct(parsed);
-    const imageUrl = absolute(found?.imageUrl, base);
-    if (imageUrl) return { ...found, imageUrl, source: 'app-state' };
+    const imageUrls = absoluteImages(found?.imageUrls || found?.imageUrl, base);
+    if (imageUrls.length) {
+      return { ...found, imageUrl: imageUrls[0], imageUrls, source: 'app-state' };
+    }
   }
 
   return null;
@@ -309,16 +317,18 @@ function fromMetaTags($, base) {
     $(`meta[name="${name}"]`).attr('content') ||
     null;
 
-  const imageUrl = absolute(
-    meta('og:image:secure_url') || meta('og:image') || meta('twitter:image'),
-    base,
-  );
-  if (!imageUrl) return null;
+  const imageUrls = [...new Set(
+    $('meta[property="og:image:secure_url"], meta[property="og:image"], meta[name="twitter:image"]')
+      .toArray()
+      .flatMap((element) => absoluteImages($(element).attr('content'), base)),
+  )];
+  if (!imageUrls.length) return null;
 
   // Storefronts that render the product client-side leave a site-wide og:image
   // behind — usually the logo. Cutting out a logo is worse than falling
   // through to the next strategy.
-  if (NOISE.test(imageUrl)) return null;
+  const usefulImages = imageUrls.filter((image) => !NOISE.test(image));
+  if (!usefulImages.length) return null;
 
   return {
     title: clean(meta('og:title') || $('title').first().text()),
@@ -327,7 +337,8 @@ function fromMetaTags($, base) {
       meta('product:price:amount') || meta('og:price:amount'),
       meta('product:price:currency') || meta('og:price:currency'),
     ),
-    imageUrl,
+    imageUrl: usefulImages[0],
+    imageUrls: usefulImages,
     source: 'og',
   };
 }
@@ -356,8 +367,7 @@ const NOISE = /(logo|icon|sprite|placeholder|pixel|badge|flag|payment|banner)/i;
 
 /** Last resort: the biggest image the page declares or offers a srcset for. */
 function fromLargestImage($, base) {
-  let best = null;
-  let bestArea = 0;
+  const candidates = [];
 
   $('img').each((_, el) => {
     const $el = $(el);
@@ -371,25 +381,66 @@ function fromLargestImage($, base) {
     const width = parseInt($el.attr('width') || '0', 10);
     const height = parseInt($el.attr('height') || '0', 10);
     const area = width * height || (/(\d{3,4})[x_/](\d{3,4})/.test(src) ? 300 * 300 : 0);
-    if (area > bestArea && (width === 0 || width >= 300)) {
-      bestArea = area;
-      best = src;
+    if (width === 0 || width >= 300) {
+      candidates.push({ src, area });
     }
   });
 
-  const imageUrl = absolute(best, base);
-  if (!imageUrl) return null;
+  const imageUrls = [...new Set(
+    candidates
+      .sort((a, b) => b.area - a.area)
+      .flatMap(({ src }) => absoluteImages(src, base)),
+  )].slice(0, 5);
+  if (!imageUrls.length) return null;
 
   return {
     title: clean($('h1').first().text() || $('title').first().text()),
     brand: null,
     price: null,
-    imageUrl,
+    imageUrl: imageUrls[0],
+    imageUrls,
     source: 'largest-img',
   };
 }
 
 /* -------------------------------------------------------------------------- */
+
+function productGalleryImages($, base) {
+  const selectors = [
+    '[itemprop="image"]',
+    '#landingImage',
+    '#altImages img',
+    '[class*="product-gallery"] img',
+    '[class*="productGallery"] img',
+    '[class*="image-grid"] img',
+    '[class*="imageGrid"] img',
+    '[data-testid*="product"] img',
+  ].join(', ');
+  const found = [];
+
+  for (const element of $(selectors).toArray()) {
+    const image = $(element);
+    const dynamic = image.attr('data-a-dynamic-image');
+    if (dynamic) {
+      const parsed = parseJsonLoose(dynamic);
+      if (parsed && typeof parsed === 'object') found.push(...Object.keys(parsed));
+    }
+    found.push(
+      widestFromSrcset(image.attr('srcset') || image.attr('data-srcset')),
+      image.attr('data-old-hires'),
+      image.attr('data-zoom-image'),
+      image.attr('data-src'),
+      image.attr('src'),
+      image.attr('content'),
+    );
+  }
+
+  return [...new Set(
+    found
+      .flatMap((image) => absoluteImages(image, base))
+      .filter((image) => !NOISE.test(image)),
+  )];
+}
 
 const STRATEGIES = [fromJsonLd, fromMicrodata, fromEmbeddedState, fromMetaTags, fromLargestImage];
 
@@ -407,10 +458,24 @@ export function parseProduct(html, base) {
     }
     if (!hit?.imageUrl) continue;
 
+    const rawImageUrls = [...new Set([
+      ...(hit.imageUrls || []),
+      hit.imageUrl,
+      ...productGalleryImages($, base),
+    ].filter(Boolean))];
+    const imageUrls = [...new Set(
+      rawImageUrls
+        .map((image) => absolute(image, base))
+        .filter((image) => image && !NOISE.test(image))
+        .map((image) => upgradeImage(image, host)),
+    )].slice(0, 5);
+    if (!imageUrls.length) continue;
+
     return {
       ...hit,
       brand: hit.brand || siteFor(host).label || null,
-      imageUrl: upgradeImage(hit.imageUrl, host),
+      imageUrl: imageUrls[0],
+      imageUrls,
       rawImageUrl: hit.imageUrl,
     };
   }

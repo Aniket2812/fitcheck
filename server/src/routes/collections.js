@@ -43,6 +43,15 @@ collections.post('/:collectionId/items', async (c) => {
     if (image.startsWith('data:image/')) {
       body.imageUrl = await saveDataImage(image, 'collection');
     }
+    if (Array.isArray(body?.productImageUrls)) {
+      body.productImageUrls = await Promise.all(
+        body.productImageUrls.slice(0, 5).map((source) =>
+          String(source || '').startsWith('data:image/')
+            ? saveDataImage(source, 'product')
+            : source,
+        ),
+      );
+    }
     const result = await addCollectionItem(
       c.get('user').id,
       c.req.param('collectionId'),

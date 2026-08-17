@@ -57,7 +57,15 @@ export async function seedDemoFeed(db, currentVersion = 0, now = Date.now()) {
       userId: post.userId,
       caption: post.caption,
       imageUrl: post.imageUrl,
-      garments: post.garments,
+      garments: post.garments.map((garment) => ({
+        ...garment,
+        // Seed imagery is already a clean, product-only studio packshot. Four
+        // gallery frames let the client present a full view plus detail views
+        // without ever falling back to a crop of the person wearing the look.
+        productImageUrls: Array.isArray(garment.productImageUrls)
+          ? garment.productImageUrls.slice(0, 5)
+          : Array(4).fill(garment.imageUrl),
+      })),
       likeUserIds: existing?.likeUserIds || post.likeUserIds || [],
       comments,
       createdAt: existing?.createdAt || createdAt,

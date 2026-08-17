@@ -421,6 +421,15 @@ function cleanGarment(garment, index) {
   } catch {
     throw new PostError(`Garment ${index + 1} has an invalid buying link.`);
   }
+  const gallery = (Array.isArray(garment?.productImageUrls)
+    ? garment.productImageUrls
+    : [garment?.originalImageUrl || imageUrl]
+  )
+    .map((value) => String(value || '').trim())
+    .filter(Boolean)
+    .slice(0, 5);
+  if (!gallery.length) gallery.push(imageUrl);
+  while (gallery.length < 4) gallery.push(gallery.at(-1));
 
   return {
     id: garment.id || randomUUID(),
@@ -429,6 +438,7 @@ function cleanGarment(garment, index) {
     price: garment.price ? String(garment.price).slice(0, 80) : null,
     imageUrl,
     originalImageUrl: garment.originalImageUrl ? String(garment.originalImageUrl) : null,
+    productImageUrls: gallery,
     buyUrl,
     category: garment.category ? String(garment.category).slice(0, 40) : null,
     x: clampUnit(garment.x, 0.5),

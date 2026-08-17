@@ -49,12 +49,24 @@ async function parseCreateRequest(c) {
 async function persistGarmentCutouts(garments) {
   if (!Array.isArray(garments)) return garments;
   return Promise.all(
-    garments.map(async (garment) => ({
-      ...garment,
-      imageUrl: String(garment.imageUrl || garment.image || '').startsWith('data:image/')
-        ? await saveDataImage(garment.imageUrl || garment.image, 'garment')
-        : garment.imageUrl || garment.image,
-    })),
+    garments.map(async (garment) => {
+      const productImageUrls = Array.isArray(garment.productImageUrls)
+        ? await Promise.all(
+            garment.productImageUrls.slice(0, 5).map((source) =>
+              String(source || '').startsWith('data:image/')
+                ? saveDataImage(source, 'product')
+                : source,
+            ),
+          )
+        : garment.productImageUrls;
+      return {
+        ...garment,
+        productImageUrls,
+        imageUrl: String(garment.imageUrl || garment.image || '').startsWith('data:image/')
+          ? await saveDataImage(garment.imageUrl || garment.image, 'garment')
+          : garment.imageUrl || garment.image,
+      };
+    }),
   );
 }
 

@@ -34,6 +34,12 @@ try {
       {
         title: 'Black jacket',
         imageUrl: '/media/garment-test.webp',
+        productImageUrls: [
+          '/media/jacket-front.webp',
+          '/media/jacket-back.webp',
+          '/media/jacket-side.webp',
+          '/media/jacket-detail.webp',
+        ],
         buyUrl: 'https://example.com/jacket',
         x: 0.51,
         y: 0.34,
@@ -49,6 +55,13 @@ try {
   });
   assert.equal(store.listPosts().length, 1);
   assert.equal(store.publicPost(created, user.id).garments.length, 2);
+  assert.deepEqual(store.publicPost(created, user.id).garments[0].productImageUrls, [
+    '/media/jacket-front.webp',
+    '/media/jacket-back.webp',
+    '/media/jacket-side.webp',
+    '/media/jacket-detail.webp',
+  ]);
+  assert.equal(store.publicPost(created, user.id).garments[1].productImageUrls.length, 4);
 
   const viewerPost = store.publicPost(created, viewer.id);
   assert.deepEqual(

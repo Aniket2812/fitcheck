@@ -57,6 +57,13 @@ try {
       assert.equal(visualMatch.productImage, garment.imageUrl);
       assert.ok(visualMatch.colour);
       assert.ok(visualMatch.product);
+      assert.ok(Array.isArray(garment.productImageUrls));
+      assert.ok(garment.productImageUrls.length >= 4);
+      assert.ok(garment.productImageUrls.length <= 5);
+      assert.ok(
+        garment.productImageUrls.every((imageUrl) => imageUrl === garment.imageUrl),
+        `Mock gallery for ${garment.id} must stay product-only`,
+      );
 
       assert.match(garment.imageUrl, /^\/media\/[a-z0-9-]+\.jpg$/);
       const productImage = await readMedia(
@@ -149,7 +156,7 @@ try {
   assert.ok(seededImage.bytes.length > 100_000);
 
   const persisted = JSON.parse(await readFile(process.env.DATA_FILE, 'utf8'));
-  assert.equal(persisted.demoFeedVersion, 7);
+  assert.equal(persisted.demoFeedVersion, 8);
   assert.equal(persisted.posts.length, 24);
 
   await store.loadStore();
@@ -183,7 +190,7 @@ try {
     2,
     Date.parse('2026-08-17T00:00:00.000Z'),
   );
-  assert.equal(migration.version, 7);
+  assert.equal(migration.version, 8);
   assert.equal(migrationDb.posts.size, 24);
   const migratedPost = migrationDb.posts.get('demo-post-city-layers');
   assert.deepEqual(migratedPost.likeUserIds, ['existing-viewer']);

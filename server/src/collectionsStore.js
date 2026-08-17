@@ -36,6 +36,7 @@ function projectItem(item) {
     price: item.price,
     imageUrl: item.imageUrl,
     originalImageUrl: item.originalImageUrl,
+    productImageUrls: item.productImageUrls || [],
     buyUrl: item.buyUrl,
     category: item.category,
     createdAt: item.createdAt,
@@ -164,6 +165,13 @@ export async function addCollectionItem(userId, collectionId, input) {
     price: input?.price ? String(input.price).slice(0, 40) : null,
     imageUrl: String(input?.imageUrl || input?.image || ''),
     originalImageUrl: input?.originalImageUrl || input?.originalImage || null,
+    productImageUrls: (Array.isArray(input?.productImageUrls)
+      ? input.productImageUrls
+      : [input?.originalImageUrl || input?.originalImage || input?.imageUrl || input?.image]
+    )
+      .map((value) => String(value || '').trim())
+      .filter(Boolean)
+      .slice(0, 5),
     buyUrl,
     category: input?.category ? String(input.category) : collection.kind,
     createdAt: new Date().toISOString(),
