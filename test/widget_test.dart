@@ -56,7 +56,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('COMPETE'), findsOneWidget);
-    expect(find.text('No outfits yet'), findsOneWidget);
+    expect(find.text('Fresh looks incoming'), findsOneWidget);
     expect(
       tester.getSize(find.byKey(const Key('feed-tab'))),
       const Size.square(44),
@@ -74,16 +74,19 @@ void main() {
 
     await tester.tap(find.byKey(const Key('search-button')));
     await tester.pump();
-    expect(find.text('Search Compete'), findsOneWidget);
+    expect(find.text('Find your next vibe'), findsOneWidget);
 
     await tester.enterText(find.byKey(const Key('search-field')), 'jacket');
     await tester.pump();
-    expect(find.text('No results'), findsOneWidget);
-    expect(find.text('Nothing matches “jacket” yet.'), findsOneWidget);
+    expect(find.text('No match yet'), findsOneWidget);
+    expect(
+      find.text('Nothing for “jacket” yet. Try a broader vibe.'),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byKey(const Key('clear-search-button')));
     await tester.pump();
-    expect(find.text('Search Compete'), findsOneWidget);
+    expect(find.text('Find your next vibe'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('close-search-button')));
     await tester.pumpAndSettle();
@@ -107,9 +110,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('feed server is not reachable'), findsOneWidget);
+    expect(find.textContaining('feed took a little too long'), findsOneWidget);
     expect(find.textContaining('TimeoutException'), findsNothing);
-    expect(find.text('Retry'), findsOneWidget);
+    expect(find.text('Try again'), findsOneWidget);
   });
 
   testWidgets('visited tabs keep their loaded state between switches', (
@@ -282,12 +285,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('wardrobe-overview')), findsOneWidget);
+    expect(find.text('Drop in a tee you’d wear on repeat.'), findsOneWidget);
     expect(
-      find.text('Start with a tee you would wear on repeat.'),
-      findsOneWidget,
-    );
-    expect(
-      find.text('Add the pair that completes your next outfit.'),
+      find.text('Add the pair that pulls your next look together.'),
       findsOneWidget,
     );
     expect(
@@ -503,7 +503,7 @@ void main() {
     await tester.tap(find.byKey(const Key('shop-post-shared-shop-post')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Every piece in this fit'), findsOneWidget);
+    expect(find.text('Every piece, one tap away'), findsOneWidget);
     expect(
       find.byKey(const Key('shop-piece-shared-shop-post-shared-shirt')),
       findsOneWidget,
@@ -519,7 +519,7 @@ void main() {
       find.byKey(const Key('shop-piece-shared-shop-post-shared-shirt')),
     );
     await tester.pumpAndSettle();
-    expect(find.text('View exact product'), findsOneWidget);
+    expect(find.text('Shop this exact piece'), findsOneWidget);
   });
 
   testWidgets('plus button builds outfits only from saved collections', (
@@ -544,7 +544,7 @@ void main() {
 
     await tester.tap(find.byKey(const Key('add-post-button')));
     await tester.pumpAndSettle();
-    expect(find.text('Build an outfit'), findsOneWidget);
+    expect(find.text('Put the fit together'), findsOneWidget);
     expect(find.byKey(const Key('choose-outfit-photo')), findsNothing);
     expect(find.byKey(const Key('composer-new-photo')), findsNothing);
     expect(find.text('Choose from gallery'), findsNothing);
@@ -615,7 +615,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Choose a collection'), findsOneWidget);
+    expect(find.text('Where should it live?'), findsOneWidget);
     await tester.tap(find.byKey(const Key('share-collection-shirts')));
     await tester.pumpAndSettle();
     expect(ingestedUrl, 'https://www.myntra.com/shared-top/buy');
@@ -658,7 +658,7 @@ void main() {
     await tester.tap(find.byKey(const Key('photos-tab')));
     await tester.pumpAndSettle();
 
-    expect(find.text('My full-body photos'), findsOneWidget);
+    expect(find.text('My photos'), findsOneWidget);
     expect(find.text('Front pose'), findsOneWidget);
     expect(find.text('Default'), findsOneWidget);
   });
@@ -714,7 +714,7 @@ void main() {
     expect(find.text('YouCam Creator'), findsOneWidget);
     expect(find.text('@youcam_creator'), findsOneWidget);
     expect(find.text('Everyday fits, virtually styled.'), findsOneWidget);
-    expect(find.text('Your outfit story starts here.'), findsOneWidget);
+    expect(find.text('Your first fit goes here'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('profile-edit-button')));
     await tester.pumpAndSettle();
@@ -819,7 +819,7 @@ void main() {
     expect(find.byKey(const Key('composer-active-step-3')), findsOneWidget);
 
     expect(find.byKey(const Key('outfit-preview-empty')), findsOneWidget);
-    expect(find.text('Your complete look will appear here'), findsOneWidget);
+    expect(find.text('Your look lands here'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('generate-outfit-button')));
     await tester.pump();
@@ -827,7 +827,7 @@ void main() {
 
     expect(generatedItems, ['top-1']);
     expect(find.byKey(const Key('outfit-preview-empty')), findsNothing);
-    expect(find.text('Regenerate outfit'), findsOneWidget);
+    expect(find.text('Remix the look'), findsOneWidget);
     expect(find.byKey(const Key('publish-background-note')), findsOneWidget);
   });
 
@@ -1161,14 +1161,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Test jacket'), findsOneWidget);
     expect(find.text('Compete · example.com'), findsOneWidget);
-    expect(find.text('4 images from the product link'), findsOneWidget);
+    expect(find.text('4 product views'), findsOneWidget);
     expect(find.byKey(const Key('product-gallery-page-view')), findsOneWidget);
     expect(find.byKey(const Key('product-gallery-image-0')), findsOneWidget);
     expect(
       find.byKey(const Key('product-gallery-thumbnail-3')),
       findsOneWidget,
     );
-    expect(find.text('View exact product'), findsOneWidget);
+    expect(find.text('Shop this exact piece'), findsOneWidget);
   });
 
   testWidgets('feed try-on uses a saved photo and shows diagonal processing', (
@@ -1280,9 +1280,9 @@ void main() {
     result.complete('https://example.com/my-look.jpg');
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.text('Your version is ready.'), findsOneWidget);
+    expect(find.text('Okay, this is so you.'), findsOneWidget);
     expect(find.byKey(const Key('try-on-result-summary')), findsOneWidget);
-    expect(find.textContaining('source composition retained'), findsOneWidget);
+    expect(find.textContaining('pose and background kept'), findsOneWidget);
 
     await tester.ensureVisible(find.byKey(const Key('save-try-on-fit-button')));
     await tester.tap(find.byKey(const Key('save-try-on-fit-button')));
@@ -1291,10 +1291,10 @@ void main() {
     expect(savedImageUrl, 'https://example.com/my-look.jpg');
     expect(savedModelPhotoId, 'my-photo');
     expect(savedGarments?.map((garment) => garment.id), ['garment-try-on']);
-    expect(find.text('Ready for later'), findsOneWidget);
+    expect(find.text('Saved for later'), findsOneWidget);
     expect(find.text('Saved'), findsOneWidget);
     expect(
-      find.text('Fit saved. Find it in Profile → Saved Fits.'),
+      find.text('Saved for later. It’s waiting in Profile → Saved Fits.'),
       findsOneWidget,
     );
 

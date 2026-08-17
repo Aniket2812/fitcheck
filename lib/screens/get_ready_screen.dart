@@ -6,6 +6,7 @@ import '../components/garment_product_dialog.dart';
 import '../models/saved_fit.dart';
 import '../services/saved_fit_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/user_facing_error.dart';
 
 class GetReadyScreen extends StatefulWidget {
   const GetReadyScreen({
@@ -53,7 +54,10 @@ class _GetReadyScreenState extends State<GetReadyScreen> {
       if (!mounted) return;
       setState(() {
         _publishing = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = userFacingError(
+          error,
+          fallback: 'This fit didn’t post. Give it another go.',
+        );
       });
     }
   }
@@ -91,7 +95,10 @@ class _GetReadyScreenState extends State<GetReadyScreen> {
       if (!mounted) return;
       setState(() {
         _deleting = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = userFacingError(
+          error,
+          fallback: 'Couldn’t remove this fit just yet. Try again.',
+        );
       });
     }
   }
@@ -163,7 +170,7 @@ class _GetReadyScreenState extends State<GetReadyScreen> {
             ),
             const SizedBox(height: AppSpacing.x1),
             const Text(
-              'This saved preview keeps your pose and original background. When you post, only the background changes to the Compete studio.',
+              'Your pose and original background stay untouched here. When you post, we give it the clean Compete studio finish.',
               style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
@@ -201,7 +208,7 @@ class _GetReadyScreenState extends State<GetReadyScreen> {
                   SizedBox(width: AppSpacing.x2),
                   Expanded(
                     child: Text(
-                      'Same person. Same posture. Same framing. A clean Linen White background is applied only to the feed post.',
+                      'Same you. Same pose. Same framing. Only the feed post gets our clean Linen White backdrop.',
                       style: TextStyle(fontSize: 12, height: 1.35),
                     ),
                   ),
@@ -283,7 +290,7 @@ class _GetReadyScreenState extends State<GetReadyScreen> {
               maxLines: 3,
               decoration: const InputDecoration(
                 labelText: 'Caption',
-                hintText: 'Tell people about this fit…',
+                hintText: 'What’s the vibe?',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -308,9 +315,7 @@ class _GetReadyScreenState extends State<GetReadyScreen> {
                       )
                     : const Icon(Icons.arrow_upward_rounded),
                 label: Text(
-                  _publishing
-                      ? 'Preparing studio post…'
-                      : 'Post with studio background',
+                  _publishing ? 'Giving it the studio finish…' : 'Post the fit',
                 ),
               ),
             ),

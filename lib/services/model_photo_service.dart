@@ -101,7 +101,7 @@ abstract final class ModelPhotoService {
   }
 
   static const _connectionMessage =
-      'Could not reach your photo library. Keep the backend running and reconnect wireless debugging, then try again.';
+      'Your photos didn’t load this time. Give it another go.';
 
   static ModelPhoto _photo(Map<String, dynamic> json) {
     final imageUrl = json['imageUrl']?.toString() ?? '';
@@ -136,7 +136,7 @@ abstract final class ModelPhotoService {
   ) {
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw Exception(
-        data['error']?.toString() ?? 'The server could not save your photo.',
+        data['error']?.toString() ?? 'We couldn’t save that photo just yet.',
       );
     }
   }

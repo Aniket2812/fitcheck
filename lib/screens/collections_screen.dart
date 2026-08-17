@@ -9,6 +9,7 @@ import '../models/fashion_collection.dart';
 import '../services/collection_service.dart';
 import '../services/ingest_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/user_facing_error.dart';
 
 enum _CollectionFilter { all, ready, empty }
 
@@ -92,7 +93,10 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
       if (!mounted || request != _loadRequest) return;
       setState(() {
         _loading = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = userFacingError(
+          error,
+          fallback: 'Your collections didn’t load this time. Pull to refresh.',
+        );
       });
     }
   }
@@ -265,7 +269,14 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
   void _showError(Object error) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(error.toString().replaceFirst('Exception: ', ''))),
+      SnackBar(
+        content: Text(
+          userFacingError(
+            error,
+            fallback: 'That change didn’t stick. Give it another go.',
+          ),
+        ),
+      ),
     );
   }
 
@@ -294,10 +305,10 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 84),
               children: [
                 AppPageIntro(
-                  eyebrow: 'Your wardrobe',
+                  eyebrow: 'Your closet, your rules',
                   title: 'Collections',
                   subtitle:
-                      'A visual library of everything you want to wear, try and post.',
+                      'Save the pieces you’re into, then mix them into your next look.',
                   trailing: IconButton.filled(
                     key: const Key('add-collection-button'),
                     onPressed: _createCollection,
@@ -326,9 +337,9 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                 if (_collections.isEmpty)
                   AppEmptyState(
                     icon: Icons.folder_copy_outlined,
-                    title: 'Create your first collection',
+                    title: 'Start your first collection',
                     message:
-                        'Group products by category, occasion or whatever makes sense to you.',
+                        'Sort pieces by vibe, category, occasion—whatever feels right.',
                     action: FilledButton.icon(
                       onPressed: _createCollection,
                       icon: const Icon(Icons.add, size: 17),
@@ -594,7 +605,7 @@ class _WardrobeOverview extends StatelessWidget {
           children: [
             const Expanded(
               child: Text(
-                'DIGITAL WARDROBE',
+                'YOUR STYLE STASH',
                 style: TextStyle(
                   color: Color(0xFFBFC1B8),
                   fontSize: 10,
@@ -613,7 +624,7 @@ class _WardrobeOverview extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 11),
               ),
               icon: const Icon(Icons.add_link_rounded, size: 16),
-              label: const Text('Quick add'),
+              label: const Text('Drop a link'),
             ),
           ],
         ),
@@ -629,7 +640,9 @@ class _WardrobeOverview extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.x1),
         Text(
-          pieceCount == 1 ? 'piece ready to style' : 'pieces ready to style',
+          pieceCount == 1
+              ? 'piece ready for a look'
+              : 'pieces ready for a look',
           style: const TextStyle(color: Color(0xFFD4D5CF), fontSize: 12),
         ),
         const SizedBox(height: AppSpacing.x4),
@@ -786,11 +799,11 @@ class _FilteredCollectionEmpty extends StatelessWidget {
         ? Icons.bookmark_add_outlined
         : Icons.task_alt_rounded,
     title: filter == _CollectionFilter.ready
-        ? 'Nothing saved yet'
-        : 'Every collection has a start',
+        ? 'Nothing ready yet'
+        : 'No empty folders—love that',
     message: filter == _CollectionFilter.ready
-        ? 'Add a product link and this view will become your ready-to-style wardrobe.'
-        : 'There are no empty collections right now. Nice work building your wardrobe.',
+        ? 'Drop in a product link and it’ll show up here, ready to style.'
+        : 'Every collection already has a piece. Your closet is looking good.',
   );
 }
 
@@ -908,44 +921,44 @@ _CollectionVisual _collectionVisual(String kind) => switch (kind) {
   'tshirt' => const _CollectionVisual(
     color: Color(0xFFEAF5D4),
     icon: Icons.checkroom_outlined,
-    subtitle: 'Everyday foundations',
-    emptyMessage: 'Start with a tee you would wear on repeat.',
+    subtitle: 'Tees on heavy rotation',
+    emptyMessage: 'Drop in a tee you’d wear on repeat.',
   ),
   'shirt' => const _CollectionVisual(
     color: Color(0xFFE3EFFD),
     icon: Icons.dry_cleaning_outlined,
-    subtitle: 'Shirts, tops and layers',
-    emptyMessage: 'Save a shirt or top for your next layered look.',
+    subtitle: 'Shirts, tops and good layers',
+    emptyMessage: 'Save a shirt or top for your next layered fit.',
   ),
   'jeans' => const _CollectionVisual(
     color: Color(0xFFE9E7FA),
     icon: Icons.straighten,
-    subtitle: 'Denim and bottoms',
-    emptyMessage: 'Build your bottoms rotation with jeans or trousers.',
+    subtitle: 'Denim, cargos and everything below',
+    emptyMessage: 'Start your bottoms rotation with jeans or trousers.',
   ),
   'shoes' => const _CollectionVisual(
     color: Color(0xFFFFE9D8),
     icon: Icons.ice_skating_outlined,
-    subtitle: 'Pairs that finish the fit',
-    emptyMessage: 'Add the pair that completes your next outfit.',
+    subtitle: 'Pairs that make the fit',
+    emptyMessage: 'Add the pair that pulls your next look together.',
   ),
   'dress' => const _CollectionVisual(
     color: Color(0xFFFFE7EF),
     icon: Icons.woman_2_outlined,
-    subtitle: 'One-piece looks',
-    emptyMessage: 'Keep a dress ready for a complete one-piece try-on.',
+    subtitle: 'One piece, whole look',
+    emptyMessage: 'Save a dress that already knows the assignment.',
   ),
   'accessory' => const _CollectionVisual(
     color: Color(0xFFDFF4EF),
     icon: Icons.watch_outlined,
-    subtitle: 'The finishing details',
-    emptyMessage: 'Finish a look with eyewear, bags, hats or jewellery.',
+    subtitle: 'The details that do the most',
+    emptyMessage: 'Finish the fit with eyewear, bags, hats or jewellery.',
   ),
   _ => const _CollectionVisual(
     color: AppColors.freshSoft,
     icon: Icons.folder_outlined,
-    subtitle: 'Your personal edit',
-    emptyMessage: 'Give this collection its first standout piece.',
+    subtitle: 'Your own little edit',
+    emptyMessage: 'Give this collection its first standout find.',
   ),
 };
 

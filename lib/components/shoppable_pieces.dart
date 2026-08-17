@@ -26,7 +26,7 @@ Future<void> showShoppablePiecesSheet(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'SHOP THE LOOK',
+                      'GET THE LOOK',
                       style: TextStyle(
                         color: AppColors.textMuted,
                         fontSize: 10,
@@ -36,7 +36,7 @@ Future<void> showShoppablePiecesSheet(
                     ),
                     SizedBox(height: AppSpacing.x1),
                     Text(
-                      'Every piece in this fit',
+                      'Every piece, one tap away',
                       style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.w600,
@@ -102,7 +102,7 @@ class _ShoppablePiece extends StatelessWidget {
     final host = Uri.tryParse(
       garment.buyUrl,
     )?.host.replaceFirst(RegExp(r'^www\.'), '');
-    return host?.isNotEmpty == true ? host! : 'Retailer link';
+    return host?.isNotEmpty == true ? host! : 'Original shop';
   }
 
   @override

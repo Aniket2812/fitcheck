@@ -9,6 +9,7 @@ import '../services/model_photo_service.dart';
 import '../services/saved_fit_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/user_facing_error.dart';
 
 typedef PickFullBodyPhoto = Future<XFile?> Function(ImageSource source);
 
@@ -155,26 +156,24 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
   }
 
   String _friendlyError(Object error, {required String phase}) {
-    final message = error.toString().replaceFirst('Exception: ', '');
-    if (message.contains('ClientConnection') ||
-        message.contains('SocketException') ||
-        message.contains('TimeoutException')) {
-      if (phase == 'try-on') {
-        return 'The fitting service did not finish in time. Your original photo is unchanged; retry this look.';
-      }
-      if (phase == 'save') {
-        return 'Could not save this fit. Keep the backend running and reconnect wireless debugging, then try again.';
-      }
-      return 'Could not reach your photo library. Keep the backend running and reconnect wireless debugging, then try again.';
-    }
-    return message;
+    final fallback = switch (phase) {
+      'try-on' =>
+        'This look is taking longer than usual. Your photo is safe—try it once more.',
+      'save' => 'Couldn’t save this one just yet. Give it another go.',
+      'upload' => 'That photo didn’t upload. Try it once more.',
+      _ => 'Your photos didn’t load this time. Tap Retry in a sec.',
+    };
+    return userFacingError(error, fallback: fallback);
   }
 
   Future<void> _generate() async {
     final photo = _selected;
     if (photo == null) return;
     if (widget.post.garments.isEmpty) {
-      setState(() => _error = 'This post has no tagged items to try on.');
+      setState(
+        () => _error =
+            'This fit needs shoppable pieces before you can try it on.',
+      );
       return;
     }
     setState(() {
@@ -223,7 +222,9 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Fit saved. Find it in Profile → Saved Fits.'),
+          content: Text(
+            'Saved for later. It’s waiting in Profile → Saved Fits.',
+          ),
         ),
       );
     } catch (error) {
@@ -240,7 +241,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
     key: const Key('try-on-yourself-screen'),
     backgroundColor: AppColors.canvas,
     appBar: AppBar(
-      title: const Text('Try on yourself'),
+      title: const Text('Try it on'),
       backgroundColor: AppColors.canvas,
       surfaceTintColor: Colors.transparent,
     ),
@@ -262,7 +263,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
               Text(
                 _result == null
                     ? 'See this complete fit on you.'
-                    : 'Your version is ready.',
+                    : 'Okay, this is so you.',
                 style: const TextStyle(
                   fontSize: 21,
                   fontWeight: FontWeight.w500,
@@ -368,7 +369,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                       ),
                       const SizedBox(height: AppSpacing.x1),
                       const Text(
-                        'Use one clear, front-facing head-to-feet photo. It will be checked for YouCam compatibility and saved in My Photos.',
+                        'Use one clear, front-facing head-to-feet shot. Save it once, then reuse it for every fit.',
                         style: TextStyle(height: 1.4),
                       ),
                       const SizedBox(height: AppSpacing.x2),
@@ -415,7 +416,7 @@ class _TryOnYourselfScreenState extends State<TryOnYourselfScreen> {
                 const Padding(
                   padding: EdgeInsets.only(top: 2),
                   child: Text(
-                    'Pick the pose and background you want to keep in the result.',
+                    'Pick the pose and background you want to keep—both stay yours.',
                     style: TextStyle(color: AppColors.textMuted, fontSize: 11),
                   ),
                 ),
@@ -520,7 +521,7 @@ class _CompositionPromise extends StatelessWidget {
         SizedBox(width: AppSpacing.x2),
         Expanded(
           child: Text(
-            'Your selected photo stays the base — same pose, framing and background. Only the complete outfit is transferred.',
+            'Your photo stays the base—same pose, framing and background. We only switch up the outfit.',
             style: TextStyle(fontSize: 12, height: 1.35),
           ),
         ),
@@ -579,8 +580,8 @@ class _ResultSummary extends StatelessWidget {
         const SizedBox(width: AppSpacing.x2),
         Expanded(
           child: Text(
-            '$appliedCount pieces transferred as one complete look'
-            '${compositionPreserved ? ' · source composition retained' : ''}',
+            '$appliedCount ${appliedCount == 1 ? 'piece' : 'pieces'} fitted into one complete look'
+            '${compositionPreserved ? ' · pose and background kept' : ''}',
             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
         ),
@@ -623,7 +624,7 @@ class _SaveFitAction extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    saved ? 'Ready for later' : 'Keep this version',
+                    saved ? 'Saved for later' : 'Keep this look',
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -632,8 +633,8 @@ class _SaveFitAction extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     saved
-                        ? 'Saved privately with every shoppable piece.'
-                        : 'Save privately, then post it anytime from Profile.',
+                        ? 'It’s private, with every shopping link intact.'
+                        : 'Save it now, post it whenever the vibe is right.',
                     style: const TextStyle(
                       color: AppColors.textMuted,
                       fontSize: 11,

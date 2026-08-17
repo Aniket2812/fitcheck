@@ -12,6 +12,7 @@ import '../services/profile_service.dart';
 import '../services/saved_fit_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/user_facing_error.dart';
 import 'get_ready_screen.dart';
 import 'post_detail_screen.dart';
 
@@ -77,7 +78,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = userFacingError(
+          error,
+          fallback: 'Your profile didn’t load this time. Tap Retry.',
+        );
       });
     }
   }
@@ -98,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (post != null && mounted) {
       widget.onPublished?.call(post);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Your saved fit is now live.')),
+        const SnackBar(content: Text('Your saved fit just hit the feed.')),
       );
     }
   }
@@ -476,7 +480,7 @@ class _EmptySavedFits extends StatelessWidget {
           SizedBox(width: AppSpacing.x3),
           Expanded(
             child: Text(
-              'Save a generated look from Build an outfit and it will wait here until you are ready.',
+              'Save a look while styling or trying it on. It’ll wait here until you’re ready.',
               style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 12,
@@ -580,8 +584,8 @@ class _EmptyProfilePosts extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const AppEmptyState(
     icon: Icons.checkroom_outlined,
-    title: 'Your outfit story starts here.',
-    message: 'Post your first virtual try-on and it will appear on this grid.',
+    title: 'Your first fit goes here',
+    message: 'Post a look and start building your own style board.',
   );
 }
 
@@ -656,7 +660,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
 
   Future<void> _save() async {
     if (_name.text.trim().isEmpty) {
-      setState(() => _error = 'Name cannot be empty.');
+      setState(() => _error = 'Give us a name to put on the profile.');
       return;
     }
     setState(() {
@@ -674,7 +678,10 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = userFacingError(
+          error,
+          fallback: 'Those changes didn’t save. Give it another go.',
+        );
       });
     }
   }

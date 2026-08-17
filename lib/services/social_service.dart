@@ -63,7 +63,7 @@ abstract final class SocialService {
       if (cached.isNotEmpty) return cached;
       if (error is TimeoutException || error is http.ClientException) {
         throw Exception(
-          'Could not reach the feed server. Keep the backend running and reconnect wireless debugging, then tap Retry.',
+          'Your feed is taking a little longer than usual. Tap Retry.',
         );
       }
       rethrow;
@@ -189,7 +189,9 @@ abstract final class SocialService {
   }) async {
     final reference = garment.originalImageUrl;
     if (reference == null || !reference.startsWith('http')) {
-      throw Exception('This garment has no public reference image for YouCam.');
+      throw Exception(
+        'This piece needs a clearer product photo before you can try it on.',
+      );
     }
     final session = await SessionService.ensureSession();
     if (modelPhoto != null) {
@@ -301,11 +303,11 @@ abstract final class SocialService {
       return PostTryOnResult.fromJson(data);
     } on TimeoutException {
       throw Exception(
-        'The fitting service took too long. Your original photo is unchanged; please try again.',
+        'This look is taking longer than usual. Your photo is safe—try it once more.',
       );
     } on http.ClientException {
       throw Exception(
-        'The fitting server disconnected. Keep the backend running and try again.',
+        'The fitting room paused for a moment. Your photo is safe—try again.',
       );
     }
   }
@@ -390,7 +392,7 @@ abstract final class SocialService {
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw Exception(
         data['error']?.toString() ??
-            'The server could not complete the request.',
+            'That didn’t come together this time. Give it another go.',
       );
     }
   }

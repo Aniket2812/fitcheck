@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../components/app_motion.dart';
@@ -13,6 +11,7 @@ import '../services/model_photo_service.dart';
 import '../services/saved_fit_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/user_facing_error.dart';
 import 'post_detail_screen.dart';
 import 'try_on_yourself_screen.dart';
 
@@ -91,13 +90,11 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   String _friendlyError(Object error) {
-    if (error is TimeoutException) {
-      return 'The feed server is not reachable right now. Keep the backend running and reconnect wireless debugging, then tap Retry.';
-    }
-    final message = error.toString().replaceFirst('Exception: ', '');
-    return message.contains('TimeoutException')
-        ? 'The feed server is not reachable right now. Keep the backend running and reconnect wireless debugging, then tap Retry.'
-        : message;
+    return userFacingError(
+      error,
+      fallback:
+          'Your feed took a little too long. Tap Retry and we’ll give it another go.',
+    );
   }
 
   List<SocialPost> get _visiblePosts {
@@ -128,7 +125,12 @@ class _FeedScreenState extends State<FeedScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error.toString().replaceFirst('Exception: ', '')),
+            content: Text(
+              userFacingError(
+                error,
+                fallback: 'That like didn’t stick. Try it once more.',
+              ),
+            ),
           ),
         );
       }
@@ -204,7 +206,7 @@ class _FeedScreenState extends State<FeedScreen> {
                             ),
                             SizedBox(height: AppSpacing.x1),
                             Text(
-                              'Fits worth trying',
+                              'Looks worth trying',
                               style: TextStyle(
                                 fontSize: 21,
                                 fontWeight: FontWeight.w500,
@@ -214,7 +216,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         ),
                       ),
                       Text(
-                        'SHOP · TRY · POST',
+                        'SHOP · TRY · MAKE IT YOURS',
                         style: TextStyle(
                           color: AppColors.textMuted,
                           fontSize: 10,
@@ -255,7 +257,7 @@ class _FeedScreenState extends State<FeedScreen> {
                     padding: EdgeInsets.all(AppSpacing.x8),
                     child: Center(
                       child: Text(
-                        'No fits in this edit yet.',
+                        'Nothing in this edit yet. Try another vibe.',
                         style: TextStyle(color: AppColors.textSecondary),
                       ),
                     ),
@@ -704,8 +706,8 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const AppEmptyState(
     icon: Icons.people_outline_rounded,
-    title: 'No outfits yet',
-    message: 'Tap + to publish the first fit and tag every shoppable garment.',
+    title: 'Fresh looks incoming',
+    message: 'Tap + to post the first fit and keep every piece shoppable.',
   );
 }
 

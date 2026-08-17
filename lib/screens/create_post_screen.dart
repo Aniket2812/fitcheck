@@ -12,6 +12,7 @@ import '../services/model_photo_service.dart';
 import '../services/saved_fit_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/user_facing_error.dart';
 
 typedef PickComposerPhoto = Future<XFile?> Function(ImageSource source);
 
@@ -125,13 +126,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   String _friendlyError(Object error) {
-    final message = error.toString().replaceFirst('Exception: ', '');
-    if (message.contains('ClientConnection') ||
-        message.contains('SocketException') ||
-        message.contains('TimeoutException')) {
-      return 'Some studio data could not load. Keep the backend running and reconnect wireless debugging, then refresh.';
-    }
-    return message;
+    return userFacingError(
+      error,
+      fallback:
+          'Your closet didn’t load this time. Pull to refresh and try again.',
+    );
   }
 
   Future<FashionCollection?> _createCollection() async {
@@ -192,7 +191,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           children: [
             const Text(
-              'Save product into',
+              'Where should this piece live?',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: AppSpacing.x2),
@@ -201,7 +200,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 key: Key('composer-target-${collection.id}'),
                 leading: const Icon(Icons.folder_outlined),
                 title: Text(collection.name),
-                subtitle: Text('${collection.items.length} items'),
+                subtitle: Text(
+                  '${collection.items.length} ${collection.items.length == 1 ? 'piece' : 'pieces'}',
+                ),
                 trailing: const Icon(Icons.arrow_forward),
                 onTap: () => Navigator.pop(sheetContext, collection),
               ),
@@ -210,7 +211,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             ListTile(
               key: const Key('composer-new-collection-from-picker'),
               leading: const Icon(Icons.create_new_folder_outlined),
-              title: const Text('Create a new collection'),
+              title: const Text('Make a new collection'),
               onTap: () async {
                 Navigator.pop(sheetContext);
                 await _createCollection();
@@ -249,7 +250,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           FilledButton(
             key: const Key('composer-fetch-product-submit'),
             onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Fetch item'),
+            child: const Text('Bring it in'),
           ),
         ],
       ),
@@ -359,14 +360,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   void _continueFromPieces() {
     if (_selectedItems.isEmpty) {
-      return _setError('Choose at least one product to continue.');
+      return _setError('Pick at least one piece to keep going.');
     }
     _showStep(1);
   }
 
   void _continueFromPhoto() {
     if (_selectedModelPhoto == null) {
-      return _setError('Choose or add a full-body photo to continue.');
+      return _setError('Pick or add a full-body photo to keep going.');
     }
     _showStep(2);
   }
@@ -414,13 +415,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     final modelPhoto = _selectedModelPhoto;
     final garments = _garments;
     if (garments.isEmpty) {
-      return _setError('Choose at least one collection item.');
+      return _setError('Pick at least one piece for this look.');
     }
     if (modelPhoto == null) {
-      return _setError('Choose a saved full-body photo from My Photos.');
+      return _setError('Pick a full-body photo for this look.');
     }
     if (!_youCamConfigured) {
-      return _setError('YouCam is currently unavailable.');
+      return _setError(
+        'The fitting room is taking a breather. Try again shortly.',
+      );
     }
     setState(() {
       _generating = true;
@@ -434,7 +437,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       );
       if (mounted) setState(() => _previewUrl = url);
     } catch (error) {
-      _setError(error.toString().replaceFirst('Exception: ', ''));
+      _setError(
+        userFacingError(
+          error,
+          fallback: 'This look didn’t come together. Give it another go.',
+        ),
+      );
     } finally {
       if (mounted) setState(() => _generating = false);
     }
@@ -442,16 +450,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Future<void> _publish() async {
     if (_garments.isEmpty) {
-      return _setError('Choose at least one collection item.');
+      return _setError('Pick at least one piece for this look.');
     }
     if (_selectedModelPhoto == null) {
-      return _setError('Choose a saved full-body photo from My Photos.');
+      return _setError('Pick a full-body photo for this look.');
     }
     if (_generating) {
-      return _setError('Wait for your outfit preview to finish.');
+      return _setError('Hang tight—your preview is still getting dressed.');
     }
     if (_previewUrl == null) {
-      return _setError('Generate your outfit preview first.');
+      return _setError('Make the preview before posting this fit.');
     }
     setState(() {
       _publishing = true;
@@ -466,24 +474,29 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       );
       if (mounted) Navigator.pop(context, post);
     } catch (error) {
-      _setError(error.toString().replaceFirst('Exception: ', ''));
+      _setError(
+        userFacingError(
+          error,
+          fallback: 'This fit didn’t post. Give it another go.',
+        ),
+      );
       if (mounted) setState(() => _publishing = false);
     }
   }
 
   Future<void> _saveFit() async {
     if (_garments.isEmpty) {
-      return _setError('Choose at least one collection item.');
+      return _setError('Pick at least one piece for this look.');
     }
     if (_selectedModelPhoto == null) {
-      return _setError('Choose a saved full-body photo from My Photos.');
+      return _setError('Pick a full-body photo for this look.');
     }
     if (_generating) {
-      return _setError('Wait for your outfit preview to finish.');
+      return _setError('Hang tight—your preview is still getting dressed.');
     }
     final preview = _previewUrl;
     if (preview == null) {
-      return _setError('Generate your outfit preview before saving this fit.');
+      return _setError('Make the preview before saving this fit.');
     }
     setState(() {
       _savingFit = true;
@@ -499,12 +512,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Fit saved. Open Profile whenever you are ready.'),
+          content: Text('Saved for later. It’s waiting in your profile.'),
         ),
       );
       Navigator.pop(context);
     } catch (error) {
-      _setError(error.toString().replaceFirst('Exception: ', ''));
+      _setError(
+        userFacingError(
+          error,
+          fallback: 'This fit didn’t save. Give it another go.',
+        ),
+      );
       if (mounted) setState(() => _savingFit = false);
     }
   }
@@ -547,9 +565,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Widget _buildPiecesStep() => _stepCard(
     step: 0,
-    title: 'Build your outfit',
+    title: 'Pick your pieces',
     subtitle:
-        'Choose compatible pieces from your collections, or bring in a new fashion link.',
+        'Mix from your collections or drop in a fresh link. We’ll keep the combo wearable.',
     children: [
       Row(
         children: [
@@ -563,7 +581,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.add_link, size: 18),
-              label: Text(_addingProduct ? 'Fetching…' : 'Add product link'),
+              label: Text(_addingProduct ? 'Bringing it in…' : 'Add a link'),
             ),
           ),
           const SizedBox(width: AppSpacing.x2),
@@ -582,7 +600,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         children: [
           const Expanded(
             child: Text(
-              'YOUR COLLECTIONS',
+              'YOUR CLOSET PICKS',
               style: TextStyle(
                 color: AppColors.textMuted,
                 fontSize: 10,
@@ -595,7 +613,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             key: const Key('composer-refresh-button'),
             onPressed: _load,
             icon: const Icon(Icons.sync_rounded, size: 15),
-            label: const Text('Refresh'),
+            label: const Text('Sync'),
           ),
         ],
       ),
@@ -618,8 +636,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           icon: const Icon(Icons.arrow_forward_rounded, size: 18),
           label: Text(
             _selectedItems.isEmpty
-                ? 'Select a product to continue'
-                : 'Continue with ${_selectedItems.length} ${_selectedItems.length == 1 ? 'piece' : 'pieces'}',
+                ? 'Pick a piece to keep going'
+                : 'Style ${_selectedItems.length} ${_selectedItems.length == 1 ? 'piece' : 'pieces'}',
           ),
         ),
       ),
@@ -630,7 +648,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     step: 1,
     title: 'Choose your photo',
     subtitle:
-        'Pick the full-body photo whose pose, framing, and background you want to keep.',
+        'Choose the full-body shot that feels most you. We’ll keep the pose, framing and background.',
     children: [
       _SelectionSummary(
         icon: Icons.checkroom_outlined,
@@ -676,8 +694,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           icon: const Icon(Icons.arrow_forward_rounded, size: 18),
           label: Text(
             _selectedModelPhoto == null
-                ? 'Choose a photo to continue'
-                : 'Continue to preview',
+                ? 'Pick a photo to keep going'
+                : 'See the fit on you',
           ),
         ),
       ),
@@ -686,9 +704,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Widget _buildPreviewStep() => _stepCard(
     step: 2,
-    title: 'Create your look',
+    title: 'See it on you',
     subtitle:
-        'YouCam fits every selected piece while keeping your pose and original background unchanged.',
+        'We’ll fit every piece while keeping your pose and original background exactly yours.',
     children: [
       _SelectionSummary(
         icon: Icons.person_outline_rounded,
@@ -714,8 +732,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             _generating
                 ? 'Fitting every piece…'
                 : _previewUrl == null
-                ? 'Generate outfit preview'
-                : 'Regenerate outfit',
+                ? 'Make the look'
+                : 'Remix the look',
           ),
         ),
       ),
@@ -742,7 +760,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           maxLines: 3,
           decoration: const InputDecoration(
             labelText: 'Caption',
-            hintText: 'Tell people about this fit…',
+            hintText: 'What’s the vibe?',
             border: OutlineInputBorder(),
           ),
         ),
@@ -772,7 +790,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.arrow_upward_rounded, size: 17),
-                label: Text(_publishing ? 'Posting…' : 'Post outfit'),
+                label: Text(_publishing ? 'Posting…' : 'Post the fit'),
               ),
             ),
           ],
@@ -785,7 +803,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: AppColors.canvas,
     appBar: AppBar(
-      title: const Text('Build an outfit'),
+      title: const Text('Put the fit together'),
       backgroundColor: AppColors.canvas,
       surfaceTintColor: Colors.transparent,
     ),
@@ -985,7 +1003,7 @@ class _StudioProgress extends StatelessWidget {
           children: [
             const Expanded(
               child: Text(
-                'OUTFIT STUDIO',
+                'FIT CHECK',
                 style: TextStyle(
                   color: AppColors.textMuted,
                   fontSize: 9.5,
@@ -1281,8 +1299,8 @@ class _CollectionPicker extends StatelessWidget {
             const SizedBox(height: AppSpacing.x1),
             Text(
               collections.isEmpty
-                  ? 'Paste a product link, then choose or create a collection for it.'
-                  : '${collections.length} collections are ready. Add a product link and choose where it belongs.',
+                  ? 'Drop a product link, then give it a collection.'
+                  : 'Your ${collections.length} collections are ready. Drop in a link and choose its spot.',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: AppColors.textSecondary,
@@ -1432,7 +1450,7 @@ class _PhotoPicker extends StatelessWidget {
           border: Border.all(color: AppColors.borderDefault),
         ),
         child: const Text(
-          'No full-body photos yet. Add one from camera or gallery above and use it immediately.',
+          'No full-body shots yet. Add one now and jump straight into the fit.',
           style: TextStyle(color: AppColors.textSecondary),
         ),
       );
@@ -1518,7 +1536,7 @@ class _OutfitPreview extends StatelessWidget {
                     children: [
                       Icon(Icons.auto_awesome_outlined, size: 42),
                       SizedBox(height: AppSpacing.x2),
-                      Text('Your complete look will appear here'),
+                      Text('Your look lands here'),
                     ],
                   ),
                 )

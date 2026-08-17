@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/closet_item.dart';
 import '../services/ingest_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/user_facing_error.dart';
 import 'garment_image.dart';
 
 enum _AddStatus { idle, loading, error, done }
@@ -91,9 +92,12 @@ class _AddLinkDialogState extends State<AddLinkDialog> {
     } catch (error) {
       if (!mounted) return;
       _stopProgress();
-      final message = error.toString().replaceFirst('Exception: ', '');
       setState(() {
-        _error = message;
+        _error = userFacingError(
+          error,
+          fallback:
+              'Couldn’t pull that piece in. Check the link and try again.',
+        );
         _status = _AddStatus.error;
       });
     }
@@ -177,7 +181,7 @@ class _FormView extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.x3),
         const Text(
-          'Paste a link from Myntra, Zara, Instagram — anywhere. We pull the garment out and cut the background away.',
+          'Drop a link from Myntra, AJIO, Amazon, Flipkart—or anywhere you found the piece. We’ll do the rest.',
           style: TextStyle(
             fontSize: 15,
             height: 1.5,
@@ -234,7 +238,7 @@ class _FormView extends StatelessWidget {
                           color: AppColors.textOnAccent,
                         ),
                       )
-                    : const Text('Extract'),
+                    : const Text('Bring it in'),
               ),
             ),
           ],
@@ -256,12 +260,12 @@ class _FormView extends StatelessWidget {
   String _progressMessage(int seconds) {
     final elapsed = seconds > 0 ? ' · ${seconds}s' : '';
     if (seconds < 20) {
-      return 'Fetching the product and preparing the cutout$elapsed';
+      return 'Finding the product and getting it closet-ready$elapsed';
     }
     if (seconds < 90) {
-      return 'The image provider is cutting out the garment. Keep this open$elapsed';
+      return 'Cleaning up the product shots—keep this open$elapsed';
     }
-    return 'Still processing — complex images can take a few minutes$elapsed';
+    return 'Still polishing this one—it’s a tricky photo$elapsed';
   }
 
   OutlineInputBorder _border(bool error, {double width = 0.5}) {
@@ -293,7 +297,7 @@ class _DoneView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Added to your closet',
+          'Your closet just got better',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,

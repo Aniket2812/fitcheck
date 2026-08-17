@@ -31,10 +31,12 @@ abstract final class IngestService {
           .timeout(const Duration(seconds: 390));
     } on TimeoutException {
       throw Exception(
-        'The server did not finish within 6½ minutes. Check its ingest logs before retrying.',
+        'This link is taking longer than usual. Give it another go in a moment.',
       );
     } catch (_) {
-      throw Exception("Can't reach the fitterest server at $apiUrl.");
+      throw Exception(
+        'We couldn’t open that product right now. Try again shortly.',
+      );
     }
 
     Map<String, dynamic> data = const {};
@@ -46,7 +48,10 @@ abstract final class IngestService {
     }
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception(data['error']?.toString() ?? 'Something went wrong.');
+      throw Exception(
+        data['error']?.toString() ??
+            'We couldn’t pull that product in. Check the link and try again.',
+      );
     }
 
     data['productImageUrls'] = (data['productImageUrls'] as List? ?? const [])

@@ -74,12 +74,12 @@ class AppErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AppEmptyState(
     icon: Icons.cloud_off_outlined,
-    title: 'Couldn’t load this yet',
+    title: 'Tiny hiccup',
     message: message,
     action: OutlinedButton.icon(
       onPressed: onRetry,
       icon: const Icon(Icons.refresh, size: 17),
-      label: const Text('Retry'),
+      label: const Text('Try again'),
     ),
   );
 }

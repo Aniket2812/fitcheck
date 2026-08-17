@@ -9,6 +9,7 @@ import '../services/model_photo_service.dart';
 import '../services/saved_fit_service.dart';
 import '../services/social_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/user_facing_error.dart';
 import 'try_on_yourself_screen.dart';
 
 class PostDetailScreen extends StatefulWidget {
@@ -70,7 +71,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   void _message(Object error) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(error.toString().replaceFirst('Exception: ', ''))),
+      SnackBar(
+        content: Text(
+          userFacingError(
+            error,
+            fallback: 'That didn’t land. Give it another go.',
+          ),
+        ),
+      ),
     );
   }
 
@@ -190,7 +198,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         children: [
                           const Expanded(
                             child: Text(
-                              'Shop every piece',
+                              'Shop the whole fit',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -233,7 +241,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     const SizedBox(width: AppSpacing.x2),
                     const Expanded(
                       child: Text(
-                        'Conversation',
+                        'Fit talk',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -254,7 +262,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 const Padding(
                   padding: EdgeInsets.fromLTRB(16, 12, 16, 22),
                   child: Text(
-                    'No comments yet. Start the conversation.',
+                    'No comments yet. Say what you’re thinking.',
                     textAlign: TextAlign.center,
                   ),
                 )
@@ -286,7 +294,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     onSubmitted: (_) => _sendComment(),
                     decoration: const InputDecoration(
                       counterText: '',
-                      hintText: 'Add a comment…',
+                      hintText: 'Drop a comment…',
                       border: OutlineInputBorder(),
                     ),
                   ),

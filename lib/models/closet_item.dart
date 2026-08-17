@@ -24,7 +24,9 @@ class ClosetItem {
   factory ClosetItem.fromJson(Map<String, dynamic> json) {
     final image = json['image'];
     if (image is! String || image.isEmpty) {
-      throw const FormatException('The server returned no garment image.');
+      throw const FormatException(
+        'We couldn’t find a clear product image on that page.',
+      );
     }
 
     return ClosetItem(

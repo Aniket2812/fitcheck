@@ -5,6 +5,7 @@ import '../models/fashion_collection.dart';
 import '../services/collection_service.dart';
 import '../services/ingest_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/user_facing_error.dart';
 
 class SaveSharedProductScreen extends StatefulWidget {
   const SaveSharedProductScreen({
@@ -49,7 +50,10 @@ class _SaveSharedProductScreenState extends State<SaveSharedProductScreen> {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = userFacingError(
+          error,
+          fallback: 'Your collections didn’t load. Give it another go.',
+        );
       });
     }
   }
@@ -67,7 +71,10 @@ class _SaveSharedProductScreenState extends State<SaveSharedProductScreen> {
       if (!mounted) return;
       setState(() {
         _savingId = null;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = userFacingError(
+          error,
+          fallback: 'Couldn’t save that piece. Try the link once more.',
+        );
       });
     }
   }
@@ -77,7 +84,7 @@ class _SaveSharedProductScreenState extends State<SaveSharedProductScreen> {
     key: const Key('save-shared-product-screen'),
     backgroundColor: AppColors.canvas,
     appBar: AppBar(
-      title: const Text('Save shared item'),
+      title: const Text('Save this find'),
       backgroundColor: AppColors.canvas,
       surfaceTintColor: Colors.transparent,
     ),
@@ -87,12 +94,12 @@ class _SaveSharedProductScreenState extends State<SaveSharedProductScreen> {
             padding: const EdgeInsets.fromLTRB(14, 8, 14, 24),
             children: [
               const Text(
-                'Choose a collection',
+                'Where should it live?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: AppSpacing.x2),
               const Text(
-                'We’ll fetch the product, cut it out, and keep its original buying link.',
+                'We’ll pull in the clean product shots and keep the original shopping link.',
                 style: TextStyle(color: AppColors.textSecondary, height: 1.3),
               ),
               if (_error != null)

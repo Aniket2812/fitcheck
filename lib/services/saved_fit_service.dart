@@ -139,7 +139,7 @@ abstract final class SavedFitService {
   ) {
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw Exception(
-        data['error']?.toString() ?? 'The saved fit request failed.',
+        data['error']?.toString() ?? 'Your saved fits need a quick retry.',
       );
     }
   }

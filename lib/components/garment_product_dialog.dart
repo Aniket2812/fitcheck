@@ -74,7 +74,7 @@ class _GarmentProductDialogState extends State<_GarmentProductDialog> {
     }
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Could not open this buying link.')),
+      const SnackBar(content: Text('That shopping link won’t open right now.')),
     );
   }
 
@@ -115,7 +115,7 @@ class _GarmentProductDialogState extends State<_GarmentProductDialog> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'PRODUCT GALLERY',
+                                  'THE PIECE, UP CLOSE',
                                   style: TextStyle(
                                     color: AppColors.textMuted,
                                     fontSize: 10,
@@ -125,7 +125,7 @@ class _GarmentProductDialogState extends State<_GarmentProductDialog> {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  '${gallery.length} images from the product link',
+                                  '${gallery.length} product views',
                                   key: const Key('product-gallery-count'),
                                   style: const TextStyle(
                                     fontSize: 13,
@@ -268,7 +268,7 @@ class _GarmentProductDialogState extends State<_GarmentProductDialog> {
                               key: const Key('buy-garment-button'),
                               onPressed: _openProduct,
                               icon: const Icon(Icons.open_in_new, size: 18),
-                              label: const Text('View exact product'),
+                              label: const Text('Shop this exact piece'),
                             ),
                           ),
                         ],

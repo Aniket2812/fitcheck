@@ -8,6 +8,7 @@ import '../components/screen.dart';
 import '../models/model_photo.dart';
 import '../services/model_photo_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/user_facing_error.dart';
 
 class ModelPhotosScreen extends StatefulWidget {
   const ModelPhotosScreen({
@@ -158,7 +159,10 @@ class _ModelPhotosScreenState extends State<ModelPhotosScreen> {
   void _setError(Object error) {
     if (!mounted) return;
     setState(() {
-      _error = error.toString().replaceFirst('Exception: ', '');
+      _error = userFacingError(
+        error,
+        fallback: 'Your photos didn’t load this time. Pull to refresh.',
+      );
     });
   }
 
@@ -178,10 +182,10 @@ class _ModelPhotosScreenState extends State<ModelPhotosScreen> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
                 child: AppPageIntro(
-                  eyebrow: 'Your model library',
-                  title: 'My full-body photos',
+                  eyebrow: 'Your try-on lineup',
+                  title: 'My photos',
                   subtitle:
-                      'Upload once, then reuse your best poses across every virtual try-on.',
+                      'Save your best full-body shots once, then reuse them across every fit.',
                   trailing: FilledButton.icon(
                     key: const Key('add-model-photo-button'),
                     onPressed: _uploading ? null : _chooseSource,
@@ -251,9 +255,9 @@ class _EmptyPhotos extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const AppEmptyState(
     icon: Icons.accessibility_new_rounded,
-    title: 'Add your first full-body photo',
+    title: 'Add your go-to photo',
     message:
-        'Use a clear, front-facing photo with your full outfit area visible.',
+        'A clear, front-facing head-to-feet shot gives every try-on its best chance.',
   );
 }
 

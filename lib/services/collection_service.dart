@@ -140,7 +140,7 @@ abstract final class CollectionService {
   ) {
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw Exception(
-        data['error']?.toString() ?? 'The collection request failed.',
+        data['error']?.toString() ?? 'Your collections need a quick retry.',
       );
     }
   }

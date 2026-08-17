@@ -97,7 +97,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 color: AppColors.textPrimary,
                               ),
                               decoration: const InputDecoration.collapsed(
-                                hintText: 'Search looks, pieces, people',
+                                hintText: 'Search fits, pieces, people',
                                 hintStyle: TextStyle(
                                   fontSize: 13,
                                   color: AppColors.textMuted,
@@ -165,7 +165,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       const SizedBox(height: AppSpacing.x4),
                       Text(
-                        trimmed.isEmpty ? 'Search Compete' : 'No results',
+                        trimmed.isEmpty
+                            ? 'Find your next vibe'
+                            : 'No match yet',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 18,
@@ -176,8 +178,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       const SizedBox(height: AppSpacing.x2),
                       Text(
                         trimmed.isEmpty
-                            ? 'Find looks by piece, brand, or the person who put them together.'
-                            : 'Nothing matches “$trimmed” yet.',
+                            ? 'Search by piece, brand or the person behind the fit.'
+                            : 'Nothing for “$trimmed” yet. Try a broader vibe.',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 13.5,

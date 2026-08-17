@@ -36,7 +36,7 @@ class SavedScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Nothing saved',
+                      'Nothing tucked away yet',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
@@ -46,7 +46,7 @@ class SavedScreen extends StatelessWidget {
                     ),
                     SizedBox(height: AppSpacing.x2),
                     Text(
-                      'Looks you save will collect here, ready to pair.',
+                      'Save the pieces you can’t stop thinking about. They’ll wait here.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 15,
