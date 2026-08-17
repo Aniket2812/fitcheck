@@ -16,6 +16,7 @@ import { authRoutes, meRoutes, userRoutes } from './routes/auth.js';
 import { collectionRoutes } from './routes/collections.js';
 import { modelPhotoRoutes } from './routes/modelPhotos.js';
 import { postRoutes } from './routes/posts.js';
+import { savedFitRoutes } from './routes/savedFits.js';
 import { tryOnRoutes } from './routes/tryon.js';
 import { loadStore } from './store.js';
 
@@ -43,6 +44,7 @@ app.route('/api/users', userRoutes);
 app.route('/api/collections', collectionRoutes);
 app.route('/api/model-photos', modelPhotoRoutes);
 app.route('/api/posts', postRoutes);
+app.route('/api/saved-fits', savedFitRoutes);
 app.route('/api/try-on', tryOnRoutes);
 
 app.get('/media/:name', async (c) => {

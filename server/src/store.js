@@ -26,11 +26,12 @@ const SESSION_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
 // a disk write per call for no extra benefit.
 const SESSION_RENEW_AFTER_MS = SESSION_TTL_MS / 2;
 
-/** @type {{ users: Map<string, object>, sessions: Map<string, object>, posts: Map<string, object>, demoFeedVersion: number }} */
+/** @type {{ users: Map<string, object>, sessions: Map<string, object>, posts: Map<string, object>, savedFits: Map<string, object>, demoFeedVersion: number }} */
 const db = {
   users: new Map(),
   sessions: new Map(),
   posts: new Map(),
+  savedFits: new Map(),
   demoFeedVersion: 0,
 };
 
@@ -51,6 +52,7 @@ async function flush() {
         users: [...db.users.values()],
         sessions: [...db.sessions.values()],
         posts: [...db.posts.values()],
+        savedFits: [...db.savedFits.values()],
         demoFeedVersion: db.demoFeedVersion,
       },
       null,
@@ -107,6 +109,7 @@ export async function loadStore() {
     if (Date.parse(session.expiresAt) > now) db.sessions.set(session.token, session);
   }
   for (const post of parsed.posts || []) db.posts.set(post.id, post);
+  for (const fit of parsed.savedFits || []) db.savedFits.set(fit.id, fit);
   db.demoFeedVersion = Number(parsed.demoFeedVersion || 0);
 
   if (process.env.SEED_DEMO_DATA !== 'false') {
@@ -524,6 +527,103 @@ export async function deletePost(postId, userId) {
   if (post.userId !== userId) throw new PostError('You can only delete your own posts.', 403);
   db.posts.delete(postId);
   await flush();
+}
+
+// ─────────────────────────────────────────────────────────────
+// Private saved fits / post drafts
+// ─────────────────────────────────────────────────────────────
+
+export class SavedFitError extends Error {
+  constructor(message, status = 400) {
+    super(message);
+    this.status = status;
+  }
+}
+
+function projectSavedFit(fit) {
+  return {
+    id: fit.id,
+    caption: fit.caption,
+    imageUrl: fit.imageUrl,
+    garments: fit.garments,
+    modelPhotoId: fit.modelPhotoId || null,
+    createdAt: fit.createdAt,
+    updatedAt: fit.updatedAt,
+  };
+}
+
+function ownSavedFit(userId, fitId) {
+  const fit = db.savedFits.get(fitId);
+  if (!fit || fit.userId !== userId) {
+    throw new SavedFitError('No such saved fit.', 404);
+  }
+  return fit;
+}
+
+export function listSavedFits(userId) {
+  if (!db.users.has(userId)) throw new SavedFitError('No such account.', 404);
+  return [...db.savedFits.values()]
+    .filter((fit) => fit.userId === userId)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .map(projectSavedFit);
+}
+
+export async function createSavedFit(
+  userId,
+  { caption, imageUrl, garments, modelPhotoId = null },
+) {
+  const user = db.users.get(userId);
+  if (!user) throw new SavedFitError('No such account.', 404);
+  if (!imageUrl) throw new SavedFitError('Generate the outfit preview before saving this fit.');
+  if (!Array.isArray(garments) || garments.length === 0) {
+    throw new SavedFitError('Choose at least one collection item.');
+  }
+  if (garments.length > POST_LIMITS.garments) {
+    throw new SavedFitError(`A saved fit can contain at most ${POST_LIMITS.garments} garments.`);
+  }
+  const cleanCaption = String(caption || '').trim();
+  if (cleanCaption.length > POST_LIMITS.caption) {
+    throw new SavedFitError(`Captions can be at most ${POST_LIMITS.caption} characters.`);
+  }
+  if (modelPhotoId && !(user.modelPhotos || []).some((photo) => photo.id === modelPhotoId)) {
+    throw new SavedFitError('The selected full-body photo no longer exists.', 409);
+  }
+  if ([...db.savedFits.values()].filter((fit) => fit.userId === userId).length >= 30) {
+    throw new SavedFitError('You can keep up to 30 saved fits.', 409);
+  }
+
+  const now = new Date().toISOString();
+  const fit = {
+    id: randomUUID(),
+    userId,
+    caption: cleanCaption,
+    imageUrl: String(imageUrl),
+    garments: garments.map(cleanGarment),
+    modelPhotoId: modelPhotoId ? String(modelPhotoId) : null,
+    createdAt: now,
+    updatedAt: now,
+  };
+  db.savedFits.set(fit.id, fit);
+  await flush();
+  return projectSavedFit(fit);
+}
+
+export async function deleteSavedFit(userId, fitId) {
+  ownSavedFit(userId, fitId);
+  db.savedFits.delete(fitId);
+  await flush();
+}
+
+export async function publishSavedFit(userId, fitId, caption) {
+  const fit = ownSavedFit(userId, fitId);
+  const post = await createPost(userId, {
+    caption: caption == null ? fit.caption : caption,
+    imageUrl: fit.imageUrl,
+    garments: fit.garments,
+  });
+  db.savedFits.delete(fitId);
+  await flush();
+  return post;
 }
 
 // ─────────────────────────────────────────────────────────────
